@@ -211,6 +211,7 @@
     <ClCompile Include="git_dump_3.6\src\steed.c" />
     <ClCompile Include="git_dump_3.6\src\sys.c" />
     <ClCompile Include="git_dump_3.6\src\teleport.c" />
+    <ClCompile Include="git_dump_3.6\src\tile.c" />
     <ClCompile Include="git_dump_3.6\src\timeout.c" />
     <ClCompile Include="git_dump_3.6\src\topten.c" />
     <ClCompile Include="git_dump_3.6\src\track.c" />
@@ -231,6 +232,7 @@
     <ClCompile Include="git_dump_3.6\src\zap.c" />
     <ClCompile Include="git_dump_3.6\sys\share\cppregex.cpp" />
     <ClCompile Include="git_dump_3.6\sys\share\random.c" />
+    <ClCompile Include="git_dump_3.6\sys\uwp\uwp.cpp" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>

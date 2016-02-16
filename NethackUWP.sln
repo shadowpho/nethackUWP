@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "nethack_original", "nethack
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "makedefs", "makedefs\makedefs.vcxproj", "{5F9C3A4B-73A7-4514-A7DB-E52A29A81A5D}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tilemap", "tilemap\tilemap.vcxproj", "{5460793E-A003-41BA-A047-D03C42AF0C44}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM = Debug|ARM
@@ -59,6 +61,16 @@ Global
 		{5F9C3A4B-73A7-4514-A7DB-E52A29A81A5D}.Release|x64.Build.0 = Release|x64
 		{5F9C3A4B-73A7-4514-A7DB-E52A29A81A5D}.Release|x86.ActiveCfg = Release|Win32
 		{5F9C3A4B-73A7-4514-A7DB-E52A29A81A5D}.Release|x86.Build.0 = Release|Win32
+		{5460793E-A003-41BA-A047-D03C42AF0C44}.Debug|ARM.ActiveCfg = Debug|Win32
+		{5460793E-A003-41BA-A047-D03C42AF0C44}.Debug|x64.ActiveCfg = Debug|x64
+		{5460793E-A003-41BA-A047-D03C42AF0C44}.Debug|x64.Build.0 = Debug|x64
+		{5460793E-A003-41BA-A047-D03C42AF0C44}.Debug|x86.ActiveCfg = Debug|Win32
+		{5460793E-A003-41BA-A047-D03C42AF0C44}.Debug|x86.Build.0 = Debug|Win32
+		{5460793E-A003-41BA-A047-D03C42AF0C44}.Release|ARM.ActiveCfg = Release|Win32
+		{5460793E-A003-41BA-A047-D03C42AF0C44}.Release|x64.ActiveCfg = Release|x64
+		{5460793E-A003-41BA-A047-D03C42AF0C44}.Release|x64.Build.0 = Release|x64
+		{5460793E-A003-41BA-A047-D03C42AF0C44}.Release|x86.ActiveCfg = Release|Win32
+		{5460793E-A003-41BA-A047-D03C42AF0C44}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

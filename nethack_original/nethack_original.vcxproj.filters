@@ -211,5 +211,7 @@
     <ClCompile Include="git_dump_3.6\src\monstr.c" />
     <ClCompile Include="git_dump_3.6\sys\share\random.c" />
     <ClCompile Include="git_dump_3.6\sys\share\cppregex.cpp" />
+    <ClCompile Include="git_dump_3.6\src\tile.c" />
+    <ClCompile Include="git_dump_3.6\sys\uwp\uwp.cpp" />
   </ItemGroup>
 </Project>
