@@ -8,6 +8,7 @@
 
 #define boolean boolean2
 #define terminate terminate2
+
 extern "C" {
 #include "hack.h"
 #include "dlb.h"

@@ -7,6 +7,7 @@
 
 /* nhregex interface documented in sys/share/posixregex.c */
 
+#define terminate terminate2
 extern "C" {
   #include <hack.h>
 
@@ -58,3 +59,5 @@ extern "C" {
     delete re;
   }
 }
+
+#undef terminate

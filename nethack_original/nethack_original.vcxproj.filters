@@ -7,35 +7,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="git_dump_3.6\sys\amiga\windefs.h" />
-    <ClInclude Include="git_dump_3.6\sys\amiga\winext.h" />
-    <ClInclude Include="git_dump_3.6\sys\amiga\winproto.h" />
-    <ClInclude Include="git_dump_3.6\sys\msdos\pctiles.h" />
-    <ClInclude Include="git_dump_3.6\sys\msdos\pcvideo.h" />
-    <ClInclude Include="git_dump_3.6\sys\msdos\portio.h" />
-    <ClInclude Include="git_dump_3.6\sys\vms\lev_lex.h" />
-    <ClInclude Include="git_dump_3.6\sys\wince\ceinc\sys\stat.h" />
-    <ClInclude Include="git_dump_3.6\sys\wince\ceinc\assert.h" />
-    <ClInclude Include="git_dump_3.6\sys\wince\ceinc\errno.h" />
-    <ClInclude Include="git_dump_3.6\sys\wince\ceinc\fcntl.h" />
-    <ClInclude Include="git_dump_3.6\sys\wince\mhaskyn.h" />
-    <ClInclude Include="git_dump_3.6\sys\wince\mhcmd.h" />
-    <ClInclude Include="git_dump_3.6\sys\wince\mhcolor.h" />
-    <ClInclude Include="git_dump_3.6\sys\wince\mhdlg.h" />
-    <ClInclude Include="git_dump_3.6\sys\wince\mhfont.h" />
-    <ClInclude Include="git_dump_3.6\sys\wince\mhinput.h" />
-    <ClInclude Include="git_dump_3.6\sys\wince\mhmain.h" />
-    <ClInclude Include="git_dump_3.6\sys\wince\mhmap.h" />
-    <ClInclude Include="git_dump_3.6\sys\wince\mhmenu.h" />
-    <ClInclude Include="git_dump_3.6\sys\wince\mhmsg.h" />
-    <ClInclude Include="git_dump_3.6\sys\wince\mhmsgwnd.h" />
-    <ClInclude Include="git_dump_3.6\sys\wince\mhrip.h" />
-    <ClInclude Include="git_dump_3.6\sys\wince\mhstatus.h" />
-    <ClInclude Include="git_dump_3.6\sys\wince\mhtext.h" />
-    <ClInclude Include="git_dump_3.6\sys\wince\mhtxtbuf.h" />
-    <ClInclude Include="git_dump_3.6\sys\wince\newres.h" />
-    <ClInclude Include="git_dump_3.6\sys\wince\resource.h" />
-    <ClInclude Include="git_dump_3.6\sys\wince\winMS.h" />
     <ClInclude Include="git_dump_3.6\include\align.h" />
     <ClInclude Include="git_dump_3.6\include\amiconf.h" />
     <ClInclude Include="git_dump_3.6\include\artifact.h" />
@@ -130,82 +101,6 @@
     <ClInclude Include="git_dump_3.6\include\youprop.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="git_dump_3.6\sys\amiga\amidos.c" />
-    <ClCompile Include="git_dump_3.6\sys\amiga\amigst.c" />
-    <ClCompile Include="git_dump_3.6\sys\amiga\amimenu.c" />
-    <ClCompile Include="git_dump_3.6\sys\amiga\amirip.c" />
-    <ClCompile Include="git_dump_3.6\sys\amiga\amisnd.c" />
-    <ClCompile Include="git_dump_3.6\sys\amiga\amistack.c" />
-    <ClCompile Include="git_dump_3.6\sys\amiga\amitty.c" />
-    <ClCompile Include="git_dump_3.6\sys\amiga\amiwind.c" />
-    <ClCompile Include="git_dump_3.6\sys\amiga\clipwin.c" />
-    <ClCompile Include="git_dump_3.6\sys\amiga\colorwin.c" />
-    <ClCompile Include="git_dump_3.6\sys\amiga\cvtsnd.c" />
-    <ClCompile Include="git_dump_3.6\sys\amiga\txt2iff.c" />
-    <ClCompile Include="git_dump_3.6\sys\amiga\winami.c" />
-    <ClCompile Include="git_dump_3.6\sys\amiga\winchar.c" />
-    <ClCompile Include="git_dump_3.6\sys\amiga\winfuncs.c" />
-    <ClCompile Include="git_dump_3.6\sys\amiga\winkey.c" />
-    <ClCompile Include="git_dump_3.6\sys\amiga\winmenu.c" />
-    <ClCompile Include="git_dump_3.6\sys\amiga\winreq.c" />
-    <ClCompile Include="git_dump_3.6\sys\amiga\winstr.c" />
-    <ClCompile Include="git_dump_3.6\sys\amiga\xpm2iff.c" />
-    <ClCompile Include="git_dump_3.6\sys\atari\tos.c" />
-    <ClCompile Include="git_dump_3.6\sys\be\bemain.c" />
-    <ClCompile Include="git_dump_3.6\sys\mac\dprintf.c" />
-    <ClCompile Include="git_dump_3.6\sys\mac\maccurs.c" />
-    <ClCompile Include="git_dump_3.6\sys\mac\macerrs.c" />
-    <ClCompile Include="git_dump_3.6\sys\mac\macfile.c" />
-    <ClCompile Include="git_dump_3.6\sys\mac\macmain.c" />
-    <ClCompile Include="git_dump_3.6\sys\mac\macmenu.c" />
-    <ClCompile Include="git_dump_3.6\sys\mac\macsnd.c" />
-    <ClCompile Include="git_dump_3.6\sys\mac\mactopl.c" />
-    <ClCompile Include="git_dump_3.6\sys\mac\mactty.c" />
-    <ClCompile Include="git_dump_3.6\sys\mac\macunix.c" />
-    <ClCompile Include="git_dump_3.6\sys\mac\macwin.c" />
-    <ClCompile Include="git_dump_3.6\sys\mac\mgetline.c" />
-    <ClCompile Include="git_dump_3.6\sys\mac\mmodal.c" />
-    <ClCompile Include="git_dump_3.6\sys\mac\mrecover.c" />
-    <ClCompile Include="git_dump_3.6\sys\mac\mttymain.c" />
-    <ClCompile Include="git_dump_3.6\sys\msdos\msdos.c" />
-    <ClCompile Include="git_dump_3.6\sys\msdos\ovlinit.c" />
-    <ClCompile Include="git_dump_3.6\sys\msdos\pckeys.c" />
-    <ClCompile Include="git_dump_3.6\sys\msdos\pctiles.c" />
-    <ClCompile Include="git_dump_3.6\sys\msdos\sound.c" />
-    <ClCompile Include="git_dump_3.6\sys\msdos\tile2bin.c" />
-    <ClCompile Include="git_dump_3.6\sys\msdos\video.c" />
-    <ClCompile Include="git_dump_3.6\sys\msdos\vidtxt.c" />
-    <ClCompile Include="git_dump_3.6\sys\msdos\vidvga.c" />
-    <ClCompile Include="git_dump_3.6\sys\os2\os2.c" />
-    <ClCompile Include="git_dump_3.6\sys\unix\unixmain.c" />
-    <ClCompile Include="git_dump_3.6\sys\unix\unixres.c" />
-    <ClCompile Include="git_dump_3.6\sys\unix\unixunix.c" />
-    <ClCompile Include="git_dump_3.6\sys\vms\oldcrtl.c" />
-    <ClCompile Include="git_dump_3.6\sys\vms\vmsfiles.c" />
-    <ClCompile Include="git_dump_3.6\sys\vms\vmsmail.c" />
-    <ClCompile Include="git_dump_3.6\sys\vms\vmsmain.c" />
-    <ClCompile Include="git_dump_3.6\sys\vms\vmsmisc.c" />
-    <ClCompile Include="git_dump_3.6\sys\vms\vmstty.c" />
-    <ClCompile Include="git_dump_3.6\sys\vms\vmsunix.c" />
-    <ClCompile Include="git_dump_3.6\sys\wince\celib.c" />
-    <ClCompile Include="git_dump_3.6\sys\wince\cesound.c" />
-    <ClCompile Include="git_dump_3.6\sys\wince\mhaskyn.c" />
-    <ClCompile Include="git_dump_3.6\sys\wince\mhcmd.c" />
-    <ClCompile Include="git_dump_3.6\sys\wince\mhcolor.c" />
-    <ClCompile Include="git_dump_3.6\sys\wince\mhdlg.c" />
-    <ClCompile Include="git_dump_3.6\sys\wince\mhfont.c" />
-    <ClCompile Include="git_dump_3.6\sys\wince\mhinput.c" />
-    <ClCompile Include="git_dump_3.6\sys\wince\mhmain.c" />
-    <ClCompile Include="git_dump_3.6\sys\wince\mhmap.c" />
-    <ClCompile Include="git_dump_3.6\sys\wince\mhmenu.c" />
-    <ClCompile Include="git_dump_3.6\sys\wince\mhmsgwnd.c" />
-    <ClCompile Include="git_dump_3.6\sys\wince\mhrip.c" />
-    <ClCompile Include="git_dump_3.6\sys\wince\mhstatus.c" />
-    <ClCompile Include="git_dump_3.6\sys\wince\mhtext.c" />
-    <ClCompile Include="git_dump_3.6\sys\wince\mhtxtbuf.c" />
-    <ClCompile Include="git_dump_3.6\sys\wince\mswproc.c" />
-    <ClCompile Include="git_dump_3.6\sys\wince\winhack.c" />
-    <ClCompile Include="git_dump_3.6\sys\wince\winmain.c" />
     <ClCompile Include="git_dump_3.6\src\allmain.c" />
     <ClCompile Include="git_dump_3.6\src\alloc.c" />
     <ClCompile Include="git_dump_3.6\src\apply.c" />
@@ -313,13 +208,8 @@
     <ClCompile Include="git_dump_3.6\src\worn.c" />
     <ClCompile Include="git_dump_3.6\src\write.c" />
     <ClCompile Include="git_dump_3.6\src\zap.c" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="git_dump_3.6\sys\wince\winhack.rc">
-      <Filter>Resource Files</Filter>
-    </ResourceCompile>
-    <ResourceCompile Include="git_dump_3.6\sys\wince\winhcksp.rc">
-      <Filter>Resource Files</Filter>
-    </ResourceCompile>
+    <ClCompile Include="git_dump_3.6\src\monstr.c" />
+    <ClCompile Include="git_dump_3.6\sys\share\random.c" />
+    <ClCompile Include="git_dump_3.6\sys\share\cppregex.cpp" />
   </ItemGroup>
 </Project>

@@ -4,7 +4,7 @@
 
 #include "hack.h"
 
-#include <regex.h>
+#include <regex>
 
 /* The nhregex interface is implemented by several source files. The
  * file to be used can be linked in by the build.
