@@ -6,6 +6,15 @@
 #include "pch.h"
 #include "MainPage.xaml.h"
 
+#define boolean boolean2
+#define terminate terminate2
+extern "C" {
+#include "hack.h"
+#include "dlb.h"
+}
+#undef terminate
+#undef boolean
+
 using namespace NethackUWP;
 
 using namespace Platform;
@@ -24,4 +33,10 @@ using namespace Windows::UI::Xaml::Navigation;
 MainPage::MainPage()
 {
 	InitializeComponent();
+}
+
+
+void NethackUWP::MainPage::button_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	newgame();
 }
