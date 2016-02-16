@@ -26,6 +26,214 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="git_dump_3.6\include\align.h" />
+    <ClInclude Include="git_dump_3.6\include\amiconf.h" />
+    <ClInclude Include="git_dump_3.6\include\artifact.h" />
+    <ClInclude Include="git_dump_3.6\include\artilist.h" />
+    <ClInclude Include="git_dump_3.6\include\attrib.h" />
+    <ClInclude Include="git_dump_3.6\include\beconf.h" />
+    <ClInclude Include="git_dump_3.6\include\bitmfile.h" />
+    <ClInclude Include="git_dump_3.6\include\botl.h" />
+    <ClInclude Include="git_dump_3.6\include\color.h" />
+    <ClInclude Include="git_dump_3.6\include\config.h" />
+    <ClInclude Include="git_dump_3.6\include\config1.h" />
+    <ClInclude Include="git_dump_3.6\include\context.h" />
+    <ClInclude Include="git_dump_3.6\include\coord.h" />
+    <ClInclude Include="git_dump_3.6\include\decl.h" />
+    <ClInclude Include="git_dump_3.6\include\def_os2.h" />
+    <ClInclude Include="git_dump_3.6\include\dgn_file.h" />
+    <ClInclude Include="git_dump_3.6\include\display.h" />
+    <ClInclude Include="git_dump_3.6\include\dlb.h" />
+    <ClInclude Include="git_dump_3.6\include\dungeon.h" />
+    <ClInclude Include="git_dump_3.6\include\engrave.h" />
+    <ClInclude Include="git_dump_3.6\include\extern.h" />
+    <ClInclude Include="git_dump_3.6\include\flag.h" />
+    <ClInclude Include="git_dump_3.6\include\func_tab.h" />
+    <ClInclude Include="git_dump_3.6\include\gem_rsc.h" />
+    <ClInclude Include="git_dump_3.6\include\global.h" />
+    <ClInclude Include="git_dump_3.6\include\hack.h" />
+    <ClInclude Include="git_dump_3.6\include\lev.h" />
+    <ClInclude Include="git_dump_3.6\include\lint.h" />
+    <ClInclude Include="git_dump_3.6\include\load_img.h" />
+    <ClInclude Include="git_dump_3.6\include\mac-carbon.h" />
+    <ClInclude Include="git_dump_3.6\include\mac-qt.h" />
+    <ClInclude Include="git_dump_3.6\include\mac-term.h" />
+    <ClInclude Include="git_dump_3.6\include\macconf.h" />
+    <ClInclude Include="git_dump_3.6\include\macpopup.h" />
+    <ClInclude Include="git_dump_3.6\include\mactty.h" />
+    <ClInclude Include="git_dump_3.6\include\macwin.h" />
+    <ClInclude Include="git_dump_3.6\include\mail.h" />
+    <ClInclude Include="git_dump_3.6\include\mextra.h" />
+    <ClInclude Include="git_dump_3.6\include\mfndpos.h" />
+    <ClInclude Include="git_dump_3.6\include\micro.h" />
+    <ClInclude Include="git_dump_3.6\include\mkroom.h" />
+    <ClInclude Include="git_dump_3.6\include\monattk.h" />
+    <ClInclude Include="git_dump_3.6\include\mondata.h" />
+    <ClInclude Include="git_dump_3.6\include\monflag.h" />
+    <ClInclude Include="git_dump_3.6\include\monst.h" />
+    <ClInclude Include="git_dump_3.6\include\monsym.h" />
+    <ClInclude Include="git_dump_3.6\include\mttypriv.h" />
+    <ClInclude Include="git_dump_3.6\include\ntconf.h" />
+    <ClInclude Include="git_dump_3.6\include\obj.h" />
+    <ClInclude Include="git_dump_3.6\include\objclass.h" />
+    <ClInclude Include="git_dump_3.6\include\os2conf.h" />
+    <ClInclude Include="git_dump_3.6\include\patchlevel.h" />
+    <ClInclude Include="git_dump_3.6\include\pcconf.h" />
+    <ClInclude Include="git_dump_3.6\include\permonst.h" />
+    <ClInclude Include="git_dump_3.6\include\prop.h" />
+    <ClInclude Include="git_dump_3.6\include\qtext.h" />
+    <ClInclude Include="git_dump_3.6\include\qttableview.h" />
+    <ClInclude Include="git_dump_3.6\include\qt_clust.h" />
+    <ClInclude Include="git_dump_3.6\include\qt_kde0.h" />
+    <ClInclude Include="git_dump_3.6\include\qt_win.h" />
+    <ClInclude Include="git_dump_3.6\include\qt_xpms.h" />
+    <ClInclude Include="git_dump_3.6\include\quest.h" />
+    <ClInclude Include="git_dump_3.6\include\rect.h" />
+    <ClInclude Include="git_dump_3.6\include\region.h" />
+    <ClInclude Include="git_dump_3.6\include\rm.h" />
+    <ClInclude Include="git_dump_3.6\include\skills.h" />
+    <ClInclude Include="git_dump_3.6\include\spell.h" />
+    <ClInclude Include="git_dump_3.6\include\sp_lev.h" />
+    <ClInclude Include="git_dump_3.6\include\sys.h" />
+    <ClInclude Include="git_dump_3.6\include\system.h" />
+    <ClInclude Include="git_dump_3.6\include\tcap.h" />
+    <ClInclude Include="git_dump_3.6\include\tile2x11.h" />
+    <ClInclude Include="git_dump_3.6\include\timeout.h" />
+    <ClInclude Include="git_dump_3.6\include\tosconf.h" />
+    <ClInclude Include="git_dump_3.6\include\tradstdc.h" />
+    <ClInclude Include="git_dump_3.6\include\trampoli.h" />
+    <ClInclude Include="git_dump_3.6\include\trap.h" />
+    <ClInclude Include="git_dump_3.6\include\unixconf.h" />
+    <ClInclude Include="git_dump_3.6\include\vision.h" />
+    <ClInclude Include="git_dump_3.6\include\vmsconf.h" />
+    <ClInclude Include="git_dump_3.6\include\wceconf.h" />
+    <ClInclude Include="git_dump_3.6\include\winami.h" />
+    <ClInclude Include="git_dump_3.6\include\wingem.h" />
+    <ClInclude Include="git_dump_3.6\include\winGnome.h" />
+    <ClInclude Include="git_dump_3.6\include\winprocs.h" />
+    <ClInclude Include="git_dump_3.6\include\wintty.h" />
+    <ClInclude Include="git_dump_3.6\include\wintype.h" />
+    <ClInclude Include="git_dump_3.6\include\winX.h" />
+    <ClInclude Include="git_dump_3.6\include\xwindow.h" />
+    <ClInclude Include="git_dump_3.6\include\xwindowp.h" />
+    <ClInclude Include="git_dump_3.6\include\you.h" />
+    <ClInclude Include="git_dump_3.6\include\youprop.h" />
+    
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="git_dump_3.6\src\allmain.c" />
+    <ClCompile Include="git_dump_3.6\src\alloc.c" />
+    <ClCompile Include="git_dump_3.6\src\apply.c" />
+    <ClCompile Include="git_dump_3.6\src\artifact.c" />
+    <ClCompile Include="git_dump_3.6\src\attrib.c" />
+    <ClCompile Include="git_dump_3.6\src\ball.c" />
+    <ClCompile Include="git_dump_3.6\src\bones.c" />
+    <ClCompile Include="git_dump_3.6\src\botl.c" />
+    <ClCompile Include="git_dump_3.6\src\cmd.c" />
+    <ClCompile Include="git_dump_3.6\src\dbridge.c" />
+    <ClCompile Include="git_dump_3.6\src\decl.c" />
+    <ClCompile Include="git_dump_3.6\src\detect.c" />
+    <ClCompile Include="git_dump_3.6\src\dig.c" />
+    <ClCompile Include="git_dump_3.6\src\display.c" />
+    <ClCompile Include="git_dump_3.6\src\dlb.c" />
+    <ClCompile Include="git_dump_3.6\src\do.c" />
+    <ClCompile Include="git_dump_3.6\src\dog.c" />
+    <ClCompile Include="git_dump_3.6\src\dogmove.c" />
+    <ClCompile Include="git_dump_3.6\src\dokick.c" />
+    <ClCompile Include="git_dump_3.6\src\dothrow.c" />
+    <ClCompile Include="git_dump_3.6\src\do_name.c" />
+    <ClCompile Include="git_dump_3.6\src\do_wear.c" />
+    <ClCompile Include="git_dump_3.6\src\drawing.c" />
+    <ClCompile Include="git_dump_3.6\src\dungeon.c" />
+    <ClCompile Include="git_dump_3.6\src\eat.c" />
+    <ClCompile Include="git_dump_3.6\src\end.c" />
+    <ClCompile Include="git_dump_3.6\src\engrave.c" />
+    <ClCompile Include="git_dump_3.6\src\exper.c" />
+    <ClCompile Include="git_dump_3.6\src\explode.c" />
+    <ClCompile Include="git_dump_3.6\src\extralev.c" />
+    <ClCompile Include="git_dump_3.6\src\files.c" />
+    <ClCompile Include="git_dump_3.6\src\fountain.c" />
+    <ClCompile Include="git_dump_3.6\src\hack.c" />
+    <ClCompile Include="git_dump_3.6\src\hacklib.c" />
+    <ClCompile Include="git_dump_3.6\src\invent.c" />
+    <ClCompile Include="git_dump_3.6\src\light.c" />
+    <ClCompile Include="git_dump_3.6\src\lock.c" />
+    <ClCompile Include="git_dump_3.6\src\mail.c" />
+    <ClCompile Include="git_dump_3.6\src\makemon.c" />
+    <ClCompile Include="git_dump_3.6\src\mapglyph.c" />
+    <ClCompile Include="git_dump_3.6\src\mcastu.c" />
+    <ClCompile Include="git_dump_3.6\src\mhitm.c" />
+    <ClCompile Include="git_dump_3.6\src\mhitu.c" />
+    <ClCompile Include="git_dump_3.6\src\minion.c" />
+    <ClCompile Include="git_dump_3.6\src\mklev.c" />
+    <ClCompile Include="git_dump_3.6\src\mkmap.c" />
+    <ClCompile Include="git_dump_3.6\src\mkmaze.c" />
+    <ClCompile Include="git_dump_3.6\src\mkobj.c" />
+    <ClCompile Include="git_dump_3.6\src\mkroom.c" />
+    <ClCompile Include="git_dump_3.6\src\mon.c" />
+    <ClCompile Include="git_dump_3.6\src\mondata.c" />
+    <ClCompile Include="git_dump_3.6\src\monmove.c" />
+    <ClCompile Include="git_dump_3.6\src\monst.c" />
+    <ClCompile Include="git_dump_3.6\src\mplayer.c" />
+    <ClCompile Include="git_dump_3.6\src\mthrowu.c" />
+    <ClCompile Include="git_dump_3.6\src\muse.c" />
+    <ClCompile Include="git_dump_3.6\src\music.c" />
+    <ClCompile Include="git_dump_3.6\src\objects.c" />
+    <ClCompile Include="git_dump_3.6\src\objnam.c" />
+    <ClCompile Include="git_dump_3.6\src\options.c" />
+    <ClCompile Include="git_dump_3.6\src\o_init.c" />
+    <ClCompile Include="git_dump_3.6\src\pager.c" />
+    <ClCompile Include="git_dump_3.6\src\pickup.c" />
+    <ClCompile Include="git_dump_3.6\src\pline.c" />
+    <ClCompile Include="git_dump_3.6\src\polyself.c" />
+    <ClCompile Include="git_dump_3.6\src\potion.c" />
+    <ClCompile Include="git_dump_3.6\src\pray.c" />
+    <ClCompile Include="git_dump_3.6\src\priest.c" />
+    <ClCompile Include="git_dump_3.6\src\quest.c" />
+    <ClCompile Include="git_dump_3.6\src\questpgr.c" />
+    <ClCompile Include="git_dump_3.6\src\read.c" />
+    <ClCompile Include="git_dump_3.6\src\rect.c" />
+    <ClCompile Include="git_dump_3.6\src\region.c" />
+    <ClCompile Include="git_dump_3.6\src\restore.c" />
+    <ClCompile Include="git_dump_3.6\src\rip.c" />
+    <ClCompile Include="git_dump_3.6\src\rnd.c" />
+    <ClCompile Include="git_dump_3.6\src\role.c" />
+    <ClCompile Include="git_dump_3.6\src\rumors.c" />
+    <ClCompile Include="git_dump_3.6\src\save.c" />
+    <ClCompile Include="git_dump_3.6\src\shk.c" />
+    <ClCompile Include="git_dump_3.6\src\shknam.c" />
+    <ClCompile Include="git_dump_3.6\src\sit.c" />
+    <ClCompile Include="git_dump_3.6\src\sounds.c" />
+    <ClCompile Include="git_dump_3.6\src\spell.c" />
+    <ClCompile Include="git_dump_3.6\src\sp_lev.c" />
+    <ClCompile Include="git_dump_3.6\src\steal.c" />
+    <ClCompile Include="git_dump_3.6\src\steed.c" />
+    <ClCompile Include="git_dump_3.6\src\sys.c" />
+    <ClCompile Include="git_dump_3.6\src\teleport.c" />
+    <ClCompile Include="git_dump_3.6\src\timeout.c" />
+    <ClCompile Include="git_dump_3.6\src\topten.c" />
+    <ClCompile Include="git_dump_3.6\src\track.c" />
+    <ClCompile Include="git_dump_3.6\src\trap.c" />
+    <ClCompile Include="git_dump_3.6\src\uhitm.c" />
+    <ClCompile Include="git_dump_3.6\src\u_init.c" />
+    <ClCompile Include="git_dump_3.6\src\vault.c" />
+    <ClCompile Include="git_dump_3.6\src\version.c" />
+    <ClCompile Include="git_dump_3.6\src\vision.c" />
+    <ClCompile Include="git_dump_3.6\src\weapon.c" />
+    <ClCompile Include="git_dump_3.6\src\were.c" />
+    <ClCompile Include="git_dump_3.6\src\wield.c" />
+    <ClCompile Include="git_dump_3.6\src\windows.c" />
+    <ClCompile Include="git_dump_3.6\src\wizard.c" />
+    <ClCompile Include="git_dump_3.6\src\worm.c" />
+    <ClCompile Include="git_dump_3.6\src\worn.c" />
+    <ClCompile Include="git_dump_3.6\src\write.c" />
+    <ClCompile Include="git_dump_3.6\src\zap.c" />
+    
+  </ItemGroup>
+  <ItemGroup>
+
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{9d7f0254-6fdb-4968-8699-da05854c226c}</ProjectGuid>
     <Keyword>StaticLibrary</Keyword>
@@ -118,9 +326,10 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>D:\Programming\NethackUWP\nethackUWP\nethack_original\git_dump_3.6\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -130,9 +339,10 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>D:\Programming\NethackUWP\nethackUWP\nethack_original\git_dump_3.6\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -142,9 +352,10 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>D:\Programming\NethackUWP\nethackUWP\nethack_original\git_dump_3.6\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -154,9 +365,10 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>D:\Programming\NethackUWP\nethackUWP\nethack_original\git_dump_3.6\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -166,9 +378,10 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>D:\Programming\NethackUWP\nethackUWP\nethack_original\git_dump_3.6\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -178,9 +391,10 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>D:\Programming\NethackUWP\nethackUWP\nethack_original\git_dump_3.6\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
