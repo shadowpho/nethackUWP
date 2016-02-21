@@ -5,6 +5,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tga;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="THIS IS A FOLDER NO REALLY">
+      <UniqueIdentifier>{4b7bd476-78e9-4586-87ff-f5e037560c7b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="git_dump_3.6\include\align.h" />
@@ -213,5 +216,17 @@
     <ClCompile Include="git_dump_3.6\sys\share\cppregex.cpp" />
     <ClCompile Include="git_dump_3.6\src\tile.c" />
     <ClCompile Include="git_dump_3.6\sys\uwp\uwp.cpp" />
+    <ClCompile Include="git_dump_3.6\win\tty\topl.c">
+      <Filter>THIS IS A FOLDER NO REALLY</Filter>
+    </ClCompile>
+    <ClCompile Include="git_dump_3.6\win\tty\wintty.c">
+      <Filter>THIS IS A FOLDER NO REALLY</Filter>
+    </ClCompile>
+    <ClCompile Include="git_dump_3.6\win\tty\getline.c">
+      <Filter>THIS IS A FOLDER NO REALLY</Filter>
+    </ClCompile>
+    <ClCompile Include="git_dump_3.6\win\tty\termcap.c">
+      <Filter>THIS IS A FOLDER NO REALLY</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

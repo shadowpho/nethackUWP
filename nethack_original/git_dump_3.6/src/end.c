@@ -1417,7 +1417,7 @@ boolean identified, all_containers, reportempty;
 
 /* should be called with either EXIT_SUCCESS or EXIT_FAILURE */
 void
-terminate(status)
+terminate2(status)
 int status;
 {
     program_state.in_moveloop = 0; /* won't be returning to normal play */

@@ -19,5 +19,7 @@ namespace NethackUWP
 
 	private:
 		void button_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+		void Send_butt_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+		void InputBox_TextChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::TextChangedEventArgs^ e);
 	};
 }

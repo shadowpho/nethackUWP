@@ -10,6 +10,8 @@
 
 #include "config.h"
 #include "dlb.h"
+#include "assert.h"
+
 
 /* Macintosh-specific code */
 #if defined(__APPLE__) && defined(__MACH__)
@@ -52,6 +54,27 @@ FILE *FDECL(freopen, (char *, char *, FILE *));
 #if defined(__BORLANDC__) && !defined(_WIN32)
 extern unsigned _stklen = STKSIZ;
 #endif
+
+
+char* dupstr (const char *s)
+{
+char *p;
+size_t n;
+
+assert(s != NULL);
+
+n=strlen(s) + 1;
+p = malloc(n);
+
+if (p)
+p=memcpy(p,s,n);
+
+return p;
+}
+
+
+
+
 int
 main(argc, argv)
 int argc;

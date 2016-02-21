@@ -50,6 +50,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="NethackUWP_TemporaryKey.pfx" />
+    <None Include="..\nethack_original\git_dump_3.6\dat\dungeon">
+      <Filter>Assets</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Page Include="MainPage.xaml" />

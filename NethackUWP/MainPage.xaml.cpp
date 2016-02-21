@@ -5,7 +5,12 @@
 
 #include "pch.h"
 #include "MainPage.xaml.h"
+#include <deque>
+#include <thread>
+#include <mutex>
 
+bool game_is_running = false;
+bool waiting_for_input = false;
 #define boolean boolean2
 #define terminate terminate2
 
@@ -17,6 +22,8 @@ extern "C" {
 #undef boolean
 
 using namespace NethackUWP;
+using namespace std;
+
 
 using namespace Platform;
 using namespace Windows::Foundation;
@@ -39,5 +46,41 @@ MainPage::MainPage()
 
 void NethackUWP::MainPage::button_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-	newgame();
+	if (game_is_running == true) return;
+	game_is_running = true;
+	static thread nethack_thread([]()
+	{
+		sys_early_init();
+		choose_windows("tty");//dun worry
+							  //	tty_procs (NULL, NULL); //dun worry
+		initoptions(); //nuh nuh nuh
+
+		dlb_init();
+		init_nhwindows(0, 0);
+		newgame();
+
+		//resuming = pcmain(argc, argv);
+
+		//moveloop(resuming);
+		//trololololololololololololololololololo
+	});
+	
 }
+
+extern deque<char> input_string;
+extern mutex blocked_on_input;
+extern condition_variable input_string_cv;
+
+void NethackUWP::MainPage::Send_butt_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+
+		unique_lock<mutex> blocked_on_input_lock(blocked_on_input);
+
+		input_string.insert(input_string.end(),begin(InputBox->Text), end(InputBox->Text));
+		input_string.push_back('\n');
+		InputBox->Text = "";
+		input_string_cv.notify_one();
+
+}
+
+

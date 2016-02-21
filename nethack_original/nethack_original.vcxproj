@@ -233,6 +233,10 @@
     <ClCompile Include="git_dump_3.6\sys\share\cppregex.cpp" />
     <ClCompile Include="git_dump_3.6\sys\share\random.c" />
     <ClCompile Include="git_dump_3.6\sys\uwp\uwp.cpp" />
+    <ClCompile Include="git_dump_3.6\win\tty\getline.c" />
+    <ClCompile Include="git_dump_3.6\win\tty\termcap.c" />
+    <ClCompile Include="git_dump_3.6\win\tty\topl.c" />
+    <ClCompile Include="git_dump_3.6\win\tty\wintty.c" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>

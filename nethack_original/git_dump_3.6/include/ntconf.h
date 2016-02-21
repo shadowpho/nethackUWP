@@ -23,10 +23,11 @@
 
 #define SELF_RECOVER /* Allow the game itself to recover from an aborted \
                         game */
-
+#if 0
 #define SYSCF                /* Use a global configuration */
 #define SYSCF_FILE "sysconf" /* Use a file to hold the SYSCF configuration \
                                 */
+#endif
 
 #define USER_SOUNDS
 

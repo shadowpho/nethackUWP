@@ -186,10 +186,11 @@
 #ifndef WIZARD_NAME /* allow for compile-time or Makefile changes */
 #define WIZARD_NAME "wizard" /* value is ignored if SYSCF is enabled */
 #endif
-
+#if 0
 #ifndef SYSCF
 #define SYSCF                /* use a global configuration */
 #define SYSCF_FILE "sysconf" /* global configuration is in a file */
+#endif
 #endif
 
 #ifndef GDBPATH
