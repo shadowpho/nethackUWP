@@ -41,7 +41,7 @@
  * Some combinations make no sense.  See the installation document.
  */
 #if !defined(NOTTYGRAPHICS)
-#define TTY_GRAPHICS /* good old tty based graphics */
+//#define TTY_GRAPHICS /* good old tty based graphics */
 #endif
 /* #define X11_GRAPHICS */   /* X11 interface */
 /* #define QT_GRAPHICS */    /* Qt interface */

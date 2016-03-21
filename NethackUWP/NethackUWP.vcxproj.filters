@@ -50,7 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="NethackUWP_TemporaryKey.pfx" />
-    <None Include="..\nethack_original\git_dump_3.6\dat\dungeon">
+    <None Include="..\..\NethackUWP\nethackUWP\nethack_original\git_dump_3.6\dat\dungeon">
       <Filter>Assets</Filter>
     </None>
   </ItemGroup>

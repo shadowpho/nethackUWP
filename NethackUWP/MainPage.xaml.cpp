@@ -68,6 +68,7 @@ void NethackUWP::MainPage::button_Click(Platform::Object^ sender, Windows::UI::X
 }
 
 extern deque<char> input_string;
+extern deque<char> output_string; //XXX
 extern mutex blocked_on_input;
 extern condition_variable input_string_cv;
 
@@ -80,7 +81,28 @@ void NethackUWP::MainPage::Send_butt_Click(Platform::Object^ sender, Windows::UI
 		input_string.push_back('\n');
 		InputBox->Text = "";
 		input_string_cv.notify_one();
+		//XXX XXX HACK NOT SAFE DO NOT USE NSFW PLZ REMOVE
+		//THIS WILL BREAK.
+		wstring my_sad_performance;
+		while (!output_string.empty())
+		{
+			char wtf = output_string.at(0);
+			output_string.pop_front();
+			//my_sad_performance.append(wtf);
+			my_sad_performance.push_back(wtf);
+			
+			
+		}
+		
+
+		OutputBox->Text = ref new String(my_sad_performance.c_str());
+		//OutputBox->Text = my_sad_performance;
 
 }
 
+
+void NethackUWP::MainPage::recv_char_print(int c)
+{
+	//OutputBox->Text += String c;
+}
 

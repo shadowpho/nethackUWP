@@ -22,6 +22,8 @@ extern "C"
 	mutex blocked_on_input;
 	condition_variable input_string_cv;
 
+	mutex blocked_on_output;
+	deque<char> output_string;
 	extern "C"
 	{
 
@@ -137,11 +139,28 @@ extern "C"
 		return ret;
 
 	}
-	void gettty() {}
+	void gettty() { return;  } //called after ! or ^Z. Don't think we need it.
 	void settty(const char*) {}
-	void setftty() {}
-	void tty_startup() {}
-	void xputc() { }
+	void setftty() { return; } //set forward? i dunoo
+	void tty_startup() { return; } //this is where I will do startup I guess
+
+								
+	//extern deque<char> output_string;
+	/*extern mutex blocked_on_output;
+	extern void recv_char_print(int c);
+	void write_to_button(char c)
+	{
+		unique_lock<mutex> blocked_on_output_lock(blocked_on_output);
+
+		recv_char_print((int)c);
+		
+	}
+	*/
+	
+	void xputc(char c) {
+		output_string.push_back(c); //it's 1 am and I wanna sleep
+
+	}
 	void cl_end() {}
 	void clear_screen() {}
 	void home() {}
@@ -161,7 +180,7 @@ extern "C"
 	void erase_char() {}
 	void kill_char() {}
 
-
+	void mswin_procs() {}
 	void xputs(char* printme) { printf("%s", printme); };
 	void load_keyboard_handler() {};
 }
