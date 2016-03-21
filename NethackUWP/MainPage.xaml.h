@@ -16,6 +16,7 @@ namespace NethackUWP
 	{
 	public:
 		MainPage();
+		void recv_char_print(int c);
 
 	private:
 		void button_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);

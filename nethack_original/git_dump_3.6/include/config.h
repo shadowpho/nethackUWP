@@ -41,12 +41,12 @@
  * Some combinations make no sense.  See the installation document.
  */
 #if !defined(NOTTYGRAPHICS)
-#define TTY_GRAPHICS /* good old tty based graphics */
+//#define TTY_GRAPHICS /* good old tty based graphics */
 #endif
 /* #define X11_GRAPHICS */   /* X11 interface */
 /* #define QT_GRAPHICS */    /* Qt interface */
 /* #define GNOME_GRAPHICS */ /* Gnome interface */
-/* #define MSWIN_GRAPHICS */ /* Windows NT, CE, Graphics */
+ #define MSWIN_GRAPHICS  /* Windows NT, CE, Graphics */
 
 /*
  * Define the default window system.  This should be one that is compiled

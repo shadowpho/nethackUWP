@@ -9,9 +9,9 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Button x:Name="button" Content="Start New Game" HorizontalAlignment="Left" Margin="85,68,0,0" VerticalAlignment="Top" Click="button_Click"/>
-        <Button x:Name="Send_butt" Content="Send String" HorizontalAlignment="Left" Margin="245,350,0,0" VerticalAlignment="Top" Click="Send_butt_Click"/>
-        <TextBox x:Name="InputBox" HorizontalAlignment="Left" Margin="85,350,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="138" />
-        <TextBox x:Name="OutputBox" HorizontalAlignment="Left" Margin="85,564,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="138"/>
+        <Button x:Name="Send_butt" Content="Send String" HorizontalAlignment="Left" Margin="212,146,0,0" VerticalAlignment="Top" Click="Send_butt_Click"/>
+        <TextBox x:Name="InputBox" HorizontalAlignment="Left" Margin="52,146,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="138" />
+        <TextBox x:Name="OutputBox" HorizontalAlignment="Left" Margin="10,224,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="350" Height="363"/>
 
     </Grid>
 </Page>
