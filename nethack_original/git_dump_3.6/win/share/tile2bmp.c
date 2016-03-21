@@ -87,6 +87,8 @@ lelong(INT32 x)
 #endif
 }
 
+
+
 #ifdef __GNUC__
 typedef struct tagBMIH {
     UINT32 biSize;

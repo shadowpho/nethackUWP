@@ -8,7 +8,9 @@
 /*
  * PATCHLEVEL is updated for each release.
  */
-#define PATCHLEVEL 1
+
+//HACK -- TBD, FIX DUNGEON COMPILCATION
+#define PATCHLEVEL 0
 /*
  * Incrementing EDITLEVEL can be used to force invalidation of old bones
  * and save files.
