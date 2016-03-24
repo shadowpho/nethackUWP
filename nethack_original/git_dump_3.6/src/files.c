@@ -479,7 +479,8 @@ char errbuf[];
     if (errbuf)
         *errbuf = '\0';
     set_levelfile_name(lock, lev);
-    fq_lock = fqname(lock, LEVELPREFIX, 0);
+ //   fq_lock = fqname(lock, LEVELPREFIX, 0);
+ fq_lock = "spooky_ghost.txt";
 
 #if defined(MICRO) || defined(WIN32)
 /* Use O_TRUNC to force the file to be shortened if it already

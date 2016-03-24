@@ -51,17 +51,19 @@ void NethackUWP::MainPage::button_Click(Platform::Object^ sender, Windows::UI::X
 	static thread nethack_thread([]()
 	{
 		sys_early_init();
-		choose_windows("tty");//dun worry
+		choose_windows("mswin");//dun worry
 							  //	tty_procs (NULL, NULL); //dun worry
 		initoptions(); //nuh nuh nuh
 
 		dlb_init();
 		init_nhwindows(0, 0);
+		vision_init();
+		display_gamewindows();//dunno
 		newgame();
-
+		
 		//resuming = pcmain(argc, argv);
 
-		//moveloop(resuming);
+		moveloop(0);
 		//trololololololololololololololololololo
 	});
 	
