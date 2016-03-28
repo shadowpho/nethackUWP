@@ -47,6 +47,12 @@ MainPage::MainPage()
     g_corewindow = Windows::UI::Core::CoreWindow::GetForCurrentThread();
     Notifications = ref new Platform::Collections::Vector<Platform::String^>();
     this->DataContext = this;
+
+    output_string = std::wstring(NativeMainPage::max_width_offset * NativeMainPage::max_height, L'C');
+    for (int x = 1; x <= NativeMainPage::max_height; ++x)
+    {
+        output_string[x * NativeMainPage::max_width_offset - 1] = '\n';
+    }
 }
 
 void NethackUWP::MainPage::button_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
@@ -82,7 +88,6 @@ void NethackUWP::MainPage::Send_butt_Click(Platform::Object^ sender, Windows::UI
         if (input_string.empty())
             input_string_cv.notify_all();
         input_string.insert(input_string.end(), begin(InputBox->Text), end(InputBox->Text));
-        input_string.push_back('\n');
     }
     InputBox->Text = "";
 }
@@ -103,12 +108,13 @@ int NativeMainPage::read_char()
 
 using namespace Windows::UI::Core;
 
-void NativeMainPage::write_char(int ch)
+void NativeMainPage::write_char(int x, int y, char ch)
 {
     {
         lock_guard<mutex> lock(g_mainpage->blocked_on_output);
-
-        g_mainpage->output_string.push_back(ch);
+        if (x >= max_width) abort();
+        if (y >= max_height) abort();
+        g_mainpage->output_string[max_width_offset * y + x] = ch;
     }
     g_corewindow->Dispatcher->RunAsync(CoreDispatcherPriority::Low, ref new DispatchedHandler([]() {
         g_mainpage->PropertyChanged(g_mainpage, ref new PropertyChangedEventArgs("OutStringBuf"));
@@ -117,6 +123,9 @@ void NativeMainPage::write_char(int ch)
 
 void NativeMainPage::write_notification(const char * str)
 {
+    if (str == 0 || *str == 0)
+        return;
+
     std::wstring strbuf;
     while (*str) { strbuf.push_back(*str); ++str; }
     Platform::String^ pcstr = ref new Platform::String(strbuf.c_str());

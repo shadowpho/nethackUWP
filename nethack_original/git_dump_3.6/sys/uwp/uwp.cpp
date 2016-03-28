@@ -8,7 +8,7 @@
 
 struct NativeMainPage {
     static int read_char();
-    static void write_char(int);
+    static void write_char(int x, int y, char ch);
 
     static void write_notification(const char*);
 };
@@ -39,8 +39,6 @@ extern "C"
 		void mswin_display_nhwindow(winid wid, BOOLEAN_P block) {}
 		void mswin_destroy_nhwindow(winid wid) {}
 		void mswin_curs(winid wid, int x, int y) {}
-		void mswin_putstr(winid wid, int attr, const char *text) {}
-		void mswin_putstr_ex(winid wid, int attr, const char *text, int) {}
 		void mswin_display_file(const char *filename, BOOLEAN_P must_exist) {}
 		void mswin_start_menu(winid wid) {}
 		void mswin_add_menu(winid wid, int glyph, const ANY_P *identifier,
@@ -53,7 +51,6 @@ extern "C"
 		void mswin_wait_synch(void) {}
 		void mswin_cliparound(int x, int y) {}
         //xxx
-        void xputc(char c);
 		void mswin_print_glyph(winid wid, XCHAR_P x, XCHAR_P y, int glyph, int bkglyph) 
         {
             int ch;
@@ -107,7 +104,8 @@ extern "C"
                 xputg(glyph, ch, special);
             else
 #endif
-                xputc((char)ch);
+            if (ch > 127) abort();
+            NativeMainPage::write_char(x, y, (char)ch);
             //g_putch(ch); /* print the character */
 
             if (reverse_on) {
@@ -135,8 +133,10 @@ extern "C"
 		{
             NativeMainPage::write_notification(str);
         }
+        void mswin_putstr(winid wid, int attr, const char *text) { mswin_raw_print(text); }
+        void mswin_putstr_ex(winid wid, int attr, const char *text, int) { mswin_raw_print(text); }
         int mswin_nhgetch(void) { return tgetch(); }
-		int mswin_nh_poskey(int *x, int *y, int *mod) { return 0; }
+		int mswin_nh_poskey(int *x, int *y, int *mod) { return tgetch(); }
 		void mswin_nhbell(void) {}
 		int mswin_doprev_message(void) { return 0; }
 		char mswin_yn_function(const char *question, const char *choices, CHAR_P def) { return 0; }
@@ -305,9 +305,6 @@ extern "C"
 	}
 	*/
 	
-	void xputc(char c) {
-        NativeMainPage::write_char(c);
-	}
 	void cl_end() {}
 	void clear_screen() {}
 	void home() {}

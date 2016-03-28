@@ -12,8 +12,11 @@
 #include <vector>
 
 struct NativeMainPage {
+    static constexpr int max_width = 100;
+    static constexpr int max_width_offset = max_width + 1;
+    static constexpr int max_height = 80;
     static int read_char();
-    static void write_char(int);
+    static void write_char(int x, int y, char ch);
  
     static void write_notification(const char*);
 };
@@ -45,7 +48,7 @@ namespace NethackUWP
 		void Send_butt_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void InputBox_TextChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::TextChangedEventArgs^ e);
 
-        std::deque<char> input_string;
+        std::deque<wchar_t> input_string;
         std::mutex blocked_on_input;
         std::condition_variable input_string_cv;
 
