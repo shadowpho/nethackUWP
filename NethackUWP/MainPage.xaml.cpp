@@ -133,3 +133,9 @@ void NativeMainPage::write_notification(const char * str)
         g_mainpage->Notifications->Append(pcstr);
     }));
 }
+
+
+void NethackUWP::MainPage::OutputBox_TextChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::TextChangedEventArgs^ e)
+{
+
+}

@@ -56,7 +56,8 @@ namespace NethackUWP
         std::wstring output_string;
 
         friend struct ::NativeMainPage;
-	};
+        void OutputBox_TextChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::TextChangedEventArgs^ e);
+    };
     static MainPage^ g_mainpage;
     static Platform::Agile<Windows::UI::Core::CoreWindow> g_corewindow;
 }
