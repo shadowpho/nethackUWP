@@ -1071,6 +1071,7 @@ currentlevel_rewrite()
 void
 save_currentstate()
 {
+    return; // HACK TODO FIXME
     int fd;
 
     if (flags.ins_chkpt) {

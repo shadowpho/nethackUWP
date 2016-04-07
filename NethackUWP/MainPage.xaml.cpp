@@ -41,14 +41,25 @@ using namespace Windows::UI::Xaml::Navigation;
 MainPage::MainPage()
 {
 	InitializeComponent();
-}
+    if (g_mainpage != nullptr)
+        abort();
+    g_mainpage = this;
+    g_corewindow = Windows::UI::Core::CoreWindow::GetForCurrentThread();
+    Notifications = ref new Platform::Collections::Vector<Platform::String^>();
+    this->DataContext = this;
 
+    output_string = std::wstring(NativeMainPage::max_width_offset * NativeMainPage::max_height, L'C');
+    for (int x = 1; x <= NativeMainPage::max_height; ++x)
+    {
+        output_string[x * NativeMainPage::max_width_offset - 1] = '\n';
+    }
+}
 
 void NethackUWP::MainPage::button_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
 	if (game_is_running == true) return;
 	game_is_running = true;
-	static thread nethack_thread([]()
+    static thread nethack_thread([]()
 	{
 		sys_early_init();
 		choose_windows("mswin");//dun worry
@@ -69,42 +80,62 @@ void NethackUWP::MainPage::button_Click(Platform::Object^ sender, Windows::UI::X
 	
 }
 
-extern deque<char> input_string;
-extern deque<char> output_string; //XXX
-extern mutex blocked_on_input;
-extern condition_variable input_string_cv;
-
 void NethackUWP::MainPage::Send_butt_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
+    {
+        lock_guard<mutex> lock(blocked_on_input);
 
-		unique_lock<mutex> blocked_on_input_lock(blocked_on_input);
-
-		input_string.insert(input_string.end(),begin(InputBox->Text), end(InputBox->Text));
-		input_string.push_back('\n');
-		InputBox->Text = "";
-		input_string_cv.notify_one();
-		//XXX XXX HACK NOT SAFE DO NOT USE NSFW PLZ REMOVE
-		//THIS WILL BREAK.
-		wstring my_sad_performance;
-		while (!output_string.empty())
-		{
-			char wtf = output_string.at(0);
-			output_string.pop_front();
-			//my_sad_performance.append(wtf);
-			my_sad_performance.push_back(wtf);
-			
-			
-		}
-		
-
-		OutputBox->Text = ref new String(my_sad_performance.c_str());
-		//OutputBox->Text = my_sad_performance;
-
+        if (input_string.empty())
+            input_string_cv.notify_all();
+        input_string.insert(input_string.end(), begin(InputBox->Text), end(InputBox->Text));
+    }
+    InputBox->Text = "";
 }
 
-
-void NethackUWP::MainPage::recv_char_print(int c)
+int NativeMainPage::read_char()
 {
-	//OutputBox->Text += String c;
+    unique_lock<mutex> lock(g_mainpage->blocked_on_input);
+    while (g_mainpage->input_string.empty())
+    {
+        g_mainpage->input_string_cv.wait(lock);
+    }
+
+    int ret = g_mainpage->input_string.back();
+    g_mainpage->input_string.pop_back();
+
+    return ret;
 }
 
+using namespace Windows::UI::Core;
+
+void NativeMainPage::write_char(int x, int y, char ch)
+{
+    {
+        lock_guard<mutex> lock(g_mainpage->blocked_on_output);
+        if (x >= max_width) abort();
+        if (y >= max_height) abort();
+        g_mainpage->output_string[max_width_offset * y + x] = ch;
+    }
+    g_corewindow->Dispatcher->RunAsync(CoreDispatcherPriority::Low, ref new DispatchedHandler([]() {
+        g_mainpage->PropertyChanged(g_mainpage, ref new PropertyChangedEventArgs("OutStringBuf"));
+    }));
+}
+
+void NativeMainPage::write_notification(const char * str)
+{
+    if (str == 0 || *str == 0)
+        return;
+
+    std::wstring strbuf;
+    while (*str) { strbuf.push_back(*str); ++str; }
+    Platform::String^ pcstr = ref new Platform::String(strbuf.c_str());
+    g_corewindow->Dispatcher->RunAsync(CoreDispatcherPriority::Low, ref new DispatchedHandler([pcstr]() {
+        g_mainpage->Notifications->Append(pcstr);
+    }));
+}
+
+
+void NethackUWP::MainPage::OutputBox_TextChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::TextChangedEventArgs^ e)
+{
+
+}

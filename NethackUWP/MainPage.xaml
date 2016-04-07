@@ -8,10 +8,11 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Button x:Name="button" Content="Start New Game" HorizontalAlignment="Left" Margin="85,68,0,0" VerticalAlignment="Top" Click="button_Click"/>
-        <Button x:Name="Send_butt" Content="Send String" HorizontalAlignment="Left" Margin="212,146,0,0" VerticalAlignment="Top" Click="Send_butt_Click"/>
-        <TextBox x:Name="InputBox" HorizontalAlignment="Left" Margin="52,146,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="138" />
-        <TextBox x:Name="OutputBox" HorizontalAlignment="Left" Margin="10,224,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="350" Height="363"/>
+        <Button x:Name="button" Content="Start New Game" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Click="button_Click"/>
+        <Button x:Name="Send_butt" Content="Send String" HorizontalAlignment="Left" Margin="153,47,0,0" VerticalAlignment="Top" Click="Send_butt_Click"/>
+        <TextBox x:Name="InputBox" HorizontalAlignment="Left" Margin="10,47,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="138" />
+        <TextBox x:Name="OutputBox" Margin="10,84,10,0" Text="{Binding OutStringBuf}" VerticalAlignment="Top" Height="363" FontFamily="Consolas" TextChanged="OutputBox_TextChanged" ScrollViewer.HorizontalScrollBarVisibility="Visible" ScrollViewer.VerticalScrollBarVisibility="Visible" TextWrapping="NoWrap" AcceptsReturn="True"/>
+        <ListView x:Name="listView" ItemsSource="{Binding Notifications}" Height="151" Margin="10,460,10,0" VerticalAlignment="Top" BorderThickness="5" BorderBrush="Black"/>
 
     </Grid>
 </Page>

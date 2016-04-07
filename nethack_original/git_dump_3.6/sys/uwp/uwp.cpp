@@ -6,6 +6,12 @@
 #include <condition_variable>
 
 
+struct NativeMainPage {
+    static int read_char();
+    static void write_char(int x, int y, char ch);
+
+    static void write_notification(const char*);
+};
 
 
 #define terminate terminate2
@@ -18,18 +24,12 @@ extern "C"
 
 	using namespace std;
 
-	deque<char> input_string;
-	mutex blocked_on_input;
-	condition_variable input_string_cv;
-
-	mutex blocked_on_output;
-	deque<char> output_string;
-	extern "C"
+    extern "C"
 	{
 
 		void mswin_init_nhwindows(int *argc, char **argv) {}
 		void mswin_player_selection(void) {}
-		void mswin_askname(void) { strcpy(plname, "best_playa"); } //ask user for name, bail if cancel.
+		void mswin_askname(void) { strcpy(plname, "best_playa-wizard-elf-female-chaos"); } //ask user for name, bail if cancel.
 		void mswin_get_nh_event(void) {}
 		void mswin_exit_nhwindows(const char *) {}
 		void mswin_suspend_nhwindows(const char *) {}
@@ -39,8 +39,6 @@ extern "C"
 		void mswin_display_nhwindow(winid wid, BOOLEAN_P block) {}
 		void mswin_destroy_nhwindow(winid wid) {}
 		void mswin_curs(winid wid, int x, int y) {}
-		void mswin_putstr(winid wid, int attr, const char *text) {}
-		void mswin_putstr_ex(winid wid, int attr, const char *text, int) {}
 		void mswin_display_file(const char *filename, BOOLEAN_P must_exist) {}
 		void mswin_start_menu(winid wid) {}
 		void mswin_add_menu(winid wid, int glyph, const ANY_P *identifier,
@@ -52,20 +50,93 @@ extern "C"
 		void mswin_mark_synch(void) {}
 		void mswin_wait_synch(void) {}
 		void mswin_cliparound(int x, int y) {}
-		void mswin_print_glyph(winid wid, XCHAR_P x, XCHAR_P y, int glyph, int bkglyph) {}
-		
-		std::vector<std::string> v;
+        //xxx
+		void mswin_print_glyph(winid wid, XCHAR_P x, XCHAR_P y, int glyph, int bkglyph) 
+        {
+            int ch;
+            boolean reverse_on = FALSE;
+            int color;
+            unsigned special;
 
+#ifdef CLIPPING
+            //if (clipping) {
+            //    if (x <= clipx || y < clipy || x >= clipxmax || y >= clipymax)
+            //        return;
+            //}
+#endif
+            /* map glyph to character and color */
+            (void)mapglyph(glyph, &ch, &color, &special, x, y);
+
+            //print_vt_code2(AVTC_SELECT_WINDOW, window);
+
+            ///* Move the cursor. */
+            //tty_curs(window, x, y);
+
+            //print_vt_code3(AVTC_GLYPH_START, glyph2tile[glyph], special);
+
+#ifndef NO_TERMS
+            if (ul_hack && ch == '_') { /* non-destructive underscore */
+                (void)putchar((char) ' ');
+                backsp();
+            }
+#endif
+
+#ifdef TEXTCOLOR
+            //if (color != ttyDisplay->color) {
+            //    if (ttyDisplay->color != NO_COLOR)
+            //        term_end_color();
+            //    ttyDisplay->color = color;
+            //    if (color != NO_COLOR)
+            //        term_start_color(color);
+            //}
+#endif /* TEXTCOLOR */
+
+            /* must be after color check; term_end_color may turn off inverse too */
+            if (((special & MG_PET) && iflags.hilite_pet)
+                || ((special & MG_OBJPILE) && iflags.hilite_pile)
+                || ((special & MG_DETECT) && iflags.use_inverse)) {
+                //term_start_attr(ATR_INVERSE);
+                reverse_on = TRUE;
+            }
+
+#if defined(USE_TILES) && defined(MSDOS)
+            if (iflags.grmode && iflags.tile_view)
+                xputg(glyph, ch, special);
+            else
+#endif
+            if (ch > 127) abort();
+            NativeMainPage::write_char(x, y, (char)ch);
+            //g_putch(ch); /* print the character */
+
+            if (reverse_on) {
+                //term_end_attr(ATR_INVERSE);
+#ifdef TEXTCOLOR
+                /* turn off color as well, ATR_INVERSE may have done this already */
+                //if (ttyDisplay->color != NO_COLOR) {
+                //    term_end_color();
+                //    ttyDisplay->color = NO_COLOR;
+                //}
+#endif
+            }
+
+            //print_vt_code1(AVTC_GLYPH_END);
+
+            //wins[window]->curx++; /* one character over */
+            //ttyDisplay->curx++;   /* the real cursor moved too */
+        }
+		
 		void mswin_raw_print(const char *str) 
 		{
-			v.push_back(str);
+			NativeMainPage::write_notification(str);
 		}
 		void mswin_raw_print_bold(const char *str) 
 		{
-			v.push_back(str);
-		}
-		int mswin_nhgetch(void) { return 0; }
-		int mswin_nh_poskey(int *x, int *y, int *mod) { return 0; }
+            NativeMainPage::write_notification(str);
+        }
+        void mswin_putstr(winid wid, int attr, const char *text) { mswin_raw_print(text); }
+        void mswin_putstr_ex(winid wid, int attr, const char *text, int) { mswin_raw_print(text); }
+        int mswin_nhgetch(void) { return tgetch(); }
+		int mswin_nh_poskey(int *x, int *y, int *mod) { return tgetch(); }
 		void mswin_nhbell(void) {}
 		int mswin_doprev_message(void) { return 0; }
 		char mswin_yn_function(const char *question, const char *choices, CHAR_P def) { return 0; }
@@ -214,19 +285,7 @@ extern "C"
 	void nttty_preference_update(const char*) {}
 	int tgetch() 
 	{
-		unique_lock<mutex> blocked_on_input_lock(blocked_on_input) ;
-		while (input_string.empty())
-		{
-			input_string_cv.wait(blocked_on_input_lock);
-		}
-
-		int ret = '\n';
-
-		ret = input_string.back();
-		input_string.pop_back();
-
-		return ret;
-
+		return NativeMainPage::read_char();
 	}
 	void gettty() { return;  } //called after ! or ^Z. Don't think we need it.
 	void settty(const char*) {}
@@ -246,10 +305,6 @@ extern "C"
 	}
 	*/
 	
-	void xputc(char c) {
-		output_string.push_back(c); //it's 1 am and I wanna sleep
-
-	}
 	void cl_end() {}
 	void clear_screen() {}
 	void home() {}
