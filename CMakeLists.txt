@@ -127,8 +127,8 @@ add_library(nethack_original STATIC ${NETHACK_SOURCES})
 set(APP_MANIFEST NethackUWP/Package.appxmanifest)
 
 set(CONTENT_FILES
-  nethack_original/git_dump_3.6/dat/quest.dat
-  nethack_original/git_dump_3.6/dat/dungeon
+  #nethack_original/git_dump_3.6/dat/quest.dat
+  #nethack_original/git_dump_3.6/dat/dungeon
 )
 set(ASSET_FILES
   NethackUWP/Assets/LockScreenLogo.scale-200.png
@@ -162,5 +162,5 @@ set_property(SOURCE ${ASSET_FILES} PROPERTY VS_DEPLOYMENT_CONTENT 1)
 set_property(SOURCE ${ASSET_FILES} PROPERTY VS_DEPLOYMENT_LOCATION "Assets")
 add_executable(NethackUWP ${UWP_SOURCES} ${CONTENT_FILES} ${ASSET_FILES} NethackUWP/NethackUWP_TemporaryKey.pfx)
 target_include_directories(NethackUWP PRIVATE NethackUWP)
-target_link_libraries(NethackUWP nethack_original)
+#target_link_libraries(NethackUWP nethack_original)
 set_property(TARGET NethackUWP PROPERTY VS_WINRT_COMPONENT TRUE)

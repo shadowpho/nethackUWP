@@ -49,13 +49,9 @@
     <AppxManifest Include="Package.appxmanifest" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="NethackUWP_TemporaryKey.pfx" />
-    <None Include="..\nethack_original\git_dump_3.6\dat\quest.dat">
-      <Filter>Assets</Filter>
-    </None>
-    <None Include="..\nethack_original\git_dump_3.6\dat\dungeon" />
+    <Page Include="MainPage.xaml" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="MainPage.xaml" />
+    <None Include="NethackUWP_TemporaryKey.pfx" />
   </ItemGroup>
 </Project>
