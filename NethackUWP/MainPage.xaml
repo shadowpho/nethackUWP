@@ -20,9 +20,11 @@
                             <TextBlock Text="INV" FontSize="20" />
                         </RadioButton.Tag>
                     </RadioButton>-->
-                    <Button Content="BACK" Click="Button_Click_1" />
+                    <Button Content="INV" Click="Button_Click_1" Height="50" Width="50"/>
                 </StackPanel>
-
+                <ScrollViewer Margin="5" Grid.Row="1">
+                    <ItemsControl x:Name="listView_Inventory" ItemsSource="{Binding Inventory_Strings}"/>
+                </ScrollViewer>
             </Grid>
         </SplitView.Pane>
 

@@ -49,8 +49,13 @@ MainPage::MainPage()
     g_mainpage = this;
     g_corewindow = Windows::UI::Core::CoreWindow::GetForCurrentThread();
     Notifications = ref new Platform::Collections::Vector<Platform::String^>();
-	StatusNotify = ref new Platform::Collections::Vector<Platform::String^>();
-    
+    Inventory_Strings = ref new Platform::Collections::Vector<Platform::String^>();
+    StatusNotify = ref new Platform::Collections::Vector<Platform::String^>();
+
+    for (int x = 0;x < 20; ++x)
+    {
+        Inventory_Strings->Append(L"Silver Dragon Scale Mail +5 blessed");
+    }
 
 	this->DataContext = this;
     output_string = std::wstring(NativeMainPage::max_width_offset * NativeMainPage::max_height, L'C');
