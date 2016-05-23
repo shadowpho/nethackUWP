@@ -21,6 +21,9 @@ struct NativeMainPage {
     static void write_notification(const char*);
 	static void update_statusbar(const char * str);
 	static void clear_statusbar();
+
+    static void clear_inv();
+    static void add_inv_str(const char* str, boolean is_header, int attr, char accelerator);
 };
 
 namespace NethackUWP
