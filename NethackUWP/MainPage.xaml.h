@@ -10,12 +10,13 @@
 #include <mutex>
 #include <condition_variable>
 #include <vector>
+#include <tuple>
 
 struct NativeMainPage {
     static constexpr int max_width = 100;
     static constexpr int max_width_offset = max_width + 1;
     static constexpr int max_height = 80;
-    static int read_char();
+	static int read_char(int &x, int &y);
     static void write_char(int x, int y, char ch);
  
     static void write_notification(const char*);
@@ -52,12 +53,16 @@ namespace NethackUWP
         virtual event Windows::UI::Xaml::Data::PropertyChangedEventHandler ^ PropertyChanged;
 
 	private:
-		void OutputBox_Tapped(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+		void NethackUWP::MainPage::OutputBox_Tapped2(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e);
+
 		void button_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void Send_butt_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+		void Quick_Button_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+
 		void InputBox_TextChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::TextChangedEventArgs^ e);
 
         std::deque<wchar_t> input_string;
+		std::deque<std::tuple<unsigned short, unsigned short> > input_mouse;
         std::mutex blocked_on_input;
         std::condition_variable input_string_cv;
 

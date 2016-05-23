@@ -67,7 +67,7 @@
             <Button x:Name="button" Content="Start New Game" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Click="button_Click" Grid.Column="1" Height="32" Width="128"/>
             <Button x:Name="Send_butt" Content="Send String" HorizontalAlignment="Left" Margin="153,47,0,0" VerticalAlignment="Top" Click="Send_butt_Click" Grid.Column="1" Height="32" Width="96"/>
             <TextBox x:Name="InputBox" HorizontalAlignment="Left" Margin="10,47,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="138" Grid.Column="1" Height="32" />
-            <TextBox x:Name="OutputBox" Margin="10,4.6,10,1" Text="{Binding OutStringBuf}" FontFamily="Consolas" Tapped  ="OutputBox_Tapped" TextChanged="OutputBox_TextChanged" ScrollViewer.HorizontalScrollBarVisibility="Visible" ScrollViewer.VerticalScrollBarVisibility="Visible" TextWrapping="NoWrap" AcceptsReturn="True" IsTapEnabled="False" IsReadOnly="True" Grid.Row="1" Grid.Column="1"/>
+            <TextBox x:Name="OutputBox" Margin="10,4.6,10,1" Text="{Binding OutStringBuf}" FontFamily="Consolas" TextChanged="OutputBox_TextChanged" ScrollViewer.HorizontalScrollBarVisibility="Visible" ScrollViewer.VerticalScrollBarVisibility="Visible" TextWrapping="NoWrap" AcceptsReturn="True" IsReadOnly="True" Grid.Row="1" Grid.Column="1" IsTabStop="False"/>
             <ListView x:Name="listView" ItemsSource="{Binding Notifications}" Height="151" Margin="10,84,10,0" VerticalAlignment="Top" BorderThickness="5" BorderBrush="Black" Grid.Column="1"/>
             <ListView x:Name="game_status" ItemsSource="{Binding StatusNotify}" Margin="10,0" BorderThickness="5" BorderBrush="Black" Grid.Row="2" Grid.Column="1"/>
 
