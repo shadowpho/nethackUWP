@@ -6,23 +6,52 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
-
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Button x:Name="button" Content="Start New Game" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Click="button_Click"/>
-        <Button x:Name="Send_butt" Content="Send String" HorizontalAlignment="Left" Margin="153,47,0,0" VerticalAlignment="Top" Click="Send_butt_Click"/>
-        <TextBox x:Name="InputBox" HorizontalAlignment="Left" Margin="10,47,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="138" />
-        <TextBox x:Name="OutputBox" Margin="10,240,10,0" Text="{Binding OutStringBuf}" VerticalAlignment="Top" Height="322" FontFamily="Consolas" Tapped  ="OutputBox_Tapped" TextChanged="OutputBox_TextChanged" ScrollViewer.HorizontalScrollBarVisibility="Visible" ScrollViewer.VerticalScrollBarVisibility="Visible" TextWrapping="NoWrap" AcceptsReturn="True" IsTapEnabled="False" IsReadOnly="True"/>
-        <ListView x:Name="listView" ItemsSource="{Binding Notifications}" Height="151" Margin="10,84,10,0" VerticalAlignment="Top" BorderThickness="5" BorderBrush="Black"/>
-        <ListView x:Name="game_status" ItemsSource="{Binding StatusNotify}" Height="102" Margin="10,562,10,0" VerticalAlignment="Top" BorderThickness="5" BorderBrush="Black"/>
-
-        <ScrollViewer  Margin="10,669,0,0" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" VerticalContentAlignment="Top" VerticalAlignment="Top" IsHorizontalScrollChainingEnabled="True" HorizontalScrollMode="Enabled" ZoomMode="Disabled" VerticalScrollMode="Disabled" >
-
-            <StackPanel x:Name="Action_Button_Stack" Orientation="Horizontal" VerticalAlignment="Top" Height="Auto">
-                    
+    <SplitView x:Name="splitView" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" DisplayMode="Overlay" IsPaneOpen="False">
+        <SplitView.Pane>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="0">
+                    <!--<RadioButton Checked="DontCheck" Command="{Binding MenuCommand}"  Background="{StaticResource SystemControlBackgroundAccentBrush}" Grid.Row="1">
+                        <RadioButton.Tag>
+                            <TextBlock Text="INV" FontSize="20" />
+                        </RadioButton.Tag>
+                    </RadioButton>-->
+                    <Button Content="BACK" Click="Button_Click_1" />
                 </StackPanel>
-         
-        </ScrollViewer>
-            
 
-    </Grid>
+            </Grid>
+        </SplitView.Pane>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="50"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="236.4"/>
+                <RowDefinition/>
+                <RowDefinition Height="100"/>
+                <RowDefinition Height="80"/>
+            </Grid.RowDefinitions>
+            <Button x:Name="button" Content="Start New Game" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Click="button_Click" Grid.Column="1" Height="32" Width="128"/>
+            <Button x:Name="Send_butt" Content="Send String" HorizontalAlignment="Left" Margin="153,47,0,0" VerticalAlignment="Top" Click="Send_butt_Click" Grid.Column="1" Height="32" Width="96"/>
+            <TextBox x:Name="InputBox" HorizontalAlignment="Left" Margin="10,47,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="138" Grid.Column="1" Height="32" />
+            <TextBox x:Name="OutputBox" Margin="10,4.6,10,1" Text="{Binding OutStringBuf}" FontFamily="Consolas" Tapped  ="OutputBox_Tapped" TextChanged="OutputBox_TextChanged" ScrollViewer.HorizontalScrollBarVisibility="Visible" ScrollViewer.VerticalScrollBarVisibility="Visible" TextWrapping="NoWrap" AcceptsReturn="True" IsTapEnabled="False" IsReadOnly="True" Grid.Row="1" Grid.Column="1"/>
+            <ListView x:Name="listView" ItemsSource="{Binding Notifications}" Height="151" Margin="10,84,10,0" VerticalAlignment="Top" BorderThickness="5" BorderBrush="Black" Grid.Column="1"/>
+            <ListView x:Name="game_status" ItemsSource="{Binding StatusNotify}" Margin="10,0" BorderThickness="5" BorderBrush="Black" Grid.Row="2" Grid.Column="1"/>
+
+            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" VerticalContentAlignment="Top" IsHorizontalScrollChainingEnabled="True" HorizontalScrollMode="Enabled" ZoomMode="Disabled" VerticalScrollMode="Disabled" MinHeight="50" Grid.Row="3" Grid.Column="1" >
+
+                <StackPanel x:Name="Action_Button_Stack" Orientation="Horizontal" VerticalAlignment="Top" Height="Auto">
+
+                </StackPanel>
+
+            </ScrollViewer>
+            <Button x:Name="Button_Open_Inventory" Content="INV" HorizontalAlignment="Left" VerticalAlignment="Top" Padding="0" Height="50" Width="50" Click="Button_Open_Inventory_Click" />
+        </Grid>
+    </SplitView>
 </Page>

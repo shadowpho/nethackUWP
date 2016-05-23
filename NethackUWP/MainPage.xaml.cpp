@@ -180,3 +180,15 @@ void NethackUWP::MainPage::OutputBox_TextChanged(Platform::Object^ sender, Windo
 {
 
 }
+
+
+void NethackUWP::MainPage::Button_Open_Inventory_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    splitView->IsPaneOpen = true;
+}
+
+
+void NethackUWP::MainPage::Button_Click_1(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    splitView->IsPaneOpen = false;
+}
