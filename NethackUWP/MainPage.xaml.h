@@ -22,6 +22,9 @@ struct NativeMainPage {
     static void write_notification(const char*);
 	static void update_statusbar(const char * str);
 	static void clear_statusbar();
+
+    static void clear_inv();
+    static void add_inv_str(const char* str, boolean is_header, int attr, char accelerator);
 };
 
 namespace NethackUWP
@@ -41,6 +44,8 @@ namespace NethackUWP
                 return ref new Platform::String(output_string.c_str());
             }
         }
+
+        property Windows::Foundation::Collections::IVector<Platform::String^>^ Inventory_Strings;
 
         property Windows::Foundation::Collections::IVector<Platform::String^>^ Notifications;
 		property Windows::Foundation::Collections::IVector<Platform::String^>^ StatusNotify;
@@ -66,6 +71,8 @@ namespace NethackUWP
 
         friend struct ::NativeMainPage;
         void OutputBox_TextChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::TextChangedEventArgs^ e);
+        void Button_Open_Inventory_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+        void Button_Click_1(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     };
     static MainPage^ g_mainpage;
     static Platform::Agile<Windows::UI::Core::CoreWindow> g_corewindow;

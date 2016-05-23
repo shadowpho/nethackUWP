@@ -14,6 +14,9 @@ struct NativeMainPage {
     static void write_notification(const char*);
 	static void update_statusbar(const char*);
 	static void clear_statusbar();
+
+    static void clear_inv();
+    static void add_inv_str(const char* str, boolean is_header, int attr, char accelerator);
 };
 
 
@@ -68,20 +71,29 @@ extern "C"
 
 		void mswin_curs(winid wid, int x, int y) {}
 		void mswin_display_file(const char *filename, BOOLEAN_P must_exist) {}
-		void mswin_start_menu(winid wid) {}
+		void mswin_start_menu(winid wid)
+        {
+            if (wid == NHW_MENU)
+            {
+                NativeMainPage::clear_inv();
+            }
+        }
 		void mswin_add_menu(winid wid, int glyph, const ANY_P *identifier,
 			CHAR_P accelerator, CHAR_P group_accel, int attr,
-			const char *str, BOOLEAN_P presel) 
-		{
-			str;
-			
-		}
+			const char *str, BOOLEAN_P presel)
+        {
+            if (wid == NHW_MENU)
+            {
+                NativeMainPage::add_inv_str(str, identifier == nullptr, attr, accelerator);
+            }
+        }
 		void mswin_end_menu(winid wid, const char *prompt) {}
 		int mswin_select_menu(winid wid, int how, MENU_ITEM_P **selected) { return 0; }
-		void mswin_update_inventory(void) 
-		{
-			//display_inventory(NULL, FALSE);
-		}
+        void mswin_update_inventory(void) {
+            if (flags.perm_invent && program_state.something_worth_saving
+                && iflags.window_inited && WIN_INVEN != WIN_ERR)
+                display_inventory(NULL, FALSE);
+        }
 		void mswin_mark_synch(void) {}
 		void mswin_wait_synch(void) {}
 		void mswin_cliparound(int x, int y) {}

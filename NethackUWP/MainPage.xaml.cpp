@@ -51,8 +51,13 @@ MainPage::MainPage()
     g_mainpage = this;
     g_corewindow = Windows::UI::Core::CoreWindow::GetForCurrentThread();
     Notifications = ref new Platform::Collections::Vector<Platform::String^>();
-	StatusNotify = ref new Platform::Collections::Vector<Platform::String^>();
-    
+    Inventory_Strings = ref new Platform::Collections::Vector<Platform::String^>();
+    StatusNotify = ref new Platform::Collections::Vector<Platform::String^>();
+
+    for (int x = 0;x < 20; ++x)
+    {
+        Inventory_Strings->Append(L"Silver Dragon Scale Mail +5 blessed");
+    }
 
 	this->DataContext = this;
     output_string = std::wstring(NativeMainPage::max_width_offset * NativeMainPage::max_height, L' ');
@@ -98,7 +103,7 @@ void NethackUWP::MainPage::button_Click(Platform::Object^ sender, Windows::UI::X
 		newgame();
 		
 		//resuming = pcmain(argc, argv);
-
+        display_inventory(nullptr, 0);
 		moveloop(0);
 		//trololololololololololololololololololo
 	});
@@ -239,26 +244,65 @@ void NativeMainPage::clear_statusbar()
 {
 	g_corewindow->Dispatcher->RunAsync(CoreDispatcherPriority::Low, ref new DispatchedHandler([]() {
 				g_mainpage->StatusNotify->Clear();
-
 	}));
 }
-void NativeMainPage::update_statusbar(const char * str)
+void NativeMainPage::clear_inv()
 {
-	if (str == 0 || *str == 0)
+    g_corewindow->Dispatcher->RunAsync(CoreDispatcherPriority::Low, ref new DispatchedHandler([]() {
+        g_mainpage->Inventory_Strings->Clear();
+    }));
+}
+
+void NativeMainPage::add_inv_str(const char* str, boolean is_header, int attr, char accelerator)
+{
+    if (str == 0 || *str == 0)
 		return;
 
 	std::wstring strbuf;
+    if (attr == 0)
+    {
+        if (accelerator != 0)
+            strbuf.push_back(accelerator);
+        else
+            strbuf.push_back(' ');
+        strbuf.append(L" - ");
+    }
 	while (*str) { strbuf.push_back(*str); ++str; }
 	Platform::String^ pcstr = ref new Platform::String(strbuf.c_str());
 	g_corewindow->Dispatcher->RunAsync(CoreDispatcherPriority::Low, ref new DispatchedHandler([pcstr]() {
-//		g_mainpage->StatusNotify->Clear();
-		g_mainpage->StatusNotify->Append(pcstr);
-
+		g_mainpage->Inventory_Strings->Append(pcstr);
 	}));
+}
+
+void NativeMainPage::update_statusbar(const char * str)
+{
+    if (str == 0 || *str == 0)
+        return;
+
+    std::wstring strbuf;
+    while (*str) { strbuf.push_back(*str); ++str; }
+    Platform::String^ pcstr = ref new Platform::String(strbuf.c_str());
+    g_corewindow->Dispatcher->RunAsync(CoreDispatcherPriority::Low, ref new DispatchedHandler([pcstr]() {
+        //		g_mainpage->StatusNotify->Clear();
+        g_mainpage->StatusNotify->Append(pcstr);
+
+    }));
 }
 
 
 void NethackUWP::MainPage::OutputBox_TextChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::TextChangedEventArgs^ e)
 {
 
+}
+
+
+void NethackUWP::MainPage::Button_Open_Inventory_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    splitView->IsPaneOpen = true;
+}
+
+
+void NethackUWP::MainPage::Button_Click_1(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    splitView->IsPaneOpen = false;
 }
