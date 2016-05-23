@@ -8,6 +8,7 @@
 #include <deque>
 #include <thread>
 #include <mutex>
+#include <string>
 
 bool game_is_running = false;
 bool waiting_for_input = false;
@@ -21,9 +22,11 @@ extern "C" {
 #undef terminate
 #undef boolean
 
+
 using namespace NethackUWP;
 using namespace std;
 
+constexpr const static unsigned int MAX_BUTTONS = 30;
 
 using namespace Platform;
 using namespace Windows::Foundation;
@@ -46,13 +49,25 @@ MainPage::MainPage()
     g_mainpage = this;
     g_corewindow = Windows::UI::Core::CoreWindow::GetForCurrentThread();
     Notifications = ref new Platform::Collections::Vector<Platform::String^>();
-    this->DataContext = this;
+	StatusNotify = ref new Platform::Collections::Vector<Platform::String^>();
+    
 
+	this->DataContext = this;
     output_string = std::wstring(NativeMainPage::max_width_offset * NativeMainPage::max_height, L'C');
     for (int x = 1; x <= NativeMainPage::max_height; ++x)
     {
         output_string[x * NativeMainPage::max_width_offset - 1] = '\n';
     }
+	for(int i=0; i< MAX_BUTTONS; i++)
+	{ 
+		Button ^button = ref new Button();
+		button->Content=ref new Platform::String( std::to_wstring(i).c_str());
+		button->Margin = 15;
+		Action_Button_Stack->Children->Append(button);
+		//Action_Button_Stack->Items->Append(button);
+		//Action_Button_Stack->Conten
+	}
+	
 }
 
 void NethackUWP::MainPage::button_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
@@ -78,6 +93,11 @@ void NethackUWP::MainPage::button_Click(Platform::Object^ sender, Windows::UI::X
 		//trololololololololololololololololololo
 	});
 	
+}
+void NethackUWP::MainPage::OutputBox_Tapped(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	//a;
+	2 + 2;
 }
 
 void NethackUWP::MainPage::Send_butt_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
@@ -123,7 +143,7 @@ void NativeMainPage::write_char(int x, int y, char ch)
 
 void NativeMainPage::write_notification(const char * str)
 {
-    if (str == 0 || *str == 0)
+    if (str == 0 || *str == 0 || !strcmp(str,""))
         return;
 
     std::wstring strbuf;
@@ -132,6 +152,27 @@ void NativeMainPage::write_notification(const char * str)
     g_corewindow->Dispatcher->RunAsync(CoreDispatcherPriority::Low, ref new DispatchedHandler([pcstr]() {
         g_mainpage->Notifications->Append(pcstr);
     }));
+}
+void NativeMainPage::clear_statusbar()
+{
+	g_corewindow->Dispatcher->RunAsync(CoreDispatcherPriority::Low, ref new DispatchedHandler([]() {
+				g_mainpage->StatusNotify->Clear();
+
+	}));
+}
+void NativeMainPage::update_statusbar(const char * str)
+{
+	if (str == 0 || *str == 0)
+		return;
+
+	std::wstring strbuf;
+	while (*str) { strbuf.push_back(*str); ++str; }
+	Platform::String^ pcstr = ref new Platform::String(strbuf.c_str());
+	g_corewindow->Dispatcher->RunAsync(CoreDispatcherPriority::Low, ref new DispatchedHandler([pcstr]() {
+//		g_mainpage->StatusNotify->Clear();
+		g_mainpage->StatusNotify->Append(pcstr);
+
+	}));
 }
 
 

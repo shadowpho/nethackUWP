@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <Windows.h>
+#include <cassert>
 #include <vector>
 #include <deque>
 #include <mutex>
@@ -11,6 +12,8 @@ struct NativeMainPage {
     static void write_char(int x, int y, char ch);
 
     static void write_notification(const char*);
+	static void update_statusbar(const char*);
+	static void clear_statusbar();
 };
 
 
@@ -27,17 +30,42 @@ extern "C"
     extern "C"
 	{
 
+		void mswin_suspend_nhwindows(const char *) { abort(); } //doesn't happen
+		void mswin_resume_nhwindows(void) { abort(); } //doesn't happen
+		void mswin_destroy_nhwindow(winid wid) { return; } //nethack doesn't own these
+
 		void mswin_init_nhwindows(int *argc, char **argv) {}
 		void mswin_player_selection(void) {}
 		void mswin_askname(void) { strcpy(plname, "best_playa-wizard-elf-female-chaos"); } //ask user for name, bail if cancel.
 		void mswin_get_nh_event(void) {}
 		void mswin_exit_nhwindows(const char *) {}
-		void mswin_suspend_nhwindows(const char *) {}
-		void mswin_resume_nhwindows(void) {}
-		winid mswin_create_nhwindow(int type) { return 0; }
-		void mswin_clear_nhwindow(winid wid) {}
-		void mswin_display_nhwindow(winid wid, BOOLEAN_P block) {}
-		void mswin_destroy_nhwindow(winid wid) {}
+
+		/*  Create a window of type "type" which can be
+		NHW_MESSAGE     (top line)
+		NHW_STATUS      (bottom lines)
+		NHW_MAP         (main dungeon)
+		NHW_MENU        (inventory or other "corner" windows)
+		NHW_TEXT        (help/text, full screen paged window)
+		*/
+		winid mswin_create_nhwindow(int type) {
+			assert(type < NHW_TEXT);
+			assert(type >= 0);
+			//we'll create them at different points.
+			return type;
+		}
+
+		void mswin_clear_nhwindow(winid wid) 
+		{
+			if (wid == NHW_STATUS)
+				NativeMainPage::clear_statusbar();
+			else
+				2 + 2;
+		}
+		void mswin_display_nhwindow(winid wid, BOOLEAN_P block) 
+		{
+			//NativeMainPage::write_notification();
+		}
+
 		void mswin_curs(winid wid, int x, int y) {}
 		void mswin_display_file(const char *filename, BOOLEAN_P must_exist) {}
 		void mswin_start_menu(winid wid) {}
@@ -133,8 +161,17 @@ extern "C"
 		{
             NativeMainPage::write_notification(str);
         }
-        void mswin_putstr(winid wid, int attr, const char *text) { mswin_raw_print(text); }
-        void mswin_putstr_ex(winid wid, int attr, const char *text, int) { mswin_raw_print(text); }
+        void mswin_putstr(winid wid, int attr, const char *text) 
+		{ 
+			if (wid == NHW_STATUS)
+				NativeMainPage::update_statusbar(text);
+			else
+				mswin_raw_print(text);
+		}
+        void mswin_putstr_ex(winid wid, int attr, const char *text, int) 
+		{ 
+			mswin_raw_print(text);
+		}
         int mswin_nhgetch(void) { return tgetch(); }
 		int mswin_nh_poskey(int *x, int *y, int *mod) { return tgetch(); }
 		void mswin_nhbell(void) {}

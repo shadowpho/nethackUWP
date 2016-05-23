@@ -19,6 +19,8 @@ struct NativeMainPage {
     static void write_char(int x, int y, char ch);
  
     static void write_notification(const char*);
+	static void update_statusbar(const char * str);
+	static void clear_statusbar();
 };
 
 namespace NethackUWP
@@ -40,10 +42,12 @@ namespace NethackUWP
         }
 
         property Windows::Foundation::Collections::IVector<Platform::String^>^ Notifications;
+		property Windows::Foundation::Collections::IVector<Platform::String^>^ StatusNotify;
 
         virtual event Windows::UI::Xaml::Data::PropertyChangedEventHandler ^ PropertyChanged;
 
 	private:
+		void OutputBox_Tapped(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void button_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void Send_butt_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void InputBox_TextChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::TextChangedEventArgs^ e);
