@@ -41,6 +41,8 @@ using namespace Windows::UI::Xaml::Navigation;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
+const wchar_t DEFAULT_KEYS[][10] = {L"i",L".",L"z",L"#engrave", };
+
 MainPage::MainPage()
 {
 	InitializeComponent();
@@ -53,7 +55,7 @@ MainPage::MainPage()
     
 
 	this->DataContext = this;
-    output_string = std::wstring(NativeMainPage::max_width_offset * NativeMainPage::max_height, L'C');
+    output_string = std::wstring(NativeMainPage::max_width_offset * NativeMainPage::max_height, L' ');
     for (int x = 1; x <= NativeMainPage::max_height; ++x)
     {
         output_string[x * NativeMainPage::max_width_offset - 1] = '\n';
@@ -61,13 +63,21 @@ MainPage::MainPage()
 	for(int i=0; i< MAX_BUTTONS; i++)
 	{ 
 		Button ^button = ref new Button();
-		button->Content=ref new Platform::String( std::to_wstring(i).c_str());
+		button->Click += ref new Windows::UI::Xaml::RoutedEventHandler(this, &NethackUWP::MainPage::Quick_Button_Click);
+		
+		//button->AddHandler(button_Click, Quick_Button_Click, true);
+		if (i < 4)
+			button->Content = ref new Platform::String(DEFAULT_KEYS[i]);
+		else
+			button->Content=ref new Platform::String( std::to_wstring(i).c_str());
 		button->Margin = 15;
 		Action_Button_Stack->Children->Append(button);
 		//Action_Button_Stack->Items->Append(button);
 		//Action_Button_Stack->Conten
 	}
-	
+
+	OutputBox->AddHandler(TappedEvent, ref new TappedEventHandler(this, &NethackUWP::MainPage::OutputBox_Tapped2), true);
+	//OutputBox->Tapped += ref new Windows::UI::Xaml::Input::TappedEventHandler(this, &NethackUWP::MainPage::OutputBox_Tapped2,true);
 }
 
 void NethackUWP::MainPage::button_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
@@ -94,10 +104,72 @@ void NethackUWP::MainPage::button_Click(Platform::Object^ sender, Windows::UI::X
 	});
 	
 }
-void NethackUWP::MainPage::OutputBox_Tapped(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+
+void NethackUWP::MainPage::OutputBox_Tapped2(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e)
 {
-	//a;
-	2 + 2;
+	Point pressed = e->GetPosition(OutputBox);
+	bool up = false;
+	bool down = false;
+	bool right = false;
+	bool left = false;
+
+	std::string send_str = "";
+
+	if (pressed.X > (OutputBox->RenderSize.Width * 2.0 / 3.0))
+		right= true;
+	if (pressed.X < (OutputBox->RenderSize.Width / 3.0 ))
+		left= true;
+	if (pressed.Y >(OutputBox->RenderSize.Height*2.0 / 3.0 ))
+		down = true;
+	if (pressed.Y <(OutputBox->RenderSize.Height / 3.0 ))
+		up = true;
+
+	//XXX DIAGONALS
+	if (up == true)
+		send_str += "k";
+	if (down == true)
+		send_str += "j";
+	if (left == true)
+		send_str += "h";
+	if (right == true)
+		send_str += "l";
+	{
+		lock_guard<mutex> lock(blocked_on_input);
+		if (input_string.empty())
+			input_string_cv.notify_all();
+		input_string.insert(input_string.end(), begin(send_str), end(send_str));
+		
+	}
+
+
+	/*
+	int px = (pressed.X) / OutputBox->FontSize;
+	int py = (pressed.Y) / OutputBox->FontSize;
+	
+	//std::string msg = to_string(px) + ',' + to_string(py);
+	//NativeMainPage::write_notification(msg.c_str());
+
+	{
+		lock_guard<mutex> lock(blocked_on_input);
+		std::tuple<unsigned short, unsigned short> new_tuple = { px,py };
+		if (input_mouse.empty())
+			input_string_cv.notify_all();
+		input_mouse.push_front(new_tuple);
+		
+	}
+	*/
+	
+}
+void NethackUWP::MainPage::Quick_Button_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	auto nethack_text = ((Platform::String^)((Button^)sender)->Content);
+	{
+		lock_guard<mutex> lock(blocked_on_input);
+		if (input_string.empty())
+			input_string_cv.notify_all();
+		input_string.insert(input_string.end(), begin(nethack_text), end(nethack_text));
+	}
+
 }
 
 void NethackUWP::MainPage::Send_butt_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
@@ -112,18 +184,28 @@ void NethackUWP::MainPage::Send_butt_Click(Platform::Object^ sender, Windows::UI
     InputBox->Text = "";
 }
 
-int NativeMainPage::read_char()
+int NativeMainPage::read_char(int &x, int &y)
 {
     unique_lock<mutex> lock(g_mainpage->blocked_on_input);
-    while (g_mainpage->input_string.empty())
+    while (g_mainpage->input_string.empty() && g_mainpage->input_mouse.empty())
     {
         g_mainpage->input_string_cv.wait(lock);
     }
+	if (!g_mainpage->input_string.empty())
+	{
+		int ret = g_mainpage->input_string.back();
+		g_mainpage->input_string.pop_back();
 
-    int ret = g_mainpage->input_string.back();
-    g_mainpage->input_string.pop_back();
-
-    return ret;
+		return ret;
+	}
+	else //mouse contact
+	{
+		std::tuple<unsigned short, unsigned short> ret_tuple = g_mainpage->input_mouse.back();
+		g_mainpage->input_mouse.pop_back();
+		x = std::get<0>(ret_tuple);
+		y = std::get<1>(ret_tuple);
+		return 0;
+	}
 }
 
 using namespace Windows::UI::Core;

@@ -8,7 +8,7 @@
 
 
 struct NativeMainPage {
-    static int read_char();
+	static int read_char(int &x, int &y);
     static void write_char(int x, int y, char ch);
 
     static void write_notification(const char*);
@@ -71,10 +71,17 @@ extern "C"
 		void mswin_start_menu(winid wid) {}
 		void mswin_add_menu(winid wid, int glyph, const ANY_P *identifier,
 			CHAR_P accelerator, CHAR_P group_accel, int attr,
-			const char *str, BOOLEAN_P presel) {}
+			const char *str, BOOLEAN_P presel) 
+		{
+			str;
+			
+		}
 		void mswin_end_menu(winid wid, const char *prompt) {}
 		int mswin_select_menu(winid wid, int how, MENU_ITEM_P **selected) { return 0; }
-		void mswin_update_inventory(void) {}
+		void mswin_update_inventory(void) 
+		{
+			//display_inventory(NULL, FALSE);
+		}
 		void mswin_mark_synch(void) {}
 		void mswin_wait_synch(void) {}
 		void mswin_cliparound(int x, int y) {}
@@ -173,14 +180,32 @@ extern "C"
 			mswin_raw_print(text);
 		}
         int mswin_nhgetch(void) { return tgetch(); }
-		int mswin_nh_poskey(int *x, int *y, int *mod) { return tgetch(); }
+		int mswin_nh_poskey(int *x, int *y, int *mod) 
+		{ 
+			int pass_x = 0;
+			int pass_y = 0;
+			int ret = NativeMainPage::read_char(pass_x, pass_y);
+			if (ret == 0)
+			{
+				*x = pass_x;
+				*y = pass_y;
+				*mod = CLICK_1;
+				return 0;
+			}
+			else
+				return ret;
+			//return tgetch(); 
+		}
 		void mswin_nhbell(void) {}
 		int mswin_doprev_message(void) { return 0; }
 		char mswin_yn_function(const char *question, const char *choices, CHAR_P def) { return 0; }
 		void mswin_getlin(const char *question, char *input) {}
 		int mswin_get_ext_cmd(void) { return 0; }
 		void mswin_number_pad(int state) {}
-		void mswin_delay_output(void) {}
+		void mswin_delay_output(void) 
+		{
+			Sleep(50); //50 ms NAP TIME lol
+		}
 		void mswin_change_color(void) {}
 		char *mswin_get_color_string(void) { return 0; }
 		void mswin_start_screen(void) {}
@@ -322,7 +347,8 @@ extern "C"
 	void nttty_preference_update(const char*) {}
 	int tgetch() 
 	{
-		return NativeMainPage::read_char();
+		//return NativeMainPage::read_char();
+		abort();
 	}
 	void gettty() { return;  } //called after ! or ^Z. Don't think we need it.
 	void settty(const char*) {}
