@@ -12,20 +12,7 @@
 #include <vector>
 #include <tuple>
 
-struct NativeMainPage {
-    static constexpr int max_width = 100;
-    static constexpr int max_width_offset = max_width + 1;
-    static constexpr int max_height = 80;
-	static int read_char(int &x, int &y);
-    static void write_char(int x, int y, char ch);
- 
-    static void write_notification(const char*);
-	static void update_statusbar(const char * str);
-	static void clear_statusbar();
-
-    static void clear_inv();
-    static void add_inv_str(const char* str, boolean is_header, int attr, char accelerator);
-};
+struct NativeMainPage;
 
 namespace NethackUWP
 {
@@ -51,6 +38,9 @@ namespace NethackUWP
         property Platform::String^ Status_Line_1;
         property Platform::String^ Status_Line_2;
 
+        property Platform::String^ Modal_Question;
+        property Windows::Foundation::Collections::IVector<Platform::String^>^ Modal_Answers;
+
         virtual event Windows::UI::Xaml::Data::PropertyChangedEventHandler ^ PropertyChanged;
 
 	private:
@@ -74,6 +64,7 @@ namespace NethackUWP
         void OutputBox_TextChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::TextChangedEventArgs^ e);
         void Button_Open_Inventory_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
         void Button_Click_1(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+        void listView_SelectionChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::SelectionChangedEventArgs^ e);
     };
     static MainPage^ g_mainpage;
     static Platform::Agile<Windows::UI::Core::CoreWindow> g_corewindow;

@@ -9,6 +9,9 @@
 #include <thread>
 #include <mutex>
 #include <string>
+#include <future>
+
+#include "../NativeMainPage.h"
 
 bool game_is_running = false;
 bool waiting_for_input = false;
@@ -52,12 +55,9 @@ MainPage::MainPage()
     g_corewindow = Windows::UI::Core::CoreWindow::GetForCurrentThread();
     Notifications = ref new Platform::Collections::Vector<Platform::String^>();
     Inventory_Strings = ref new Platform::Collections::Vector<Platform::String^>();
-    for (int x = 0;x < 20; ++x)
-    {
-        Inventory_Strings->Append(L"Silver Dragon Scale Mail +5 blessed");
-    }
+    Modal_Answers = ref new Platform::Collections::Vector<Platform::String^>();
 
-	this->DataContext = this;
+    this->DataContext = this;
     output_string = std::wstring(NativeMainPage::max_width_offset * NativeMainPage::max_height, L' ');
     for (int x = 1; x <= NativeMainPage::max_height; ++x)
     {
@@ -254,7 +254,7 @@ void NativeMainPage::clear_inv()
     }));
 }
 
-void NativeMainPage::add_inv_str(const char* str, boolean is_header, int attr, char accelerator)
+void NativeMainPage::add_inv_str(const char* str, bool is_header, int attr, char accelerator)
 {
     if (str == 0 || *str == 0)
 		return;
@@ -275,14 +275,22 @@ void NativeMainPage::add_inv_str(const char* str, boolean is_header, int attr, c
 	}));
 }
 
+static auto cstr_to_platstr(const char* str)
+{
+    if (str == nullptr)
+        return (Platform::String^)nullptr;
+    std::wstring strbuf;
+    while (*str) { strbuf.push_back(*str); ++str; }
+    Platform::String^ pcstr = ref new Platform::String(strbuf.c_str(), strbuf.size());
+    return pcstr;
+}
+
 void NativeMainPage::update_statusbar(const char * str)
 {
     if (str == 0 || *str == 0)
         return;
 
-    std::wstring strbuf;
-    while (*str) { strbuf.push_back(*str); ++str; }
-    Platform::String^ pcstr = ref new Platform::String(strbuf.c_str());
+    Platform::String^ pcstr = cstr_to_platstr(str);
     g_corewindow->Dispatcher->RunAsync(CoreDispatcherPriority::Low, ref new DispatchedHandler([pcstr]() {
         if (g_mainpage->Status_Line_1 == nullptr)
         {
@@ -297,6 +305,46 @@ void NativeMainPage::update_statusbar(const char * str)
     }));
 }
 
+struct NativeMainPageImpl
+{
+    std::mutex promise_lock;
+    std::promise<char> yn_function_promise;
+
+} g_nativepage_impl;
+
+char NativeMainPage::ask_yn_function(const char *question, const char *choices, char def)
+{
+    {
+        std::lock_guard<std::mutex> lock(g_nativepage_impl.promise_lock);
+        g_nativepage_impl.yn_function_promise = std::promise<char>();
+    }
+
+    Platform::String^ psQuestion = cstr_to_platstr(question);
+    Platform::String^ psAnswers;
+    if (choices != nullptr)
+        psAnswers = cstr_to_platstr(choices);
+    g_corewindow->Dispatcher->RunAsync(CoreDispatcherPriority::Low, ref new DispatchedHandler([psQuestion, psAnswers]() {
+        g_mainpage->Modal_Question = psQuestion;
+        g_mainpage->Modal_Answers->Clear();
+        if (psAnswers != nullptr)
+            g_mainpage->Modal_Answers->Append(psAnswers);
+        else
+            for (auto&& s : g_mainpage->Inventory_Strings)
+                g_mainpage->Modal_Answers->Append(s);
+
+        g_mainpage->PropertyChanged(g_mainpage, ref new PropertyChangedEventArgs("Modal_Question"));
+
+        VisualStateManager::GoToState(g_mainpage, Platform::StringReference(L"ModalDisplayed"), true);
+    }));
+
+    std::future<char> f = g_nativepage_impl.yn_function_promise.get_future();
+    return f.get();
+}
+void NativeMainPage::complete_yn_function(char ch)
+{
+    std::lock_guard<std::mutex> lock(g_nativepage_impl.promise_lock);
+    g_nativepage_impl.yn_function_promise.set_value(ch);
+}
 
 void NethackUWP::MainPage::OutputBox_TextChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::TextChangedEventArgs^ e)
 {
@@ -313,4 +361,14 @@ void NethackUWP::MainPage::Button_Open_Inventory_Click(Platform::Object^ sender,
 void NethackUWP::MainPage::Button_Click_1(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
     splitView->IsPaneOpen = false;
+}
+
+
+void NethackUWP::MainPage::listView_SelectionChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::SelectionChangedEventArgs^ e)
+{
+    if (e->AddedItems->Size == 1)
+    {
+        NativeMainPage::complete_yn_function(0);
+        VisualStateManager::GoToState(this, Platform::StringReference(L"ModalCollapsed"), true);
+    }
 }

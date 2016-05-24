@@ -6,19 +6,7 @@
 #include <mutex>
 #include <condition_variable>
 
-
-struct NativeMainPage {
-	static int read_char(int &x, int &y);
-    static void write_char(int x, int y, char ch);
-
-    static void write_notification(const char*);
-	static void update_statusbar(const char*);
-	static void clear_statusbar();
-
-    static void clear_inv();
-    static void add_inv_str(const char* str, boolean is_header, int attr, char accelerator);
-};
-
+#include "../../NativeMainPage.h"
 
 #define terminate terminate2
 #define boolean boolean2
@@ -210,7 +198,10 @@ extern "C"
 		}
 		void mswin_nhbell(void) {}
 		int mswin_doprev_message(void) { return 0; }
-		char mswin_yn_function(const char *question, const char *choices, CHAR_P def) { return 0; }
+		char mswin_yn_function(const char *question, const char *choices, CHAR_P def)
+        {
+            return NativeMainPage::ask_yn_function(question, choices, def);
+        }
 		void mswin_getlin(const char *question, char *input) {}
 		int mswin_get_ext_cmd(void) { return 0; }
 		void mswin_number_pad(int state) {}
