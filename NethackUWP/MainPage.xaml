@@ -71,6 +71,7 @@
                     <SolidColorBrush Color="{ThemeResource SystemChromeLowColor}"/>
                 </Grid.Background>
                 <TextBlock Text="{Binding Modal_Question, FallbackValue=TITLE}" FontSize="18" Margin="10,10,10,0"/>
+                <SymbolIcon Symbol="Cancel" HorizontalAlignment="Right" Margin="0,0,10,0" Tapped="SymbolIcon_Tapped"/>
                 <ListView x:Name="listView_modal" SelectionMode="Single" SelectionChanged="listView_SelectionChanged" ItemsSource="{Binding Modal_Answers}" Margin="10,0" Grid.Row="1">
                     <TextBlock>hello</TextBlock>
                     <TextBlock>hello</TextBlock>

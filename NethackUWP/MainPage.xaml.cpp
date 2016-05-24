@@ -368,7 +368,20 @@ void NethackUWP::MainPage::listView_SelectionChanged(Platform::Object^ sender, W
 {
     if (e->AddedItems->Size == 1)
     {
-        NativeMainPage::complete_yn_function(0);
+        auto selectedstr = (Platform::String^)e->AddedItems->GetAt(0);
+        if (selectedstr->Length() < 4 || memcmp(selectedstr->Data() + 1, L" - ", 3 * sizeof(wchar_t)) != 0)
+            return;
+        // Valid object was selected: string was "N - XXXXXXXXXX" for some N.
+
+        NativeMainPage::complete_yn_function(static_cast<char>(selectedstr->Data()[0]));
         VisualStateManager::GoToState(this, Platform::StringReference(L"ModalCollapsed"), true);
     }
+}
+
+
+void NethackUWP::MainPage::SymbolIcon_Tapped(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e)
+{
+    // Dismiss modal dialog
+    NativeMainPage::complete_yn_function(0);
+    VisualStateManager::GoToState(this, Platform::StringReference(L"ModalCollapsed"), true);
 }
