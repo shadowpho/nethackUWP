@@ -385,3 +385,15 @@ void NethackUWP::MainPage::SymbolIcon_Tapped(Platform::Object^ sender, Windows::
     NativeMainPage::complete_yn_function(0);
     VisualStateManager::GoToState(this, Platform::StringReference(L"ModalCollapsed"), true);
 }
+
+
+void NethackUWP::MainPage::Button_Open_History_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    splitView_History->IsPaneOpen = true;
+}
+
+
+void NethackUWP::MainPage::Button_Close_History_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    splitView_History->IsPaneOpen = false;
+}
