@@ -48,7 +48,8 @@ namespace NethackUWP
         property Windows::Foundation::Collections::IVector<Platform::String^>^ Inventory_Strings;
 
         property Windows::Foundation::Collections::IVector<Platform::String^>^ Notifications;
-		property Windows::Foundation::Collections::IVector<Platform::String^>^ StatusNotify;
+        property Platform::String^ Status_Line_1;
+        property Platform::String^ Status_Line_2;
 
         virtual event Windows::UI::Xaml::Data::PropertyChangedEventHandler ^ PropertyChanged;
 

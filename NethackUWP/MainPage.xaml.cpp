@@ -52,8 +52,6 @@ MainPage::MainPage()
     g_corewindow = Windows::UI::Core::CoreWindow::GetForCurrentThread();
     Notifications = ref new Platform::Collections::Vector<Platform::String^>();
     Inventory_Strings = ref new Platform::Collections::Vector<Platform::String^>();
-    StatusNotify = ref new Platform::Collections::Vector<Platform::String^>();
-
     for (int x = 0;x < 20; ++x)
     {
         Inventory_Strings->Append(L"Silver Dragon Scale Mail +5 blessed");
@@ -243,8 +241,11 @@ void NativeMainPage::write_notification(const char * str)
 void NativeMainPage::clear_statusbar()
 {
 	g_corewindow->Dispatcher->RunAsync(CoreDispatcherPriority::Low, ref new DispatchedHandler([]() {
-				g_mainpage->StatusNotify->Clear();
-	}));
+        g_mainpage->Status_Line_1 = nullptr;
+        g_mainpage->Status_Line_2 = nullptr;
+        g_mainpage->PropertyChanged(g_mainpage, ref new PropertyChangedEventArgs("Status_Line_1"));
+        g_mainpage->PropertyChanged(g_mainpage, ref new PropertyChangedEventArgs("Status_Line_2"));
+    }));
 }
 void NativeMainPage::clear_inv()
 {
@@ -283,9 +284,16 @@ void NativeMainPage::update_statusbar(const char * str)
     while (*str) { strbuf.push_back(*str); ++str; }
     Platform::String^ pcstr = ref new Platform::String(strbuf.c_str());
     g_corewindow->Dispatcher->RunAsync(CoreDispatcherPriority::Low, ref new DispatchedHandler([pcstr]() {
-        //		g_mainpage->StatusNotify->Clear();
-        g_mainpage->StatusNotify->Append(pcstr);
-
+        if (g_mainpage->Status_Line_1 == nullptr)
+        {
+            g_mainpage->Status_Line_1 = pcstr;
+            g_mainpage->PropertyChanged(g_mainpage, ref new PropertyChangedEventArgs("Status_Line_1"));
+        }
+        else
+        {
+            g_mainpage->Status_Line_2 = pcstr;
+            g_mainpage->PropertyChanged(g_mainpage, ref new PropertyChangedEventArgs("Status_Line_2"));
+        }
     }));
 }
 

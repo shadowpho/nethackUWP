@@ -45,7 +45,7 @@ void App::OnLaunched(Windows::ApplicationModel::Activation::LaunchActivatedEvent
 		if (IsDebuggerPresent())
 		{
 			// Display the current frame rate counters
-			 DebugSettings->EnableFrameRateCounter = true;
+			//DebugSettings->EnableFrameRateCounter = true;
 		}
 #endif
 
