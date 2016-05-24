@@ -39,7 +39,7 @@ extern "C"
 		NHW_TEXT        (help/text, full screen paged window)
 		*/
 		winid mswin_create_nhwindow(int type) {
-			assert(type < NHW_TEXT);
+			assert(type <= NHW_TEXT);
 			assert(type >= 0);
 			//we'll create them at different points.
 			return type;
@@ -59,6 +59,7 @@ extern "C"
 
 		void mswin_curs(winid wid, int x, int y) {}
 		void mswin_display_file(const char *filename, BOOLEAN_P must_exist) {}
+
 		void mswin_start_menu(winid wid)
         {
             if (wid == NHW_MENU)
@@ -75,8 +76,15 @@ extern "C"
                 NativeMainPage::add_inv_str(str, identifier == nullptr, attr, accelerator);
             }
         }
-		void mswin_end_menu(winid wid, const char *prompt) {}
-		int mswin_select_menu(winid wid, int how, MENU_ITEM_P **selected) { return 0; }
+		void mswin_end_menu(winid wid, const char *prompt) {
+        }
+		int mswin_select_menu(winid wid, int how, MENU_ITEM_P **selected)
+        {
+            *selected = (MENU_ITEM_P*)malloc(sizeof(MENU_ITEM_P) * 1);
+            memset(*selected, 0, sizeof(MENU_ITEM_P) * 1);
+            (*selected)->item.a_int = 1;
+            return 1;
+        }
         void mswin_update_inventory(void) {
             if (flags.perm_invent && program_state.something_worth_saving
                 && iflags.window_inited && WIN_INVEN != WIN_ERR)

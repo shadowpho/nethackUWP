@@ -44,7 +44,7 @@ using namespace Windows::UI::Xaml::Navigation;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
-const wchar_t DEFAULT_KEYS[][10] = {L"i",L".",L"z",L"#engrave", };
+const std::vector<wchar_t*> DEFAULT_KEYS = {L"i",L".",L"z",L"#engrave",L"o",L"u",L"l",L"d",L"w",L"e",};
 
 MainPage::MainPage()
 {
@@ -69,11 +69,11 @@ MainPage::MainPage()
 		button->Click += ref new Windows::UI::Xaml::RoutedEventHandler(this, &NethackUWP::MainPage::Quick_Button_Click);
 		
 		//button->AddHandler(button_Click, Quick_Button_Click, true);
-		if (i < 4)
+		if (i < DEFAULT_KEYS.size())
 			button->Content = ref new Platform::String(DEFAULT_KEYS[i]);
 		else
 			button->Content=ref new Platform::String( std::to_wstring(i).c_str());
-		button->Margin = 15;
+		button->Margin = Thickness(5,0,5,15);
 		Action_Button_Stack->Children->Append(button);
 		//Action_Button_Stack->Items->Append(button);
 		//Action_Button_Stack->Conten

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NethackUWP", "NethackUWP\NethackUWP.vcxproj", "{13146ED4-8EA0-4715-9216-01A822591971}"
 EndProject
@@ -10,6 +10,51 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "makedefs", "makedefs\makedefs.vcxproj", "{5F9C3A4B-73A7-4514-A7DB-E52A29A81A5D}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tilemap", "tilemap\tilemap.vcxproj", "{5460793E-A003-41BA-A047-D03C42AF0C44}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{59DE9FAE-35A4-4BD5-9CE0-335566E4BED8}"
+	ProjectSection(SolutionItems) = preProject
+		nethack_original\git_dump_3.6\win\win32\dgnstuff.mak = nethack_original\git_dump_3.6\win\win32\dgnstuff.mak
+		nethack_original\git_dump_3.6\win\win32\levstuff.mak = nethack_original\git_dump_3.6\win\win32\levstuff.mak
+		nethack_original\git_dump_3.6\win\win32\mhaskyn.c = nethack_original\git_dump_3.6\win\win32\mhaskyn.c
+		nethack_original\git_dump_3.6\win\win32\mhaskyn.h = nethack_original\git_dump_3.6\win\win32\mhaskyn.h
+		nethack_original\git_dump_3.6\win\win32\mhdlg.c = nethack_original\git_dump_3.6\win\win32\mhdlg.c
+		nethack_original\git_dump_3.6\win\win32\mhdlg.h = nethack_original\git_dump_3.6\win\win32\mhdlg.h
+		nethack_original\git_dump_3.6\win\win32\mhfont.c = nethack_original\git_dump_3.6\win\win32\mhfont.c
+		nethack_original\git_dump_3.6\win\win32\mhfont.h = nethack_original\git_dump_3.6\win\win32\mhfont.h
+		nethack_original\git_dump_3.6\win\win32\mhinput.c = nethack_original\git_dump_3.6\win\win32\mhinput.c
+		nethack_original\git_dump_3.6\win\win32\mhinput.h = nethack_original\git_dump_3.6\win\win32\mhinput.h
+		nethack_original\git_dump_3.6\win\win32\mhmain.c = nethack_original\git_dump_3.6\win\win32\mhmain.c
+		nethack_original\git_dump_3.6\win\win32\mhmain.h = nethack_original\git_dump_3.6\win\win32\mhmain.h
+		nethack_original\git_dump_3.6\win\win32\mhmap.c = nethack_original\git_dump_3.6\win\win32\mhmap.c
+		nethack_original\git_dump_3.6\win\win32\mhmap.h = nethack_original\git_dump_3.6\win\win32\mhmap.h
+		nethack_original\git_dump_3.6\win\win32\mhmenu.c = nethack_original\git_dump_3.6\win\win32\mhmenu.c
+		nethack_original\git_dump_3.6\win\win32\mhmenu.h = nethack_original\git_dump_3.6\win\win32\mhmenu.h
+		nethack_original\git_dump_3.6\win\win32\mhmsg.h = nethack_original\git_dump_3.6\win\win32\mhmsg.h
+		nethack_original\git_dump_3.6\win\win32\mhmsgwnd.c = nethack_original\git_dump_3.6\win\win32\mhmsgwnd.c
+		nethack_original\git_dump_3.6\win\win32\mhmsgwnd.h = nethack_original\git_dump_3.6\win\win32\mhmsgwnd.h
+		nethack_original\git_dump_3.6\win\win32\mhrip.c = nethack_original\git_dump_3.6\win\win32\mhrip.c
+		nethack_original\git_dump_3.6\win\win32\mhrip.h = nethack_original\git_dump_3.6\win\win32\mhrip.h
+		nethack_original\git_dump_3.6\win\win32\mhsplash.c = nethack_original\git_dump_3.6\win\win32\mhsplash.c
+		nethack_original\git_dump_3.6\win\win32\mhsplash.h = nethack_original\git_dump_3.6\win\win32\mhsplash.h
+		nethack_original\git_dump_3.6\win\win32\mhstatus.c = nethack_original\git_dump_3.6\win\win32\mhstatus.c
+		nethack_original\git_dump_3.6\win\win32\mhstatus.h = nethack_original\git_dump_3.6\win\win32\mhstatus.h
+		nethack_original\git_dump_3.6\win\win32\mhtext.c = nethack_original\git_dump_3.6\win\win32\mhtext.c
+		nethack_original\git_dump_3.6\win\win32\mhtext.h = nethack_original\git_dump_3.6\win\win32\mhtext.h
+		nethack_original\git_dump_3.6\win\win32\mnsel.uu = nethack_original\git_dump_3.6\win\win32\mnsel.uu
+		nethack_original\git_dump_3.6\win\win32\mnselcnt.uu = nethack_original\git_dump_3.6\win\win32\mnselcnt.uu
+		nethack_original\git_dump_3.6\win\win32\mnunsel.uu = nethack_original\git_dump_3.6\win\win32\mnunsel.uu
+		nethack_original\git_dump_3.6\win\win32\mswproc.c = nethack_original\git_dump_3.6\win\win32\mswproc.c
+		nethack_original\git_dump_3.6\win\win32\petmark.uu = nethack_original\git_dump_3.6\win\win32\petmark.uu
+		nethack_original\git_dump_3.6\win\win32\pilemark.uu = nethack_original\git_dump_3.6\win\win32\pilemark.uu
+		nethack_original\git_dump_3.6\win\win32\record.uu = nethack_original\git_dump_3.6\win\win32\record.uu
+		nethack_original\git_dump_3.6\win\win32\resource.h = nethack_original\git_dump_3.6\win\win32\resource.h
+		nethack_original\git_dump_3.6\win\win32\rip.uu = nethack_original\git_dump_3.6\win\win32\rip.uu
+		nethack_original\git_dump_3.6\win\win32\splash.uu = nethack_original\git_dump_3.6\win\win32\splash.uu
+		nethack_original\git_dump_3.6\win\win32\tiles.mak = nethack_original\git_dump_3.6\win\win32\tiles.mak
+		nethack_original\git_dump_3.6\win\win32\winhack.c = nethack_original\git_dump_3.6\win\win32\winhack.c
+		nethack_original\git_dump_3.6\win\win32\winhack.rc = nethack_original\git_dump_3.6\win\win32\winhack.rc
+		nethack_original\git_dump_3.6\win\win32\winMS.h = nethack_original\git_dump_3.6\win\win32\winMS.h
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
