@@ -236,6 +236,8 @@ void NativeMainPage::write_notification(const char * str)
     Platform::String^ pcstr = ref new Platform::String(strbuf.c_str());
     g_corewindow->Dispatcher->RunAsync(CoreDispatcherPriority::Low, ref new DispatchedHandler([pcstr]() {
         g_mainpage->Notifications->Append(pcstr);
+        g_mainpage->Last_Notification = pcstr;
+        g_mainpage->PropertyChanged(g_mainpage, ref new PropertyChangedEventArgs("Last_Notification"));
     }));
 }
 void NativeMainPage::clear_statusbar()

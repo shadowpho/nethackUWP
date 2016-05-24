@@ -39,6 +39,7 @@ namespace NethackUWP
         property Platform::String^ Status_Line_2;
 
         property Platform::String^ Modal_Question;
+        property Platform::String^ Last_Notification;
         property Windows::Foundation::Collections::IVector<Platform::String^>^ Modal_Answers;
 
         virtual event Windows::UI::Xaml::Data::PropertyChangedEventHandler ^ PropertyChanged;
