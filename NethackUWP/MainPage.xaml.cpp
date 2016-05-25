@@ -310,7 +310,7 @@ void NativeMainPage::update_statusbar(const char * str)
 struct NativeMainPageImpl
 {
     std::mutex promise_lock;
-    std::promise<char> yn_function_promise;
+    std::promise<int> yn_function_promise;
 
 } g_nativepage_impl;
 
@@ -318,34 +318,64 @@ char NativeMainPage::ask_yn_function(const char *question, const char *choices, 
 {
     {
         std::lock_guard<std::mutex> lock(g_nativepage_impl.promise_lock);
-        g_nativepage_impl.yn_function_promise = std::promise<char>();
+        g_nativepage_impl.yn_function_promise = std::promise<int>();
     }
 
     Platform::String^ psQuestion = cstr_to_platstr(question);
-    Platform::String^ psAnswers;
-    if (choices != nullptr)
-        psAnswers = cstr_to_platstr(choices);
-    g_corewindow->Dispatcher->RunAsync(CoreDispatcherPriority::Low, ref new DispatchedHandler([psQuestion, psAnswers]() {
+    g_corewindow->Dispatcher->RunAsync(CoreDispatcherPriority::Low, ref new DispatchedHandler([psQuestion, choices]() mutable {
         g_mainpage->Modal_Question = psQuestion;
         g_mainpage->Modal_Answers->Clear();
-        if (psAnswers != nullptr)
-            g_mainpage->Modal_Answers->Append(psAnswers);
-        else
-            for (auto&& s : g_mainpage->Inventory_Strings)
-                g_mainpage->Modal_Answers->Append(s);
+        if (choices != nullptr)
+            while (*choices != 0)
+            {
+                std::string s;
+                s.push_back(*choices);
+                g_mainpage->Modal_Answers->Append(cstr_to_platstr(s.c_str()));
+                ++choices;
+            }
 
         g_mainpage->PropertyChanged(g_mainpage, ref new PropertyChangedEventArgs("Modal_Question"));
 
         VisualStateManager::GoToState(g_mainpage, Platform::StringReference(L"ModalDisplayed"), true);
     }));
 
-    std::future<char> f = g_nativepage_impl.yn_function_promise.get_future();
-    return f.get();
+    std::future<int> f = g_nativepage_impl.yn_function_promise.get_future();
+    auto f_val = f.get();
+    return f_val == -1 ? def : choices[f_val];
 }
-void NativeMainPage::complete_yn_function(char ch)
+void NativeMainPage::complete_yn_function(int idx)
 {
     std::lock_guard<std::mutex> lock(g_nativepage_impl.promise_lock);
-    g_nativepage_impl.yn_function_promise.set_value(ch);
+    g_nativepage_impl.yn_function_promise.set_value(idx);
+}
+bool NativeMainPage::ask_menu(const menu_t& m, int& selection_value)
+{
+    {
+        std::lock_guard<std::mutex> lock(g_nativepage_impl.promise_lock);
+        g_nativepage_impl.yn_function_promise = std::promise<int>();
+    }
+
+    Platform::String^ psQuestion = cstr_to_platstr(m.prompt.c_str());
+
+    g_corewindow->Dispatcher->RunAsync(CoreDispatcherPriority::Low, ref new DispatchedHandler([psQuestion, &m]() {
+        g_mainpage->Modal_Question = psQuestion;
+        g_mainpage->Modal_Answers->Clear();
+
+        for (auto&& s : m.choices)
+            g_mainpage->Modal_Answers->Append(cstr_to_platstr(s.str.c_str()));
+
+        g_mainpage->PropertyChanged(g_mainpage, ref new PropertyChangedEventArgs("Modal_Question"));
+
+        VisualStateManager::GoToState(g_mainpage, Platform::StringReference(L"ModalDisplayed"), true);
+    }));
+
+    std::future<int> f = g_nativepage_impl.yn_function_promise.get_future();
+    auto idx = f.get();
+    if (idx == -1 || !m.choices[idx].selectable)
+        return true;
+
+    selection_value = m.choices[idx].value;
+    return false;
 }
 
 void NethackUWP::MainPage::OutputBox_TextChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::TextChangedEventArgs^ e)
@@ -370,12 +400,11 @@ void NethackUWP::MainPage::listView_SelectionChanged(Platform::Object^ sender, W
 {
     if (e->AddedItems->Size == 1)
     {
-        auto selectedstr = (Platform::String^)e->AddedItems->GetAt(0);
-        if (selectedstr->Length() < 4 || memcmp(selectedstr->Data() + 1, L" - ", 3 * sizeof(wchar_t)) != 0)
-            return;
-        // Valid object was selected: string was "N - XXXXXXXXXX" for some N.
+        auto obj = (Platform::String^)e->AddedItems->GetAt(0);
+        unsigned int idx = -1;
+        Modal_Answers->IndexOf(obj, &idx);
 
-        NativeMainPage::complete_yn_function(static_cast<char>(selectedstr->Data()[0]));
+        NativeMainPage::complete_yn_function(idx);
         VisualStateManager::GoToState(this, Platform::StringReference(L"ModalCollapsed"), true);
     }
 }
@@ -384,7 +413,7 @@ void NethackUWP::MainPage::listView_SelectionChanged(Platform::Object^ sender, W
 void NethackUWP::MainPage::SymbolIcon_Tapped(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e)
 {
     // Dismiss modal dialog
-    NativeMainPage::complete_yn_function(0);
+    NativeMainPage::complete_yn_function(-1);
     VisualStateManager::GoToState(this, Platform::StringReference(L"ModalCollapsed"), true);
 }
 

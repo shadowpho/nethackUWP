@@ -5,6 +5,7 @@
 #include <deque>
 #include <mutex>
 #include <condition_variable>
+#include <unordered_map>
 
 #include "../../NativeMainPage.h"
 
@@ -39,50 +40,96 @@ extern "C"
 		NHW_TEXT        (help/text, full screen paged window)
 		*/
 		winid mswin_create_nhwindow(int type) {
+            static winid g_window_id = 0;
 			assert(type <= NHW_TEXT);
 			assert(type >= 0);
 			//we'll create them at different points.
-			return type;
+			return g_window_id++;
 		}
 
 		void mswin_clear_nhwindow(winid wid) 
 		{
-			if (wid == NHW_STATUS)
+            if (wid == WIN_ERR)
+                abort();
+
+            if (wid == WIN_STATUS)
 				NativeMainPage::clear_statusbar();
-			else
-				2 + 2;
 		}
 		void mswin_display_nhwindow(winid wid, BOOLEAN_P block) 
 		{
-			//NativeMainPage::write_notification();
+            if (wid == WIN_ERR)
+                abort();
+            //NativeMainPage::write_notification();
 		}
 
 		void mswin_curs(winid wid, int x, int y) {}
 		void mswin_display_file(const char *filename, BOOLEAN_P must_exist) {}
 
+        std::unordered_map<winid, menu_t> g_menus;
+        std::string g_inven_prompt;
+
 		void mswin_start_menu(winid wid)
         {
-            if (wid == NHW_MENU)
+            if (wid == WIN_ERR)
+                abort();
+            if (wid == WIN_INVEN)
             {
                 NativeMainPage::clear_inv();
+            }
+            else
+            {
+                auto& menu = g_menus[wid];
+                menu.prompt.clear();
+                menu.choices.clear();
             }
         }
 		void mswin_add_menu(winid wid, int glyph, const ANY_P *identifier,
 			CHAR_P accelerator, CHAR_P group_accel, int attr,
 			const char *str, BOOLEAN_P presel)
         {
-            if (wid == NHW_MENU)
+            if (wid == WIN_ERR)
+                abort();
+            if (wid == WIN_INVEN)
             {
                 NativeMainPage::add_inv_str(str, identifier == nullptr, attr, accelerator);
             }
+            else
+            {
+                choice_t ch;
+                ch.accel = accelerator;
+                ch.attr = attr;
+                ch.selectable = identifier != nullptr;
+                ch.value = identifier != nullptr ? identifier->a_int : 0;
+                ch.str = str;
+                ch.preselected = presel;
+                g_menus[wid].choices.push_back(std::move(ch));
+            }
         }
 		void mswin_end_menu(winid wid, const char *prompt) {
+            if (wid == WIN_INVEN && prompt == nullptr)
+                return;
+            if (wid == WIN_INVEN)
+            {
+                g_inven_prompt = prompt;
+                return;
+            }
+
+            g_menus[wid].prompt = prompt;
         }
 		int mswin_select_menu(winid wid, int how, MENU_ITEM_P **selected)
         {
+            if (how == PICK_NONE)
+                return 0;
+
+            int selection_value = 0;
+            auto cancelled = NativeMainPage::ask_menu(g_menus[wid], selection_value);
+
+            if (cancelled)
+                return -1;
+
             *selected = (MENU_ITEM_P*)malloc(sizeof(MENU_ITEM_P) * 1);
             memset(*selected, 0, sizeof(MENU_ITEM_P) * 1);
-            (*selected)->item.a_int = 1;
+            (*selected)->item.a_int = selection_value;
             return 1;
         }
         void mswin_update_inventory(void) {
@@ -178,7 +225,7 @@ extern "C"
         }
         void mswin_putstr(winid wid, int attr, const char *text) 
 		{ 
-			if (wid == NHW_STATUS)
+			if (wid == WIN_STATUS)
 				NativeMainPage::update_statusbar(text);
 			else
 				mswin_raw_print(text);
@@ -208,7 +255,11 @@ extern "C"
 		int mswin_doprev_message(void) { return 0; }
 		char mswin_yn_function(const char *question, const char *choices, CHAR_P def)
         {
-            return NativeMainPage::ask_yn_function(question, choices, def);
+            assert(question != nullptr);
+            if (strcmp(question, "In what direction?") == 0) // directions
+                return NativeMainPage::ask_yn_function(question, "hjklyubn<>s", def);
+            else
+                return NativeMainPage::ask_yn_function(question, choices, def);
         }
 		void mswin_getlin(const char *question, char *input) {}
 		int mswin_get_ext_cmd(void) { return 0; }
