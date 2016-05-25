@@ -130,6 +130,7 @@ extern "C"
             *selected = (MENU_ITEM_P*)malloc(sizeof(MENU_ITEM_P) * 1);
             memset(*selected, 0, sizeof(MENU_ITEM_P) * 1);
             (*selected)->item.a_int = selection_value;
+            (*selected)->count = -1;
             return 1;
         }
         void mswin_update_inventory(void) {
@@ -258,8 +259,14 @@ extern "C"
             assert(question != nullptr);
             if (strcmp(question, "In what direction?") == 0) // directions
                 return NativeMainPage::ask_yn_function(question, "hjklyubn<>s", def);
+            else if(strncmp(question, "What do you want to ", sizeof("What do you want to")) == 0)
+            {
+                return NativeMainPage::ask_inv_function(question, def);
+            }
             else
+            {
                 return NativeMainPage::ask_yn_function(question, choices, def);
+            }
         }
 		void mswin_getlin(const char *question, char *input) {}
 		int mswin_get_ext_cmd(void) { return 0; }

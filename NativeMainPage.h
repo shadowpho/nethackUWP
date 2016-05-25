@@ -44,6 +44,7 @@ struct NativeMainPage {
     static void add_inv_str(const char* str, bool is_header, int attr, char accelerator);
 
     static bool ask_menu(const menu_t& m, int& selection_value);
+    static char ask_inv_function(const char* question, char def);
 
     static char ask_yn_function(const char *question, const char *choices, char def);
     static void complete_yn_function(int idx);

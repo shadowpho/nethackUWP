@@ -314,6 +314,34 @@ struct NativeMainPageImpl
 
 } g_nativepage_impl;
 
+char NativeMainPage::ask_inv_function(const char *question, char def)
+{
+    {
+        std::lock_guard<std::mutex> lock(g_nativepage_impl.promise_lock);
+        g_nativepage_impl.yn_function_promise = std::promise<int>();
+    }
+
+    Platform::String^ psQuestion = cstr_to_platstr(question);
+    g_corewindow->Dispatcher->RunAsync(CoreDispatcherPriority::Low, ref new DispatchedHandler([psQuestion]() mutable {
+        g_mainpage->Modal_Question = psQuestion;
+        g_mainpage->Modal_Answers->Clear();
+
+        for (auto&& inv : g_mainpage->Inventory_Strings)
+            g_mainpage->Modal_Answers->Append(inv);
+
+        g_mainpage->PropertyChanged(g_mainpage, ref new PropertyChangedEventArgs("Modal_Question"));
+
+        VisualStateManager::GoToState(g_mainpage, Platform::StringReference(L"ModalDisplayed"), true);
+    }));
+
+
+    std::future<int> f = g_nativepage_impl.yn_function_promise.get_future();
+    auto f_val = f.get();
+    if (f_val >= 0)
+        return g_mainpage->Inventory_Strings->GetAt(f_val)->Data()[0];
+    return def;
+}
+
 char NativeMainPage::ask_yn_function(const char *question, const char *choices, char def)
 {
     {
