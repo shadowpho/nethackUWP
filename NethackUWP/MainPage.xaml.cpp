@@ -128,40 +128,31 @@ void NethackUWP::MainPage::OutputBox_Tapped2(Platform::Object^ sender, Windows::
 		up = true;
 
 	//XXX DIAGONALS
-	if (up == true)
-		send_str += "k";
-	if (down == true)
-		send_str += "j";
-	if (left == true)
-		send_str += "h";
-	if (right == true)
-		send_str += "l";
-	{
+    if (up && left)
+        send_str = "y";
+    else if (up && right)
+        send_str = "u";
+    else if (down && left)
+        send_str = "b";
+    else if (down && right)
+        send_str = "n";
+    else if (left)
+        send_str = "h";
+    else if (up)
+        send_str = "k";
+    else if (right)
+        send_str = "l";
+    else if (down)
+        send_str = "j";
+
+    if (!send_str.empty())
+    {
 		lock_guard<mutex> lock(blocked_on_input);
 		if (input_string.empty())
 			input_string_cv.notify_all();
 		input_string.insert(input_string.end(), begin(send_str), end(send_str));
-		
 	}
 
-
-	/*
-	int px = (pressed.X) / OutputBox->FontSize;
-	int py = (pressed.Y) / OutputBox->FontSize;
-	
-	//std::string msg = to_string(px) + ',' + to_string(py);
-	//NativeMainPage::write_notification(msg.c_str());
-
-	{
-		lock_guard<mutex> lock(blocked_on_input);
-		std::tuple<unsigned short, unsigned short> new_tuple = { px,py };
-		if (input_mouse.empty())
-			input_string_cv.notify_all();
-		input_mouse.push_front(new_tuple);
-		
-	}
-	*/
-	
 }
 void NethackUWP::MainPage::Quick_Button_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
