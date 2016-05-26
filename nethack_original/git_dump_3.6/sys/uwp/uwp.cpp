@@ -14,6 +14,7 @@
 extern "C"
 {
 #include "hack.h"
+#include "func_tab.h"
 }
 
 
@@ -269,7 +270,26 @@ extern "C"
             }
         }
 		void mswin_getlin(const char *question, char *input) {}
-		int mswin_get_ext_cmd(void) { return 0; }
+
+		int mswin_get_ext_cmd(void) {
+            menu_t ext_command_menu;
+            auto p_extcmd = extcmdlist;
+            while (p_extcmd->ef_txt != nullptr)
+            {
+                ext_command_menu.choices.push_back({});
+                auto& choice = ext_command_menu.choices.back();
+                choice.str = p_extcmd->ef_txt;
+                choice.str.append(" - ");
+                choice.str.append(p_extcmd->ef_desc);
+                choice.value = p_extcmd - extcmdlist;
+                choice.selectable = true;
+                ++p_extcmd;
+            }
+            ext_command_menu.prompt = "What extended command?";
+            int val = -1;
+            NativeMainPage::ask_menu(ext_command_menu, val);
+            return val;
+        }
 		void mswin_number_pad(int state) {}
 		void mswin_delay_output(void) 
 		{
