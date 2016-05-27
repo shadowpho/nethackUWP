@@ -53,6 +53,15 @@ struct NativeMainPageImpl
     bool waiting_for_direction = false;
 } g_nativepage_impl;
 
+void MainPage::clear_map()
+{
+    output_string = std::wstring(NativeMainPage::max_width_offset * NativeMainPage::max_height, L' ');
+    for (int x = 1; x <= NativeMainPage::max_height; ++x)
+    {
+        output_string[x * NativeMainPage::max_width_offset - 1] = '\n';
+    }
+}
+
 MainPage::MainPage()
 {
 	InitializeComponent();
@@ -64,14 +73,12 @@ MainPage::MainPage()
     Inventory_Strings = ref new Platform::Collections::Vector<Platform::String^>();
     Last_Notifications = ref new Platform::Collections::Vector<Platform::String^>();
     Modal_Answers = ref new Platform::Collections::Vector<Platform::String^>();
+    clear_map();
 
     this->DataContext = this;
-    output_string = std::wstring(NativeMainPage::max_width_offset * NativeMainPage::max_height, L' ');
-    for (int x = 1; x <= NativeMainPage::max_height; ++x)
-    {
-        output_string[x * NativeMainPage::max_width_offset - 1] = '\n';
-    }
-	for(int i=0; i< MAX_BUTTONS; i++)
+
+
+    for(int i=0; i< MAX_BUTTONS; i++)
 	{ 
 		Button ^button = ref new Button();
 		button->Click += ref new Windows::UI::Xaml::RoutedEventHandler(this, &NethackUWP::MainPage::Quick_Button_Click);
@@ -256,6 +263,9 @@ void NativeMainPage::write_char(int x, int y, char ch)
         if (y >= max_height) abort();
         g_mainpage->output_string[max_width_offset * y + x] = ch;
     }
+}
+void NativeMainPage::display_map()
+{
     g_corewindow->Dispatcher->RunAsync(CoreDispatcherPriority::Low, ref new DispatchedHandler([]() {
         g_mainpage->PropertyChanged(g_mainpage, ref new PropertyChangedEventArgs("OutStringBuf"));
     }));
@@ -277,6 +287,11 @@ void NativeMainPage::write_notification(const char * str)
             g_mainpage->notificationsExpander->Visibility = Windows::UI::Xaml::Visibility::Visible;
         g_mainpage->PropertyChanged(g_mainpage, ref new PropertyChangedEventArgs("Last_Notification"));
     }));
+}
+
+void NativeMainPage::clear_map()
+{
+    g_mainpage->clear_map();
 }
 
 void NativeMainPage::clear_notifications()

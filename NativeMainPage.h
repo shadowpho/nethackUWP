@@ -41,6 +41,9 @@ struct NativeMainPage {
     static void update_statusbar(const char*);
     static void clear_statusbar();
 
+    static void clear_map();
+    static void display_map();
+
     static void clear_inv();
     static void add_inv_str(const char* str, bool is_header, int attr, char accelerator);
 

@@ -94,11 +94,16 @@ extern "C"
 
             if (wid == WIN_STATUS)
 				NativeMainPage::clear_statusbar();
+
+            if (wid == WIN_MAP)
+                NativeMainPage::clear_map();
 		}
 		void mswin_display_nhwindow(winid wid, BOOLEAN_P block) 
 		{
             if (wid == WIN_ERR)
                 abort();
+            if (wid == WIN_MAP)
+                NativeMainPage::display_map();
             //NativeMainPage::write_notification();
 		}
 
