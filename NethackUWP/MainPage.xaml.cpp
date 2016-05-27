@@ -44,7 +44,7 @@ using namespace Windows::UI::Xaml::Navigation;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
-const std::vector<wchar_t*> DEFAULT_KEYS = {L"i",L".",L"z",L"#engrave",L"o",L"u",L"l",L"d",L"w",L"e",};
+const std::vector<wchar_t*> DEFAULT_KEYS = {L"#",L".",L"z",L"Z",L"o",L"u",L"l",L"d",L"w",L"W",};
 
 MainPage::MainPage()
 {
