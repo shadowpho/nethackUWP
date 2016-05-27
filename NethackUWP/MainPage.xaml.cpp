@@ -44,7 +44,14 @@ using namespace Windows::UI::Xaml::Navigation;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
-const std::vector<wchar_t*> DEFAULT_KEYS = {L"i",L".",L"z",L"#engrave",L"o",L"u",L"l",L"d",L"w",L"e",};
+const std::vector<wchar_t*> DEFAULT_KEYS = {L"#",L".",L"z",L"Z",L"o",L"u",L"l",L"d",L"w",L"W",};
+
+struct NativeMainPageImpl
+{
+    std::mutex promise_lock;
+    std::promise<int> yn_function_promise;
+    bool waiting_for_direction = false;
+} g_nativepage_impl;
 
 MainPage::MainPage()
 {
@@ -117,12 +124,14 @@ void NethackUWP::MainPage::button_Click(Platform::Object^ sender, Windows::UI::X
 		choose_windows("mswin");//dun worry
 							  //	tty_procs (NULL, NULL); //dun worry
 		initoptions(); //nuh nuh nuh
-
 		dlb_init();
 		init_nhwindows(0, 0);
 		vision_init();
 		display_gamewindows();//dunno
 		newgame();
+
+        flags.perm_invent = true;
+
 		flags.debug = true;
 		//resuming = pcmain(argc, argv);
         display_inventory(nullptr, 0);
@@ -169,7 +178,17 @@ void NethackUWP::MainPage::OutputBox_Tapped2(Platform::Object^ sender, Windows::
         send_str = "l";
     else if (down)
         send_str = "j";
-
+    {
+        std::lock_guard<std::mutex> lock(g_nativepage_impl.promise_lock);
+        if (g_nativepage_impl.waiting_for_direction) {
+            if (send_str.empty())
+                g_nativepage_impl.yn_function_promise.set_value('s');
+            else
+                g_nativepage_impl.yn_function_promise.set_value(send_str.front());
+            g_mainpage->modalDialog->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+            return;
+        }
+    }
     if (!send_str.empty())
     {
 		lock_guard<mutex> lock(blocked_on_input);
@@ -265,6 +284,7 @@ void NativeMainPage::clear_notifications()
     g_corewindow->Dispatcher->RunAsync(CoreDispatcherPriority::Low, ref new DispatchedHandler([]() {
         g_mainpage->Last_Notification = "";
         g_mainpage->Last_Notifications->Clear();
+        g_mainpage->notificationsExpander->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
         g_mainpage->PropertyChanged(g_mainpage, ref new PropertyChangedEventArgs("Last_Notification"));
     }));
 }
@@ -335,13 +355,6 @@ void NativeMainPage::update_statusbar(const char * str)
     }));
 }
 
-struct NativeMainPageImpl
-{
-    std::mutex promise_lock;
-    std::promise<int> yn_function_promise;
-
-} g_nativepage_impl;
-
 char NativeMainPage::ask_inv_function(const char *question, char def)
 {
     {
@@ -371,25 +384,30 @@ char NativeMainPage::ask_inv_function(const char *question, char def)
 
 char NativeMainPage::ask_direction(char def)
 {
-    static menu_t direction_menu = {
-        std::string("In what direction?"),
-        std::vector<choice_t>{
-            {0, true, 'k', 0, false, "North"},
-            {0, true, 'j', 0, false, "South"},
-            {0, true, 'l', 0, false, "East"},
-            {0, true, 'h', 0, false, "West"},
-            {0, true, 'u', 0, false, "Northeast"},
-            { 0, true, 'y', 0, false, "Northwest" },
-            { 0, true, 'n', 0, false, "Southeast" },
-            { 0, true, 'b', 0, false, "Southwest" },
-            { 0, true, '<', 0, false, "Up" },
-            { 0, true, '>', 0, false, "Down" },
-            { 0, true, 's', 0, false, "Yourself" },
+    {
+        std::lock_guard<std::mutex> lock(g_nativepage_impl.promise_lock);
+        g_nativepage_impl.yn_function_promise = std::promise<int>();
+        g_nativepage_impl.waiting_for_direction = true;
     }
-    };
-    int val = def;
-    ask_menu(direction_menu, val);
-    return static_cast<char>(val);
+
+    g_corewindow->Dispatcher->RunAsync(CoreDispatcherPriority::Low, ref new DispatchedHandler([]() {
+        g_mainpage->Modal_Question = L"In what direction?";
+        g_mainpage->Modal_Answers->Clear();
+
+        g_mainpage->PropertyChanged(g_mainpage, ref new PropertyChangedEventArgs("Modal_Question"));
+
+        g_mainpage->modalDialog->Visibility = Windows::UI::Xaml::Visibility::Visible;
+    }));
+
+    std::future<int> f = g_nativepage_impl.yn_function_promise.get_future();
+    auto x = f.get();
+    {
+        std::lock_guard<std::mutex> lock(g_nativepage_impl.promise_lock);
+        g_nativepage_impl.waiting_for_direction = false;
+    }
+    if (x == -1)
+        return def;
+    return static_cast<char>(x);
 }
 
 char NativeMainPage::ask_yn_function(const char *question, const char *choices, char def)

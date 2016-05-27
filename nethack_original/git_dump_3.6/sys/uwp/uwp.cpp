@@ -61,7 +61,9 @@ extern "C"
 				iflags.wc_tile_height = TILE_Y;
 				*/
 
+			iflags.window_inited = 1;
 		}
+
 		void mswin_player_selection(void) {}
 		void mswin_askname(void) { strcpy(plname, "best_playa-wizard-elf-female-chaos"); } //ask user for name, bail if cancel.
 		void mswin_get_nh_event(void) {}
