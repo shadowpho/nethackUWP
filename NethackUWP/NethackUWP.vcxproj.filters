@@ -55,8 +55,15 @@
       <Filter>Assets</Filter>
     </None>
     <None Include="..\nethack_original\git_dump_3.6\dat\dungeon" />
+    <None Include="sysconf" />
+    <None Include="rumors" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="MainPage.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="wizkit.txt" />
+    <Text Include="engrave.txt" />
+    <Text Include="epitaph.txt" />
   </ItemGroup>
 </Project>

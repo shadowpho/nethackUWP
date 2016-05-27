@@ -86,11 +86,32 @@ MainPage::MainPage()
 	g_mainpage->KeyUp += ref new Windows::UI::Xaml::Input::KeyEventHandler(this, &NethackUWP::MainPage::OnKeyUp);
 }
 
+
+
 void NethackUWP::MainPage::button_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
+	flags.debug = true;
+	wchar_t* spooky_ghost_folder = (wchar_t*) Windows::Storage::ApplicationData::Current->LocalFolder->Path->Data();
+
+	char* spooky_ghost = new char[1024];
+	char* real_spooky_ghost = spooky_ghost;
+
+	while (*spooky_ghost_folder)
+		*spooky_ghost++ = *spooky_ghost_folder++;
+	*spooky_ghost++ = '\\';
+	*spooky_ghost++ = 'G';
+	*spooky_ghost++ = 0;
+
+	fqn_prefix[LEVELPREFIX] = real_spooky_ghost;
+	for (int i = 0; i < 7; i++)
+	{
+		fqn_prefix[i] = real_spooky_ghost;
+	}
+
+
 	if (game_is_running == true) return;
 	game_is_running = true;
-    static thread nethack_thread([]()
+    static thread nethack_thread([real_spooky_ghost]()
 	{
 		sys_early_init();
 		choose_windows("mswin");//dun worry
@@ -102,11 +123,12 @@ void NethackUWP::MainPage::button_Click(Platform::Object^ sender, Windows::UI::X
 		vision_init();
 		display_gamewindows();//dunno
 		newgame();
-		
+		flags.debug = true;
 		//resuming = pcmain(argc, argv);
         display_inventory(nullptr, 0);
 		moveloop(0);
 		//trololololololololololololololololololo
+		delete[] real_spooky_ghost;
 	});
 	
 }
@@ -532,7 +554,7 @@ void NethackUWP::MainPage::OnKeyUp(Platform::Object ^sender, Windows::UI::Xaml::
 		lock_guard<mutex> lock(blocked_on_input);
 		if (input_string.empty())
 			input_string_cv.notify_all();
-		input_string.push_back(nethack_text);
+		input_string.push_back(nethack_text + 32);
 	}
 
 }

@@ -479,20 +479,21 @@ char errbuf[];
     if (errbuf)
         *errbuf = '\0';
     set_levelfile_name(lock, lev);
- //   fq_lock = fqname(lock, LEVELPREFIX, 0);
- fq_lock = "spooky_ghost.txt";
+   fq_lock = fqname(lock, LEVELPREFIX, 0);
+ //fq_lock = "spooky_ghost.txt";
 
 #if defined(MICRO) || defined(WIN32)
 /* Use O_TRUNC to force the file to be shortened if it already
  * exists and is currently longer.
  */
 #ifdef HOLD_LOCKFILE_OPEN
-    if (lev == 0)
-        fd = open_levelfile_exclusively(
-            fq_lock, lev, O_WRONLY | O_CREAT | O_TRUNC | O_BINARY);
-    else
+   if (lev == 0)
+	   fd = open_levelfile_exclusively(
+		   fq_lock, lev, O_WRONLY | O_CREAT | O_TRUNC | O_BINARY);
+   else
 #endif
-        fd = open(fq_lock, O_WRONLY | O_CREAT | O_TRUNC | O_BINARY, FCMASK);
+	   fd = open(fq_lock, O_WRONLY | O_CREAT | O_TRUNC | O_BINARY, FCMASK);
+	   
 #else
 #ifdef MAC
     fd = maccreat(fq_lock, LEVL_TYPE);

@@ -183,6 +183,12 @@
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
     </None>
     <None Include="NethackUWP_TemporaryKey.pfx" />
+    <None Include="rumors">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+    </None>
+    <None Include="sysconf">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\LockScreenLogo.scale-200.png" />
@@ -213,6 +219,11 @@
     <ProjectReference Include="..\nethack_original\nethack_original.vcxproj">
       <Project>{9d7f0254-6fdb-4968-8699-da05854c226c}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="engrave.txt" />
+    <Text Include="epitaph.txt" />
+    <Text Include="wizkit.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
