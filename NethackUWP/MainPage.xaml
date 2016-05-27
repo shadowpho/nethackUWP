@@ -126,7 +126,7 @@
                         <SymbolIcon Symbol="More" HorizontalAlignment="Right" Margin="0,0,10,0" Tapped="CollapseNotifications"/>
                         <ItemsControl x:Name="textBox_last_notifications" ItemsSource="{Binding Last_Notifications}" Margin="10,0,10,0" Grid.Row="1" VerticalAlignment="Top" Background="{ThemeResource SystemChromeLowColor}" ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
                     </Grid>
-                    <TextBox x:Name="OutputBox" Text="{Binding OutStringBuf}" FontFamily="Consolas" TextChanged="OutputBox_TextChanged" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled" TextWrapping="NoWrap" AcceptsReturn="True" IsReadOnly="True" Grid.Row="2" IsTabStop="False"/>
+                    <TextBox x:Name="OutputBox" Text="{Binding OutStringBuf}" FontFamily="Consolas" TextChanged="OutputBox_TextChanged" TextWrapping="NoWrap" AcceptsReturn="True" IsReadOnly="True" Grid.Row="2" IsTabStop="False"/>
                     <!-- Best_playa the Evoker    St:10 Dx:16 Co:13 In:20 Wi:7 Ch:10  Chaotic -->
                     <!-- Dlvl:1  $:0  HP:11(11) Pw:8(8) AC:9  Exp:1 -->
                     <TextBlock x:Name="textBlock_status_1" Margin="10,0,10,20" Grid.Row="3" TextWrapping="Wrap" Text="{Binding Status_Line_1, FallbackValue=Status1}" VerticalAlignment="Bottom" Height="20" />

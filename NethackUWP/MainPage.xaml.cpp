@@ -564,6 +564,8 @@ void NethackUWP::MainPage::OnSizeChanged(Platform::Object ^sender, Windows::UI::
 
 	if (out_box_h / DESIRED_MIN_H < maximum_font) maximum_font = (out_box_h / DESIRED_MIN_H);
 
+    if (maximum_font < MINIMUM_FONT) maximum_font = MINIMUM_FONT;
+
 	OutputBox->FontSize = maximum_font-1;
 	//XXX - ENABLE SCROLLBAR IF CANT REACH 80/40.
 	
