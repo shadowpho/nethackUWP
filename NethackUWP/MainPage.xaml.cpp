@@ -333,6 +333,29 @@ char NativeMainPage::ask_inv_function(const char *question, char def)
     return def;
 }
 
+char NativeMainPage::ask_direction(char def)
+{
+    static menu_t direction_menu = {
+        std::string("In what direction?"),
+        std::vector<choice_t>{
+            {0, true, 'k', 0, false, "North"},
+            {0, true, 'j', 0, false, "South"},
+            {0, true, 'l', 0, false, "East"},
+            {0, true, 'h', 0, false, "West"},
+            {0, true, 'u', 0, false, "Northeast"},
+            { 0, true, 'y', 0, false, "Northwest" },
+            { 0, true, 'n', 0, false, "Southeast" },
+            { 0, true, 'b', 0, false, "Southwest" },
+            { 0, true, '<', 0, false, "Up" },
+            { 0, true, '>', 0, false, "Down" },
+            { 0, true, 's', 0, false, "Yourself" },
+    }
+    };
+    int val = def;
+    ask_menu(direction_menu, val);
+    return static_cast<char>(val);
+}
+
 char NativeMainPage::ask_yn_function(const char *question, const char *choices, char def)
 {
     {

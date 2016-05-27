@@ -259,7 +259,7 @@ extern "C"
         {
             assert(question != nullptr);
             if (strcmp(question, "In what direction?") == 0) // directions
-                return NativeMainPage::ask_yn_function(question, "hjklyubn<>s", def);
+                return NativeMainPage::ask_direction(def);
             else if(strncmp(question, "What do you want to ", sizeof("What do you want to")) == 0)
             {
                 return NativeMainPage::ask_inv_function(question, def);
@@ -357,7 +357,12 @@ extern "C"
 		0;
 	}
 
-	int(*nt_kbhit)() = 0;
+    int uwp_kbhit()
+    {
+        return 0;
+    }
+
+	int(*nt_kbhit)() = &uwp_kbhit;
 
 	void win32con_debug_keystrokes()
 	{
