@@ -94,13 +94,14 @@ void NethackUWP::MainPage::button_Click(Platform::Object^ sender, Windows::UI::X
 		choose_windows("mswin");//dun worry
 							  //	tty_procs (NULL, NULL); //dun worry
 		initoptions(); //nuh nuh nuh
-
 		dlb_init();
 		init_nhwindows(0, 0);
 		vision_init();
 		display_gamewindows();//dunno
 		newgame();
-		
+
+        flags.perm_invent = true;
+
 		//resuming = pcmain(argc, argv);
         display_inventory(nullptr, 0);
 		moveloop(0);

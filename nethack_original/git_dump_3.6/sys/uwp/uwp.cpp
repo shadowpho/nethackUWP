@@ -27,7 +27,10 @@ extern "C"
 		void mswin_resume_nhwindows(void) { abort(); } //doesn't happen
 		void mswin_destroy_nhwindow(winid wid) { return; } //nethack doesn't own these
 
-		void mswin_init_nhwindows(int *argc, char **argv) {}
+		void mswin_init_nhwindows(int *argc, char **argv)
+        {
+            iflags.window_inited = 1;
+        }
 		void mswin_player_selection(void) {}
 		void mswin_askname(void) { strcpy(plname, "best_playa-wizard-elf-female-chaos"); } //ask user for name, bail if cancel.
 		void mswin_get_nh_event(void) {}
