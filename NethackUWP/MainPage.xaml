@@ -9,7 +9,7 @@
     
     >
 
-    <SplitView x:Name="splitView" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" DisplayMode="Overlay" IsPaneOpen="False">
+    <SplitView x:Name="splitView" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" DisplayMode="Overlay" IsPaneOpen="False" >
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="OrientationStates">
                 <VisualState x:Name="NarrowState">
@@ -27,17 +27,9 @@
                     <VisualState.Setters>
                         <Setter Target="splitView.DisplayMode" Value="Inline"/>
                         <Setter Target="splitView.IsPaneOpen" Value="True"/>
+                        <Setter Target="splitView.OpenPaneLength" Value="400"/>
                         <Setter Target="Button_Open_Inventory.Visibility" Value="Collapsed" />
                         <Setter Target="button_LeftSplitTopRow.Visibility" Value="Collapsed" />
-                    </VisualState.Setters>
-                </VisualState>
-            </VisualStateGroup>
-            <VisualStateGroup>
-                <VisualState x:Name="ModalCollapsed">
-                </VisualState>
-                <VisualState x:Name="ModalDisplayed">
-                    <VisualState.Setters>
-                        <Setter Target="modalDialog.Visibility" Value="Visible"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -104,7 +96,7 @@
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="32"/>
-                        <RowDefinition Height="40"/>
+                        <RowDefinition Height="28"/>
                         <RowDefinition/>
                         <RowDefinition Height="40"/>
                         <RowDefinition Height="60"/>
@@ -120,7 +112,20 @@
                     </StackPanel>
                     <Button x:Name="Button_Open_History" Content="HST" HorizontalAlignment="Right" VerticalAlignment="Top" Padding="0" Height="32" Width="50" Margin="0,0,0,0" Click="Button_Open_History_Click" />
 
-                    <TextBlock x:Name="textBox_last_notification" Text="{Binding Last_Notification}" Margin="10,5,10,0" Grid.Row="1" />
+                    <TextBlock x:Name="textBox_last_notification" Text="{Binding Last_Notification, FallbackValue='lorem ipsum dolor sit amet'}" Margin="10,5,40,0" Grid.Row="1" />
+                    <SymbolIcon Symbol="More" HorizontalAlignment="Right" Margin="0,0,10,0" Tapped="ExpandNotifications" Grid.Row="1"/>
+                    <Grid x:Name="notificationsExpander" RequestedTheme="Dark" Canvas.ZIndex="1" VerticalAlignment="Top" Grid.Row="1" Grid.RowSpan="2" Visibility="Collapsed">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="28"/>
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Grid.Background>
+                            <SolidColorBrush Color="{ThemeResource SystemChromeLowColor}"/>
+                        </Grid.Background>
+                        <TextBlock Text="Notifications" FontWeight="Bold" Margin="10,5,40,0"/>
+                        <SymbolIcon Symbol="More" HorizontalAlignment="Right" Margin="0,0,10,0" Tapped="CollapseNotifications"/>
+                        <ItemsControl x:Name="textBox_last_notifications" ItemsSource="{Binding Last_Notifications}" Margin="10,0,10,0" Grid.Row="1" VerticalAlignment="Top" Background="{ThemeResource SystemChromeLowColor}" ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
+                    </Grid>
                     <TextBox x:Name="OutputBox" Text="{Binding OutStringBuf}" FontFamily="Consolas" TextChanged="OutputBox_TextChanged" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled" TextWrapping="NoWrap" AcceptsReturn="True" IsReadOnly="True" Grid.Row="2" IsTabStop="False"/>
                     <!-- Best_playa the Evoker    St:10 Dx:16 Co:13 In:20 Wi:7 Ch:10  Chaotic -->
                     <!-- Dlvl:1  $:0  HP:11(11) Pw:8(8) AC:9  Exp:1 -->

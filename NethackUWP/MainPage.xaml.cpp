@@ -55,6 +55,7 @@ MainPage::MainPage()
     g_corewindow = Windows::UI::Core::CoreWindow::GetForCurrentThread();
     Notifications = ref new Platform::Collections::Vector<Platform::String^>();
     Inventory_Strings = ref new Platform::Collections::Vector<Platform::String^>();
+    Last_Notifications = ref new Platform::Collections::Vector<Platform::String^>();
     Modal_Answers = ref new Platform::Collections::Vector<Platform::String^>();
 
     this->DataContext = this;
@@ -229,7 +230,19 @@ void NativeMainPage::write_notification(const char * str)
     Platform::String^ pcstr = ref new Platform::String(strbuf.c_str());
     g_corewindow->Dispatcher->RunAsync(CoreDispatcherPriority::Low, ref new DispatchedHandler([pcstr]() {
         g_mainpage->Notifications->Append(pcstr);
+        g_mainpage->Last_Notifications->Append(pcstr);
         g_mainpage->Last_Notification = pcstr;
+        if (g_mainpage->Last_Notifications->Size > 1)
+            g_mainpage->notificationsExpander->Visibility = Windows::UI::Xaml::Visibility::Visible;
+        g_mainpage->PropertyChanged(g_mainpage, ref new PropertyChangedEventArgs("Last_Notification"));
+    }));
+}
+
+void NativeMainPage::clear_notifications()
+{
+    g_corewindow->Dispatcher->RunAsync(CoreDispatcherPriority::Low, ref new DispatchedHandler([]() {
+        g_mainpage->Last_Notification = "";
+        g_mainpage->Last_Notifications->Clear();
         g_mainpage->PropertyChanged(g_mainpage, ref new PropertyChangedEventArgs("Last_Notification"));
     }));
 }
@@ -323,8 +336,7 @@ char NativeMainPage::ask_inv_function(const char *question, char def)
             g_mainpage->Modal_Answers->Append(inv);
 
         g_mainpage->PropertyChanged(g_mainpage, ref new PropertyChangedEventArgs("Modal_Question"));
-
-        VisualStateManager::GoToState(g_mainpage, Platform::StringReference(L"ModalDisplayed"), true);
+        g_mainpage->modalDialog->Visibility = Windows::UI::Xaml::Visibility::Visible;
     }));
 
 
@@ -380,7 +392,7 @@ char NativeMainPage::ask_yn_function(const char *question, const char *choices, 
 
         g_mainpage->PropertyChanged(g_mainpage, ref new PropertyChangedEventArgs("Modal_Question"));
 
-        VisualStateManager::GoToState(g_mainpage, Platform::StringReference(L"ModalDisplayed"), true);
+        g_mainpage->modalDialog->Visibility = Windows::UI::Xaml::Visibility::Visible;
     }));
 
     std::future<int> f = g_nativepage_impl.yn_function_promise.get_future();
@@ -410,7 +422,7 @@ bool NativeMainPage::ask_menu(const menu_t& m, int& selection_value)
 
         g_mainpage->PropertyChanged(g_mainpage, ref new PropertyChangedEventArgs("Modal_Question"));
 
-        VisualStateManager::GoToState(g_mainpage, Platform::StringReference(L"ModalDisplayed"), true);
+        g_mainpage->modalDialog->Visibility = Windows::UI::Xaml::Visibility::Visible;
     }));
 
     std::future<int> f = g_nativepage_impl.yn_function_promise.get_future();
@@ -449,7 +461,7 @@ void NethackUWP::MainPage::listView_SelectionChanged(Platform::Object^ sender, W
         Modal_Answers->IndexOf(obj, &idx);
 
         NativeMainPage::complete_yn_function(idx);
-        VisualStateManager::GoToState(this, Platform::StringReference(L"ModalCollapsed"), true);
+        g_mainpage->modalDialog->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     }
 }
 
@@ -458,7 +470,7 @@ void NethackUWP::MainPage::SymbolIcon_Tapped(Platform::Object^ sender, Windows::
 {
     // Dismiss modal dialog
     NativeMainPage::complete_yn_function(-1);
-    VisualStateManager::GoToState(this, Platform::StringReference(L"ModalCollapsed"), true);
+    modalDialog->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 }
 
 
@@ -523,4 +535,16 @@ void NethackUWP::MainPage::OnKeyUp(Platform::Object ^sender, Windows::UI::Xaml::
 		input_string.push_back(nethack_text);
 	}
 
+}
+
+
+void NethackUWP::MainPage::ExpandNotifications(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e)
+{
+    notificationsExpander->Visibility = Windows::UI::Xaml::Visibility::Visible;
+}
+
+
+void NethackUWP::MainPage::CollapseNotifications(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e)
+{
+    notificationsExpander->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 }

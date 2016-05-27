@@ -87,6 +87,9 @@ extern "C"
             if (wid == WIN_ERR)
                 abort();
 
+            if (wid == WIN_MESSAGE)
+                NativeMainPage::clear_notifications();
+
             if (wid == WIN_STATUS)
 				NativeMainPage::clear_statusbar();
 		}
