@@ -242,6 +242,7 @@ void NativeMainPage::clear_notifications()
     g_corewindow->Dispatcher->RunAsync(CoreDispatcherPriority::Low, ref new DispatchedHandler([]() {
         g_mainpage->Last_Notification = "";
         g_mainpage->Last_Notifications->Clear();
+        g_mainpage->notificationsExpander->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
         g_mainpage->PropertyChanged(g_mainpage, ref new PropertyChangedEventArgs("Last_Notification"));
     }));
 }
