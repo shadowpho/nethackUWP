@@ -37,6 +37,7 @@ struct NativeMainPage {
     static void write_char(int x, int y, char ch);
 
     static void write_notification(const char*);
+    static void clear_notifications();
     static void update_statusbar(const char*);
     static void clear_statusbar();
 

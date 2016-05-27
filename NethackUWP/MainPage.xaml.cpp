@@ -55,6 +55,7 @@ MainPage::MainPage()
     g_corewindow = Windows::UI::Core::CoreWindow::GetForCurrentThread();
     Notifications = ref new Platform::Collections::Vector<Platform::String^>();
     Inventory_Strings = ref new Platform::Collections::Vector<Platform::String^>();
+    Last_Notifications = ref new Platform::Collections::Vector<Platform::String^>();
     Modal_Answers = ref new Platform::Collections::Vector<Platform::String^>();
 
     this->DataContext = this;
@@ -227,7 +228,19 @@ void NativeMainPage::write_notification(const char * str)
     Platform::String^ pcstr = ref new Platform::String(strbuf.c_str());
     g_corewindow->Dispatcher->RunAsync(CoreDispatcherPriority::Low, ref new DispatchedHandler([pcstr]() {
         g_mainpage->Notifications->Append(pcstr);
+        g_mainpage->Last_Notifications->Append(pcstr);
         g_mainpage->Last_Notification = pcstr;
+        if (g_mainpage->Last_Notifications->Size > 1)
+            g_mainpage->notificationsExpander->Visibility = Windows::UI::Xaml::Visibility::Visible;
+        g_mainpage->PropertyChanged(g_mainpage, ref new PropertyChangedEventArgs("Last_Notification"));
+    }));
+}
+
+void NativeMainPage::clear_notifications()
+{
+    g_corewindow->Dispatcher->RunAsync(CoreDispatcherPriority::Low, ref new DispatchedHandler([]() {
+        g_mainpage->Last_Notification = "";
+        g_mainpage->Last_Notifications->Clear();
         g_mainpage->PropertyChanged(g_mainpage, ref new PropertyChangedEventArgs("Last_Notification"));
     }));
 }
@@ -456,6 +469,7 @@ void NethackUWP::MainPage::SymbolIcon_Tapped(Platform::Object^ sender, Windows::
 {
     // Dismiss modal dialog
     NativeMainPage::complete_yn_function(-1);
+    modalDialog->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     VisualStateManager::GoToState(this, Platform::StringReference(L"ModalCollapsed"), true);
 }
 
@@ -469,4 +483,16 @@ void NethackUWP::MainPage::Button_Open_History_Click(Platform::Object^ sender, W
 void NethackUWP::MainPage::Button_Close_History_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
     splitView_History->IsPaneOpen = false;
+}
+
+
+void NethackUWP::MainPage::ExpandNotifications(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e)
+{
+    notificationsExpander->Visibility = Windows::UI::Xaml::Visibility::Visible;
+}
+
+
+void NethackUWP::MainPage::CollapseNotifications(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e)
+{
+    notificationsExpander->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 }

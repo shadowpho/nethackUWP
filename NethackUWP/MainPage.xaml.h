@@ -40,6 +40,7 @@ namespace NethackUWP
 
         property Platform::String^ Modal_Question;
         property Platform::String^ Last_Notification;
+        property Windows::Foundation::Collections::IVector<Platform::String^>^ Last_Notifications;
         property Windows::Foundation::Collections::IVector<Platform::String^>^ Modal_Answers;
 
         virtual event Windows::UI::Xaml::Data::PropertyChangedEventHandler ^ PropertyChanged;
@@ -69,6 +70,8 @@ namespace NethackUWP
         void SymbolIcon_Tapped(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e);
         void Button_Open_History_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
         void Button_Close_History_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+        void ExpandNotifications(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e);
+        void CollapseNotifications(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e);
     };
     static MainPage^ g_mainpage;
     static Platform::Agile<Windows::UI::Core::CoreWindow> g_corewindow;
