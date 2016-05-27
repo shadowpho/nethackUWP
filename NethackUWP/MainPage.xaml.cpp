@@ -81,6 +81,8 @@ MainPage::MainPage()
 
 	OutputBox->AddHandler(TappedEvent, ref new TappedEventHandler(this, &NethackUWP::MainPage::OutputBox_Tapped2), true);
 	//OutputBox->Tapped += ref new Windows::UI::Xaml::Input::TappedEventHandler(this, &NethackUWP::MainPage::OutputBox_Tapped2,true);
+	g_mainpage->SizeChanged += ref new Windows::UI::Xaml::SizeChangedEventHandler(this, &NethackUWP::MainPage::OnSizeChanged);
+	g_mainpage->KeyUp += ref new Windows::UI::Xaml::Input::KeyEventHandler(this, &NethackUWP::MainPage::OnKeyUp);
 }
 
 void NethackUWP::MainPage::button_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
@@ -329,7 +331,7 @@ char NativeMainPage::ask_inv_function(const char *question, char def)
     std::future<int> f = g_nativepage_impl.yn_function_promise.get_future();
     auto f_val = f.get();
     if (f_val >= 0)
-        return g_mainpage->Inventory_Strings->GetAt(f_val)->Data()[0];
+        return (char)g_mainpage->Inventory_Strings->GetAt(f_val)->Data()[0];
     return def;
 }
 
@@ -469,4 +471,56 @@ void NethackUWP::MainPage::Button_Open_History_Click(Platform::Object^ sender, W
 void NethackUWP::MainPage::Button_Close_History_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
     splitView_History->IsPaneOpen = false;
+}
+
+
+void NethackUWP::MainPage::OnSizeChanged(Platform::Object ^sender, Windows::UI::Xaml::SizeChangedEventArgs ^e)
+{
+	if (OutputBox->FontStretch != Windows::UI::Text::FontStretch::Normal)
+	{
+		__fastfail(1337); 
+	}
+
+	float total_size_w = e->NewSize.Width;
+	float total_size_h = e->NewSize.Height;
+	float out_box_w = OutputBox->RenderSize.Width;
+	float out_box_h = OutputBox->RenderSize.Height;
+
+	float test2 = (float)OutputBox->FontSize;
+
+	
+	const int DESIRED_MIN_W = 80;
+	const int DESIRED_MIN_H = 40;
+	const int MINIMUM_FONT = 15; //DPI is hard, alright? Scott can fix. Or I can fix after seeing how it works
+
+	float maximum_font = (out_box_w / DESIRED_MIN_W);
+
+	if (out_box_h / DESIRED_MIN_H < maximum_font) maximum_font = (out_box_h / DESIRED_MIN_H);
+
+	OutputBox->FontSize = maximum_font-1;
+	//XXX - ENABLE SCROLLBAR IF CANT REACH 80/40.
+	
+	
+
+
+}
+
+
+void NethackUWP::MainPage::OnKeyUp(Platform::Object ^sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs ^e)
+{
+	e->Handled = true;
+	//auto keys = e->OriginalSource;
+	auto keys2 = e->OriginalKey;
+	char key_value = (char) (int) keys2;
+	
+		
+	if(key_value >='A' && key_value <='Z')
+	{
+		wchar_t nethack_text = key_value;
+		lock_guard<mutex> lock(blocked_on_input);
+		if (input_string.empty())
+			input_string_cv.notify_all();
+		input_string.push_back(nethack_text);
+	}
+
 }

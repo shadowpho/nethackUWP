@@ -27,7 +27,41 @@ extern "C"
 		void mswin_resume_nhwindows(void) { abort(); } //doesn't happen
 		void mswin_destroy_nhwindow(winid wid) { return; } //nethack doesn't own these
 
-		void mswin_init_nhwindows(int *argc, char **argv) {}
+		void mswin_init_nhwindows(int *argc, char **argv) 
+		{
+			iflags.wc_fontsiz_map = 80;
+			/*
+			if (iflags.wc_fontsiz_status < NHFONT_SIZE_MIN
+				|| iflags.wc_fontsiz_status > NHFONT_SIZE_MAX)
+				iflags.wc_fontsiz_status = NHFONT_DEFAULT_SIZE;
+
+			if (iflags.wc_fontsiz_message < NHFONT_SIZE_MIN
+				|| iflags.wc_fontsiz_message > NHFONT_SIZE_MAX)
+				iflags.wc_fontsiz_message = NHFONT_DEFAULT_SIZE;
+
+			if (iflags.wc_fontsiz_text < NHFONT_SIZE_MIN
+				|| iflags.wc_fontsiz_text > NHFONT_SIZE_MAX)
+				iflags.wc_fontsiz_text = NHFONT_DEFAULT_SIZE;
+
+			if (iflags.wc_fontsiz_menu < NHFONT_SIZE_MIN
+				|| iflags.wc_fontsiz_menu > NHFONT_SIZE_MAX)
+				iflags.wc_fontsiz_menu = NHFONT_DEFAULT_SIZE;
+
+			if (iflags.wc_align_message == 0)
+				iflags.wc_align_message = ALIGN_TOP;
+			if (iflags.wc_align_status == 0)
+				iflags.wc_align_status = ALIGN_BOTTOM;
+			if (iflags.wc_scroll_margin == 0)
+				iflags.wc_scroll_margin = DEF_CLIPAROUND_MARGIN;
+			if (iflags.wc_scroll_amount == 0)
+				iflags.wc_scroll_amount = DEF_CLIPAROUND_AMOUNT;
+			if (iflags.wc_tile_width == 0)
+				iflags.wc_tile_width = TILE_X;
+			if (iflags.wc_tile_height == 0)
+				iflags.wc_tile_height = TILE_Y;
+				*/
+
+		}
 		void mswin_player_selection(void) {}
 		void mswin_askname(void) { strcpy(plname, "best_playa-wizard-elf-female-chaos"); } //ask user for name, bail if cancel.
 		void mswin_get_nh_event(void) {}
