@@ -334,8 +334,7 @@ char NativeMainPage::ask_inv_function(const char *question, char def)
             g_mainpage->Modal_Answers->Append(inv);
 
         g_mainpage->PropertyChanged(g_mainpage, ref new PropertyChangedEventArgs("Modal_Question"));
-
-        VisualStateManager::GoToState(g_mainpage, Platform::StringReference(L"ModalDisplayed"), true);
+        g_mainpage->modalDialog->Visibility = Windows::UI::Xaml::Visibility::Visible;
     }));
 
 
@@ -391,7 +390,7 @@ char NativeMainPage::ask_yn_function(const char *question, const char *choices, 
 
         g_mainpage->PropertyChanged(g_mainpage, ref new PropertyChangedEventArgs("Modal_Question"));
 
-        VisualStateManager::GoToState(g_mainpage, Platform::StringReference(L"ModalDisplayed"), true);
+        g_mainpage->modalDialog->Visibility = Windows::UI::Xaml::Visibility::Visible;
     }));
 
     std::future<int> f = g_nativepage_impl.yn_function_promise.get_future();
@@ -421,7 +420,7 @@ bool NativeMainPage::ask_menu(const menu_t& m, int& selection_value)
 
         g_mainpage->PropertyChanged(g_mainpage, ref new PropertyChangedEventArgs("Modal_Question"));
 
-        VisualStateManager::GoToState(g_mainpage, Platform::StringReference(L"ModalDisplayed"), true);
+        g_mainpage->modalDialog->Visibility = Windows::UI::Xaml::Visibility::Visible;
     }));
 
     std::future<int> f = g_nativepage_impl.yn_function_promise.get_future();
@@ -460,7 +459,7 @@ void NethackUWP::MainPage::listView_SelectionChanged(Platform::Object^ sender, W
         Modal_Answers->IndexOf(obj, &idx);
 
         NativeMainPage::complete_yn_function(idx);
-        VisualStateManager::GoToState(this, Platform::StringReference(L"ModalCollapsed"), true);
+        g_mainpage->modalDialog->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     }
 }
 
@@ -470,7 +469,6 @@ void NethackUWP::MainPage::SymbolIcon_Tapped(Platform::Object^ sender, Windows::
     // Dismiss modal dialog
     NativeMainPage::complete_yn_function(-1);
     modalDialog->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-    VisualStateManager::GoToState(this, Platform::StringReference(L"ModalCollapsed"), true);
 }
 
 
