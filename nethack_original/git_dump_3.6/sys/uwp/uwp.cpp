@@ -241,7 +241,7 @@ extern "C"
             else
 #endif
             if (ch > 127) abort();
-            NativeMainPage::write_char(x, y, (char)ch);
+            NativeMainPage::write_char(x, y, (char)ch, color);
             //g_putch(ch); /* print the character */
 
             if (reverse_on) {

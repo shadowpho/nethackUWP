@@ -305,7 +305,7 @@ int NativeMainPage::read_char(int &x, int &y)
 
 using namespace Windows::UI::Core;
 
-void NativeMainPage::write_char(int x, int y, char ch)
+void NativeMainPage::write_char(int x, int y, char ch, int color)
 {
     {
         lock_guard<mutex> lock(g_mainpage->blocked_on_output);
@@ -313,7 +313,7 @@ void NativeMainPage::write_char(int x, int y, char ch)
         if (y >= max_height) abort();
 
         g_mainpage->map_data[y][x].ch = ch;
-        g_mainpage->map_data[y][x].color = CLR_WHITE;
+        g_mainpage->map_data[y][x].color = color;
     }
 }
 void NativeMainPage::display_map()
@@ -710,7 +710,8 @@ void NethackUWP::MainPage::MapCanvas_Draw(Microsoft::Graphics::Canvas::UI::Xaml:
     using namespace Microsoft::Graphics::Canvas::Text;
     using namespace Windows::UI;
 
-    auto tile_size = 15.0f;
+    constexpr auto tile_width = 10.0f;
+    constexpr auto tile_height = 14.0f;
 
     //int start_x = (sender->ActualWidth / tile_size) / 2;
     //int start_y = (sender->ActualHeight / tile_size) / 2;
@@ -725,14 +726,14 @@ void NethackUWP::MainPage::MapCanvas_Draw(Microsoft::Graphics::Canvas::UI::Xaml:
 
     auto text_format = ref new CanvasTextFormat();
     text_format->FontFamily = "Consolas";
-    text_format->FontSize = 12.0f;
+    text_format->FontSize = 16.0f;
     text_format->HorizontalAlignment = CanvasHorizontalAlignment::Center;
     text_format->VerticalAlignment = CanvasVerticalAlignment::Center;
 
     std::lock_guard<std::mutex> lock(blocked_on_output);
 
     int y = start_y;
-    for (float screenY = screen_y_start; screenY < sender->ActualHeight; screenY += tile_size)
+    for (float screenY = screen_y_start; screenY < sender->ActualHeight; screenY += tile_height)
     {
         if (y >= map_data.size())
             break;
@@ -740,7 +741,7 @@ void NethackUWP::MainPage::MapCanvas_Draw(Microsoft::Graphics::Canvas::UI::Xaml:
         auto& row_data = map_data[y];
 
         int x = start_x;
-        for (float screenX = screen_x_start; screenX < sender->ActualWidth; screenX += tile_size)
+        for (float screenX = screen_x_start; screenX < sender->ActualWidth; screenX += tile_width)
         {
             if (x >= row_data.size())
                 break;
@@ -789,7 +790,7 @@ void NethackUWP::MainPage::MapCanvas_Draw(Microsoft::Graphics::Canvas::UI::Xaml:
 
                 args->DrawingSession->DrawText(
                     ref new Platform::String(&tile.ch, 1),
-                    { screenX, screenY, tile_size, tile_size },
+                    { screenX, screenY, tile_width, tile_height },
                     NetHackColorToColor(tile.color),
                     text_format);
             }

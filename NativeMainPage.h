@@ -40,7 +40,7 @@ struct NativeMainPage {
     static constexpr int max_height = 80;
 
     static int read_char(int &x, int &y);
-    static void write_char(int x, int y, char ch);
+    static void write_char(int x, int y, char ch, int color = 15);
 
     static void write_notification(const char*);
     static void clear_notifications();
