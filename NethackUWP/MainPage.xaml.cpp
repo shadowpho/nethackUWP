@@ -20,7 +20,7 @@ MainPage::MainPage()
     NethackNative::start_nethack();
 }
 
-void NethackUWP::MainPage::CanvasControl_Draw(
+void MainPage::CanvasControl_Draw(
     CanvasControl^ sender,
     CanvasDrawEventArgs^ args)
 {
@@ -94,7 +94,6 @@ void NethackUWP::MainPage::CanvasControl_Draw(
                     NetHackColorToColor(tile.color),
                     text_format);
             }
-
             x++;
         }
         y++;
