@@ -108,7 +108,11 @@
                         <Button x:Name="Send_butt" Content="Send" HorizontalAlignment="Left" VerticalAlignment="Top" Click="Send_butt_Click" Height="32" Width="55" Margin="0,0,10,0"/>
                     </StackPanel>
 
-                    <TextBox x:Name="OutputBox" Text="{Binding OutStringBuf}" FontFamily="Consolas" TextChanged="OutputBox_TextChanged" TextWrapping="NoWrap" AcceptsReturn="True" IsReadOnly="True" Grid.Row="1" IsTabStop="False"/>
+                    <TextBox x:Name="OutputBox" Text="{Binding OutStringBuf}" FontFamily="Consolas" TextChanged="OutputBox_TextChanged" TextWrapping="NoWrap" AcceptsReturn="True" IsReadOnly="True" Grid.Row="1" IsTabStop="False"
+                             IsDoubleTapEnabled="False"
+                             IsHoldingEnabled="False"
+                             IsRightTapEnabled="False"
+                             />
 
                     <TextBlock x:Name="textBox_last_notification" Text="{Binding Last_Notification, FallbackValue='lorem ipsum dolor sit amet'}" Margin="10,5,40,0" Grid.Row="2" />
                     <Button HorizontalAlignment="Right" Click="ExpandNotifications" Grid.Row="2" Width="30" Padding="0" VerticalAlignment="Stretch">
@@ -116,7 +120,7 @@
                             <SymbolIcon Symbol="More"/>
                         </Button.Content>
                     </Button>
-                    <Grid x:Name="notificationsExpander" RequestedTheme="Dark" Canvas.ZIndex="1" VerticalAlignment="Bottom" Grid.Row="1" Grid.RowSpan="2" Visibility="Collapsed" ManipulationMode="TranslateRailsY">
+                    <Grid x:Name="notificationsExpander" RequestedTheme="Dark" Canvas.ZIndex="1" VerticalAlignment="Bottom" Grid.Row="1" Grid.RowSpan="2" Visibility="Collapsed">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*" />
                             <RowDefinition Height="28"/>
