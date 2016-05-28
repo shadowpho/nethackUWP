@@ -9,5 +9,5 @@
     mc:Ignorable="d"
     >
 
-    <canvas:CanvasControl Draw="CanvasControl_Draw" ClearColor="Black" />
+    <canvas:CanvasControl x:Name="MapCanvas" Draw="Redraw" ClearColor="Black" />
 </Page>

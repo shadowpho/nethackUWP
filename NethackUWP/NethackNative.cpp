@@ -2,6 +2,7 @@
 #include "pch.h"
 
 #include "..\NethackNative.h"
+#include "NethackInterop.h"
 
 #define boolean boolean2
 #define terminate terminate2
@@ -52,7 +53,7 @@ void NethackNative::start_nethack()
 
 int NethackNative::read_char(int & x, int & y)
 {
-    return 0;
+    return NethackUWP::NethackInterop::OnInputRequest(x, y);
 }
 
 void NethackNative::put_tile(int x, int y, tile_t& tile)
@@ -108,12 +109,23 @@ void NethackNative::clear_statusbar()
 
 void NethackNative::clear_map()
 {
-    //
+    std::lock_guard<std::mutex> lock(g_map.lock);
+
+    for (auto x = 0; x < max_width; ++x)
+    {
+        for (auto y = 0; y < max_height; ++y)
+        {
+            g_map.tiles[x][y].ch = '\0';
+            g_map.tiles[x][y].color = 0;
+        }
+    }
+
+    display_map();
 }
 
 void NethackNative::display_map()
 {
-    //
+    NethackUWP::NethackInterop::OnRedrawMap();
 }
 
 void NethackNative::clear_inv()

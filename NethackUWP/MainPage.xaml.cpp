@@ -18,9 +18,22 @@ MainPage::MainPage()
 	InitializeComponent();
 
     NethackNative::start_nethack();
+
+    window = CoreWindow::GetForCurrentThread();
+
+    window->KeyDown += 
+        ref new Windows::Foundation::TypedEventHandler<
+            Windows::UI::Core::CoreWindow ^,
+            Windows::UI::Core::KeyEventArgs ^>(this, &NethackUWP::MainPage::OnKeyDown);
+
+    NethackInterop::RedrawMap += 
+        ref new NethackUWP::RedrawMapEventHandler(this, &MainPage::OnRedrawMap);
+
+    NethackInterop::InputRequest += 
+        ref new NethackUWP::RequestForInputEventHandler(this, &MainPage::OnInputRequest);
 }
 
-void MainPage::CanvasControl_Draw(
+void MainPage::Redraw(
     CanvasControl^ sender,
     CanvasDrawEventArgs^ args)
 {
@@ -53,38 +66,38 @@ void MainPage::CanvasControl_Draw(
                 auto NetHackColorToColor = [](char color) {
                     switch (color)
                     {
-                        case 1: // CLR_RED
-                            return Colors::Red;
-                        case 2: // CLR_GREEN
-                            return Colors::Green;
-                        case 3: // CLR_BROWN
-                            return Colors::Brown;
-                        case 4: // CLR_BLUE
-                            return Colors::Blue;
-                        case 5: // CLR_MAGENTA
-                            return Colors::Magenta;
-                        case 6: // CLR_CYAN
-                            return Colors::Cyan;
-                        case 7: // CLR_GRAY
-                            return Colors::Gray;
-                        case 9: // CLR_ORANGE
-                            return Colors::Orange;
-                        case 10: // CLR_BRIGHT_GREEN
-                            return Colors::LightGreen;
-                        case 11: // CLR_YELLOW
-                            return Colors::Yellow;
-                        case 12: // CLR_BRIGHT_BLUE
-                            return Colors::LightBlue;
-                        case 13: // CLR_BRIGHT_MAGENTA
-                            return Colors::LightPink;
-                        case 14: // CLR_BRIGHT_CYAN
-                            return Colors::LightCyan;
-                        case 15: // CLR_WHITE
-                            return Colors::White;
+                    case 1: // CLR_RED
+                        return Colors::Red;
+                    case 2: // CLR_GREEN
+                        return Colors::Green;
+                    case 3: // CLR_BROWN
+                        return Colors::Brown;
+                    case 4: // CLR_BLUE
+                        return Colors::Blue;
+                    case 5: // CLR_MAGENTA
+                        return Colors::Magenta;
+                    case 6: // CLR_CYAN
+                        return Colors::Cyan;
+                    case 7: // CLR_GRAY
+                        return Colors::Gray;
+                    case 9: // CLR_ORANGE
+                        return Colors::Orange;
+                    case 10: // CLR_BRIGHT_GREEN
+                        return Colors::LightGreen;
+                    case 11: // CLR_YELLOW
+                        return Colors::Yellow;
+                    case 12: // CLR_BRIGHT_BLUE
+                        return Colors::LightBlue;
+                    case 13: // CLR_BRIGHT_MAGENTA
+                        return Colors::LightPink;
+                    case 14: // CLR_BRIGHT_CYAN
+                        return Colors::LightCyan;
+                    case 15: // CLR_WHITE
+                        return Colors::White;
                     }
                     return Colors::DarkGray;
                 };
-                
+
                 std::string tile_string_ascii(1, tile.ch);
                 std::wstring tile_string_wide(tile_string_ascii.begin(), tile_string_ascii.end());
 
@@ -98,4 +111,47 @@ void MainPage::CanvasControl_Draw(
         }
         y++;
     }
+}
+
+void MainPage::OnRedrawMap()
+{
+    window->Dispatcher->RunAsync(CoreDispatcherPriority::High, ref new DispatchedHandler([=]()
+    {
+        this->MapCanvas->Invalidate();
+    }));
+}
+
+
+void MainPage::OnInputRequest(NethackInputRequest ^inputRequest)
+{
+    std::unique_lock<std::mutex> lock(inputQueueLock);
+
+    while (inputQueue.empty())
+    {
+        inputQueueSignal.wait(lock);
+    }
+
+    auto entry = inputQueue.front();
+
+    inputRequest->Key = entry.Key;
+    inputRequest->Modifiers = entry.Modifiers;
+    inputRequest->X = entry.x;
+    inputRequest->Y = entry.y;
+    inputRequest->Handled = true;
+
+    inputQueue.pop();
+}
+
+void MainPage::OnKeyDown(
+    Windows::UI::Core::CoreWindow ^sender,
+    Windows::UI::Core::KeyEventArgs ^args)
+{
+    std::unique_lock<std::mutex> lock(inputQueueLock);
+
+    InputEntry entry;
+    entry.Key = args->VirtualKey;
+    inputQueue.push(entry);
+
+    lock.unlock();
+    inputQueueSignal.notify_all();
 }
