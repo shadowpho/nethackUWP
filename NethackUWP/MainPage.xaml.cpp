@@ -516,7 +516,7 @@ void NethackUWP::MainPage::listView_SelectionChanged(Platform::Object^ sender, W
         Modal_Answers->IndexOf(obj, &idx);
 
         NativeMainPage::complete_yn_function(idx);
-        g_mainpage->modalDialog->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+        modalDialog->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     }
 }
 
@@ -531,6 +531,7 @@ void NethackUWP::MainPage::SymbolIcon_Tapped(Platform::Object^ sender, Windows::
 
 void NethackUWP::MainPage::Button_Open_History_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
+    notificationsExpander->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     splitView_History->IsPaneOpen = true;
 }
 
