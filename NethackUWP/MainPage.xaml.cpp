@@ -639,7 +639,7 @@ void NethackUWP::MainPage::OnKeyDown(Platform::Object ^sender, Windows::UI::Xaml
 {
 	using Windows::System::VirtualKey;
 
-	e->Handled = true;
+	e->Handled = false;
 	//auto keys = e->OriginalSource;
 	auto keys2 = e->Key;
 	auto keys3 = e->KeyStatus;
