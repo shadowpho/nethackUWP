@@ -55,27 +55,28 @@ void MainPage::Redraw(
     CanvasControl^ sender,
     CanvasDrawEventArgs^ args)
 {
-    auto tile_size = 24.0f;
+    auto tile_width = 16.0f;
+    auto tile_height = 24.0f;
     
     auto player_position = NethackNative::get_player_position();
 
-    int start_x = player_position.x - (sender->ActualWidth / tile_size) / 2;
-    int start_y = player_position.y - (sender->ActualHeight / tile_size) / 2;
+    int start_x = player_position.x - (sender->ActualWidth / tile_width) / 2;
+    int start_y = player_position.y - (sender->ActualHeight / tile_height) / 2;
 
-    float screen_x_start = (sender->ActualWidth / 2.0f) - (player_position.x - start_x) * tile_size;
-    float screen_y_start = (sender->ActualHeight / 2.0f) - (player_position.y - start_y) * tile_size;
+    float screen_x_start = (sender->ActualWidth / 2.0f) - (player_position.x - start_x) * tile_width;
+    float screen_y_start = (sender->ActualHeight / 2.0f) - (player_position.y - start_y) * tile_height;
 
     auto text_format = ref new CanvasTextFormat();
     text_format->FontFamily = "Consolas";
-    text_format->FontSize = 18.0f;
+    text_format->FontSize = 20.0f;
     text_format->HorizontalAlignment = CanvasHorizontalAlignment::Center;
     text_format->VerticalAlignment = CanvasVerticalAlignment::Center;
 
     int y = start_y;
-    for (float screenY = screen_y_start; screenY < sender->ActualHeight; screenY += tile_size)
+    for (float screenY = screen_y_start; screenY < sender->ActualHeight; screenY += tile_height)
     {
         int x = start_x;
-        for (float screenX = screen_x_start; screenX < sender->ActualWidth; screenX += tile_size)
+        for (float screenX = screen_x_start; screenX < sender->ActualWidth; screenX += tile_width)
         {
             tile_t tile = NethackNative::get_tile(x, y);
 
@@ -121,7 +122,7 @@ void MainPage::Redraw(
 
                 args->DrawingSession->DrawText(
                     ref new Platform::String(tile_string_wide.c_str()),
-                    { screenX, screenY, tile_size, tile_size },
+                    { screenX, screenY, tile_width, tile_height },
                     NetHackColorToColor(tile.color),
                     text_format);
             }
@@ -138,7 +139,6 @@ void MainPage::OnRedrawMap()
         this->MapCanvas->Invalidate();
     }));
 }
-
 
 void MainPage::OnInputRequest(NethackInputRequest ^inputRequest)
 {
