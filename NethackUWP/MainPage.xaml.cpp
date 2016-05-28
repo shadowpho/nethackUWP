@@ -11,6 +11,7 @@ using namespace Microsoft::Graphics::Canvas::Text;
 
 using namespace Windows::UI;
 using namespace Windows::UI::Core;
+using namespace Windows::UI::Input;
 using namespace Windows::System;
 
 MainPage::MainPage()
@@ -31,6 +32,23 @@ MainPage::MainPage()
 
     NethackInterop::InputRequest += 
         ref new NethackUWP::RequestForInputEventHandler(this, &MainPage::OnInputRequest);
+
+    MapCanvas->PointerPressed += 
+        ref new Windows::UI::Xaml::Input::PointerEventHandler(this, &NethackUWP::MainPage::OnPointerPressed);
+
+    MapCanvas->PointerMoved += 
+        ref new Windows::UI::Xaml::Input::PointerEventHandler(this, &NethackUWP::MainPage::OnPointerMoved);
+
+    MapCanvas->PointerReleased += 
+        ref new Windows::UI::Xaml::Input::PointerEventHandler(this, &NethackUWP::MainPage::OnPointerReleased);
+
+    gestureRecognizer = ref new GestureRecognizer();
+
+    gestureRecognizer->GestureSettings = GestureSettings::Tap;
+
+    gestureRecognizer->Tapped += ref new Windows::Foundation::TypedEventHandler<
+        Windows::UI::Input::GestureRecognizer ^,
+        Windows::UI::Input::TappedEventArgs ^>(this, &NethackUWP::MainPage::OnTapped);
 }
 
 void MainPage::Redraw(
@@ -151,6 +169,62 @@ void MainPage::OnKeyDown(
     InputEntry entry;
     entry.Key = args->VirtualKey;
     inputQueue.push(entry);
+
+    lock.unlock();
+    inputQueueSignal.notify_all();
+}
+
+void NethackUWP::MainPage::OnPointerPressed(
+    Platform::Object ^sender,
+    Windows::UI::Xaml::Input::PointerRoutedEventArgs ^e)
+{
+    gestureRecognizer->ProcessDownEvent(e->GetCurrentPoint(MapCanvas));
+}
+
+void NethackUWP::MainPage::OnPointerMoved(
+    Platform::Object ^sender,
+    Windows::UI::Xaml::Input::PointerRoutedEventArgs ^e)
+{
+    gestureRecognizer->ProcessMoveEvents(e->GetIntermediatePoints(MapCanvas));
+}
+
+void NethackUWP::MainPage::OnPointerReleased(
+    Platform::Object ^sender,
+    Windows::UI::Xaml::Input::PointerRoutedEventArgs ^e)
+{
+    gestureRecognizer->ProcessUpEvent(e->GetCurrentPoint(MapCanvas));
+}
+
+void NethackUWP::MainPage::OnTapped(
+    Windows::UI::Input::GestureRecognizer ^sender,
+    Windows::UI::Input::TappedEventArgs ^args)
+{
+    std::unique_lock<std::mutex> lock(inputQueueLock);
+
+    if (args->Position.X > (MapCanvas->ActualWidth * 2.0 / 3.0))
+    {
+        InputEntry entry;
+        entry.Key = VirtualKey::Right;
+        inputQueue.push(entry);
+    }
+    if (args->Position.X < (MapCanvas->ActualWidth / 3.0))
+    {
+        InputEntry entry;
+        entry.Key = VirtualKey::Left;
+        inputQueue.push(entry);
+    }
+    if (args->Position.Y > (MapCanvas->ActualHeight * 2.0 / 3.0))
+    {
+        InputEntry entry;
+        entry.Key = VirtualKey::Down;
+        inputQueue.push(entry);
+    }
+    if (args->Position.Y < (MapCanvas->ActualHeight / 3.0))
+    {
+        InputEntry entry;
+        entry.Key = VirtualKey::Up;
+        inputQueue.push(entry);
+    }
 
     lock.unlock();
     inputQueueSignal.notify_all();
