@@ -10,6 +10,7 @@
 #include <mutex>
 #include <string>
 #include <future>
+#include <cassert>
 
 #include "../NativeMainPage.h"
 
@@ -41,6 +42,7 @@ using namespace Windows::UI::Xaml::Data;
 using namespace Windows::UI::Xaml::Input;
 using namespace Windows::UI::Xaml::Media;
 using namespace Windows::UI::Xaml::Navigation;
+using namespace Windows::UI::Input;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -55,10 +57,12 @@ struct NativeMainPageImpl
 
 void MainPage::clear_map()
 {
-    output_string = std::wstring(NativeMainPage::max_width_offset * NativeMainPage::max_height, L' ');
-    for (int x = 1; x <= NativeMainPage::max_height; ++x)
+    for (auto&& c : map_data)
     {
-        output_string[x * NativeMainPage::max_width_offset - 1] = '\n';
+        for (auto& r : c)
+        {
+            r = tile_t{ L' ', 0 };
+        }
     }
 }
 
@@ -73,7 +77,9 @@ MainPage::MainPage()
     Inventory_Strings = ref new Platform::Collections::Vector<Platform::String^>();
     Last_Notifications = ref new Platform::Collections::Vector<Platform::String^>();
     Modal_Answers = ref new Platform::Collections::Vector<Platform::String^>();
-    clear_map();
+
+    for (int y = 0; y < NativeMainPage::max_height; ++y)
+        map_data.emplace_back(NativeMainPage::max_width_offset, tile_t{ L' ',0 });
 
     this->DataContext = this;
 
@@ -94,14 +100,112 @@ MainPage::MainPage()
 		//Action_Button_Stack->Conten
 	}
 
-	OutputBox->AddHandler(TappedEvent, ref new TappedEventHandler(this, &NethackUWP::MainPage::OutputBox_Tapped2), true);
+	//OutputBox->AddHandler(TappedEvent, ref new TappedEventHandler(this, &NethackUWP::MainPage::OutputBox_Tapped2), true);
 	//OutputBox->Tapped += ref new Windows::UI::Xaml::Input::TappedEventHandler(this, &NethackUWP::MainPage::OutputBox_Tapped2,true);
 	g_mainpage->SizeChanged += ref new Windows::UI::Xaml::SizeChangedEventHandler(this, &NethackUWP::MainPage::OnSizeChanged);
 	g_mainpage->KeyDown += ref new Windows::UI::Xaml::Input::KeyEventHandler(this, &NethackUWP::MainPage::OnKeyDown);
 
 	//XXX hardware button
+
+
+
+
+    MapCanvas->PointerPressed +=
+        ref new Windows::UI::Xaml::Input::PointerEventHandler(this, &NethackUWP::MainPage::OnPointerPressed);
+
+    MapCanvas->PointerMoved +=
+        ref new Windows::UI::Xaml::Input::PointerEventHandler(this, &NethackUWP::MainPage::OnPointerMoved);
+
+    MapCanvas->PointerReleased +=
+        ref new Windows::UI::Xaml::Input::PointerEventHandler(this, &NethackUWP::MainPage::OnPointerReleased);
+
+    gestureRecognizer = ref new GestureRecognizer();
+
+    gestureRecognizer->GestureSettings = GestureSettings::Tap;
+
+    gestureRecognizer->Tapped += ref new Windows::Foundation::TypedEventHandler<
+        Windows::UI::Input::GestureRecognizer ^,
+        Windows::UI::Input::TappedEventArgs ^>(this, &NethackUWP::MainPage::OnTapped);
 }
 
+void NethackUWP::MainPage::OnPointerPressed(
+    Platform::Object ^sender,
+    Windows::UI::Xaml::Input::PointerRoutedEventArgs ^e)
+{
+    gestureRecognizer->ProcessDownEvent(e->GetCurrentPoint(MapCanvas));
+}
+
+void NethackUWP::MainPage::OnPointerMoved(
+    Platform::Object ^sender,
+    Windows::UI::Xaml::Input::PointerRoutedEventArgs ^e)
+{
+    gestureRecognizer->ProcessMoveEvents(e->GetIntermediatePoints(MapCanvas));
+}
+
+void NethackUWP::MainPage::OnPointerReleased(
+    Platform::Object ^sender,
+    Windows::UI::Xaml::Input::PointerRoutedEventArgs ^e)
+{
+    gestureRecognizer->ProcessUpEvent(e->GetCurrentPoint(MapCanvas));
+}
+
+void NethackUWP::MainPage::OnTapped(
+    Windows::UI::Input::GestureRecognizer ^sender,
+    Windows::UI::Input::TappedEventArgs ^args)
+{
+    Point pressed = args->Position;
+    bool up = false;
+    bool down = false;
+    bool right = false;
+    bool left = false;
+
+    std::string send_str = "";
+
+    if (pressed.X > (MapCanvas->RenderSize.Width * 2.0 / 3.0))
+        right = true;
+    if (pressed.X < (MapCanvas->RenderSize.Width / 3.0))
+        left = true;
+    if (pressed.Y >(MapCanvas->RenderSize.Height*2.0 / 3.0))
+        down = true;
+    if (pressed.Y <(MapCanvas->RenderSize.Height / 3.0))
+        up = true;
+
+    //XXX DIAGONALS
+    if (up && left)
+        send_str = "y";
+    else if (up && right)
+        send_str = "u";
+    else if (down && left)
+        send_str = "b";
+    else if (down && right)
+        send_str = "n";
+    else if (left)
+        send_str = "h";
+    else if (up)
+        send_str = "k";
+    else if (right)
+        send_str = "l";
+    else if (down)
+        send_str = "j";
+    {
+        std::lock_guard<std::mutex> lock(g_nativepage_impl.promise_lock);
+        if (g_nativepage_impl.waiting_for_direction) {
+            if (send_str.empty())
+                g_nativepage_impl.yn_function_promise.set_value('s');
+            else
+                g_nativepage_impl.yn_function_promise.set_value(send_str.front());
+            g_mainpage->modalDialog->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+            return;
+        }
+    }
+    if (!send_str.empty())
+    {
+        lock_guard<mutex> lock(blocked_on_input);
+        if (input_string.empty())
+            input_string_cv.notify_all();
+        input_string.insert(input_string.end(), begin(send_str), end(send_str));
+    }
+}
 
 
 void NethackUWP::MainPage::button_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
@@ -151,62 +255,6 @@ void NethackUWP::MainPage::button_Click(Platform::Object^ sender, Windows::UI::X
 	
 }
 
-void NethackUWP::MainPage::OutputBox_Tapped2(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e)
-{
-	Point pressed = e->GetPosition(OutputBox);
-	bool up = false;
-	bool down = false;
-	bool right = false;
-	bool left = false;
-
-	std::string send_str = "";
-
-	if (pressed.X > (OutputBox->RenderSize.Width * 2.0 / 3.0))
-		right= true;
-	if (pressed.X < (OutputBox->RenderSize.Width / 3.0 ))
-		left= true;
-	if (pressed.Y >(OutputBox->RenderSize.Height*2.0 / 3.0 ))
-		down = true;
-	if (pressed.Y <(OutputBox->RenderSize.Height / 3.0 ))
-		up = true;
-
-	//XXX DIAGONALS
-    if (up && left)
-        send_str = "y";
-    else if (up && right)
-        send_str = "u";
-    else if (down && left)
-        send_str = "b";
-    else if (down && right)
-        send_str = "n";
-    else if (left)
-        send_str = "h";
-    else if (up)
-        send_str = "k";
-    else if (right)
-        send_str = "l";
-    else if (down)
-        send_str = "j";
-    {
-        std::lock_guard<std::mutex> lock(g_nativepage_impl.promise_lock);
-        if (g_nativepage_impl.waiting_for_direction) {
-            if (send_str.empty())
-                g_nativepage_impl.yn_function_promise.set_value('s');
-            else
-                g_nativepage_impl.yn_function_promise.set_value(send_str.front());
-            g_mainpage->modalDialog->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-            return;
-        }
-    }
-    if (!send_str.empty())
-    {
-		lock_guard<mutex> lock(blocked_on_input);
-		if (input_string.empty())
-			input_string_cv.notify_all();
-		input_string.insert(input_string.end(), begin(send_str), end(send_str));
-	}
-
-}
 void NethackUWP::MainPage::Quick_Button_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
 	auto nethack_text = ((Platform::String^)((Button^)sender)->Content);
@@ -263,13 +311,15 @@ void NativeMainPage::write_char(int x, int y, char ch)
         lock_guard<mutex> lock(g_mainpage->blocked_on_output);
         if (x >= max_width) abort();
         if (y >= max_height) abort();
-        g_mainpage->output_string[max_width_offset * y + x] = ch;
+
+        g_mainpage->map_data[y][x].ch = ch;
+        g_mainpage->map_data[y][x].color = CLR_WHITE;
     }
 }
 void NativeMainPage::display_map()
 {
     g_corewindow->Dispatcher->RunAsync(CoreDispatcherPriority::Low, ref new DispatchedHandler([]() {
-        g_mainpage->PropertyChanged(g_mainpage, ref new PropertyChangedEventArgs("OutStringBuf"));
+        g_mainpage->MapCanvas->Invalidate();
     }));
 }
 
@@ -546,19 +596,11 @@ void NethackUWP::MainPage::Button_Close_History_Click(Platform::Object^ sender, 
 
 void NethackUWP::MainPage::OnSizeChanged(Platform::Object ^sender, Windows::UI::Xaml::SizeChangedEventArgs ^e)
 {
-	if (OutputBox->FontStretch != Windows::UI::Text::FontStretch::Normal)
-	{
-		__fastfail(1337); 
-	}
-
 	float total_size_w = e->NewSize.Width;
 	float total_size_h = e->NewSize.Height;
-	float out_box_w = OutputBox->RenderSize.Width;
-	float out_box_h = OutputBox->RenderSize.Height;
+	float out_box_w = MapCanvas->RenderSize.Width;
+	float out_box_h = MapCanvas->RenderSize.Height;
 
-	float test2 = (float)OutputBox->FontSize;
-
-	
 	const int DESIRED_MIN_W = 80;
 	const int DESIRED_MIN_H = 40;
 	const int MINIMUM_FONT = 15; //DPI is hard, alright? Scott can fix. Or I can fix after seeing how it works
@@ -569,7 +611,7 @@ void NethackUWP::MainPage::OnSizeChanged(Platform::Object ^sender, Windows::UI::
 
     if (maximum_font < MINIMUM_FONT) maximum_font = MINIMUM_FONT;
 
-	OutputBox->FontSize = maximum_font-1;
+	//OutputBox->FontSize = maximum_font-1;
 	//XXX - ENABLE SCROLLBAR IF CANT REACH 80/40.
 	
 	
@@ -661,4 +703,98 @@ void NethackUWP::MainPage::ExpandNotifications(Platform::Object^ sender, Windows
 void NethackUWP::MainPage::CollapseNotifications(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e)
 {
     notificationsExpander->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+}
+
+void NethackUWP::MainPage::MapCanvas_Draw(Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl^ sender, Microsoft::Graphics::Canvas::UI::Xaml::CanvasDrawEventArgs^ args)
+{
+    using namespace Microsoft::Graphics::Canvas::Text;
+    using namespace Windows::UI;
+
+    auto tile_size = 15.0f;
+
+    //int start_x = (sender->ActualWidth / tile_size) / 2;
+    //int start_y = (sender->ActualHeight / tile_size) / 2;
+
+    //float screen_x_start = (sender->ActualWidth / 2.0f) - (15 - start_x) * tile_size;
+    //float screen_y_start = (sender->ActualHeight / 2.0f) - (15 - start_y) * tile_size;
+
+    int start_x = 0;
+    int start_y = 0;
+    float screen_x_start = 0;
+    float screen_y_start = 0;
+
+    auto text_format = ref new CanvasTextFormat();
+    text_format->FontFamily = "Consolas";
+    text_format->FontSize = 12.0f;
+    text_format->HorizontalAlignment = CanvasHorizontalAlignment::Center;
+    text_format->VerticalAlignment = CanvasVerticalAlignment::Center;
+
+    std::lock_guard<std::mutex> lock(blocked_on_output);
+
+    int y = start_y;
+    for (float screenY = screen_y_start; screenY < sender->ActualHeight; screenY += tile_size)
+    {
+        if (y >= map_data.size())
+            break;
+
+        auto& row_data = map_data[y];
+
+        int x = start_x;
+        for (float screenX = screen_x_start; screenX < sender->ActualWidth; screenX += tile_size)
+        {
+            if (x >= row_data.size())
+                break;
+            tile_t tile = row_data[x];
+
+            if (tile.ch != L'\0' && tile.ch != L' ')
+            {
+                static const auto NetHackColorToColor = [](int color) {
+                    switch (color)
+                    {
+                    case 1: // CLR_RED
+                        return Colors::Red;
+                    case 2: // CLR_GREEN
+                        return Colors::Green;
+                    case 3: // CLR_BROWN
+                        return Colors::Brown;
+                    case 4: // CLR_BLUE
+                        return Colors::Blue;
+                    case 5: // CLR_MAGENTA
+                        return Colors::Magenta;
+                    case 6: // CLR_CYAN
+                        return Colors::Cyan;
+                    case 7: // CLR_GRAY
+                        return Colors::Gray;
+                    case 9: // CLR_ORANGE
+                        return Colors::Orange;
+                    case 10: // CLR_BRIGHT_GREEN
+                        return Colors::LightGreen;
+                    case 11: // CLR_YELLOW
+                        return Colors::Yellow;
+                    case 12: // CLR_BRIGHT_BLUE
+                        return Colors::LightBlue;
+                    case 13: // CLR_BRIGHT_MAGENTA
+                        return Colors::LightPink;
+                    case 14: // CLR_BRIGHT_CYAN
+                        return Colors::LightCyan;
+                    case 15: // CLR_WHITE
+                        return Colors::White;
+                    default:
+                        return Colors::DarkGray;
+                    }
+                };
+
+                std::string tile_string_ascii(1, tile.ch);
+                std::wstring tile_string_wide(tile_string_ascii.begin(), tile_string_ascii.end());
+
+                args->DrawingSession->DrawText(
+                    ref new Platform::String(&tile.ch, 1),
+                    { screenX, screenY, tile_size, tile_size },
+                    NetHackColorToColor(tile.color),
+                    text_format);
+            }
+            x++;
+        }
+        y++;
+    }
 }

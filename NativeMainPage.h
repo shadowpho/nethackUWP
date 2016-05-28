@@ -28,6 +28,12 @@ struct menu_t
     std::vector<choice_t> choices;
 };
 
+struct tile_t
+{
+    wchar_t ch;
+    int color;
+};
+
 struct NativeMainPage {
     static constexpr int max_width = 100;
     static constexpr int max_width_offset = max_width + 1;

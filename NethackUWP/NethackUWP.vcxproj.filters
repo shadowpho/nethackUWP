@@ -57,6 +57,7 @@
     <None Include="..\nethack_original\git_dump_3.6\dat\dungeon" />
     <None Include="sysconf" />
     <None Include="rumors" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="MainPage.xaml" />
