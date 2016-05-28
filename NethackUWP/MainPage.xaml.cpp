@@ -44,7 +44,7 @@ using namespace Windows::UI::Xaml::Navigation;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
-const std::vector<wchar_t*> DEFAULT_KEYS = {L"#",L".",L"z",L"Z",L"o",L"u",L"l",L"d",L"w",L"W",};
+const std::vector<wchar_t*> DEFAULT_KEYS = {L"#",L".",L"z",L"Z",L"o",L"e",L"l",L"d",L"w",L"W",};
 
 struct NativeMainPageImpl
 {
@@ -97,7 +97,9 @@ MainPage::MainPage()
 	OutputBox->AddHandler(TappedEvent, ref new TappedEventHandler(this, &NethackUWP::MainPage::OutputBox_Tapped2), true);
 	//OutputBox->Tapped += ref new Windows::UI::Xaml::Input::TappedEventHandler(this, &NethackUWP::MainPage::OutputBox_Tapped2,true);
 	g_mainpage->SizeChanged += ref new Windows::UI::Xaml::SizeChangedEventHandler(this, &NethackUWP::MainPage::OnSizeChanged);
-	g_mainpage->KeyUp += ref new Windows::UI::Xaml::Input::KeyEventHandler(this, &NethackUWP::MainPage::OnKeyUp);
+	g_mainpage->KeyDown += ref new Windows::UI::Xaml::Input::KeyEventHandler(this, &NethackUWP::MainPage::OnKeyDown);
+
+	//XXX hardware button
 }
 
 
@@ -576,22 +578,76 @@ void NethackUWP::MainPage::OnSizeChanged(Platform::Object ^sender, Windows::UI::
 }
 
 
-void NethackUWP::MainPage::OnKeyUp(Platform::Object ^sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs ^e)
+//we care about the following keys.
+// a-z
+// 1-9 for selection
+//XXX
+// numlock
+//space to dismiss messages
+//up/down/left/right
+//escape\back
+//. and ,
+// \ ?- = ~ ; '
+
+//then we care about these MODIFIERS:
+//shift for capital letters//numbers modifier
+//ctrl for ^kick commands
+
+void NethackUWP::MainPage::OnKeyDown(Platform::Object ^sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs ^e)
 {
+	using Windows::System::VirtualKey;
+
 	e->Handled = true;
 	//auto keys = e->OriginalSource;
-	auto keys2 = e->OriginalKey;
+	auto keys2 = e->Key;
+	auto keys3 = e->KeyStatus;
 	char key_value = (char) (int) keys2;
 	
+	bool we_care_about_this_key = false;
+
 		
-	if(key_value >='A' && key_value <='Z')
+	if (key_value >= 'A' && key_value <= 'Z') //a-z
 	{
-		wchar_t nethack_text = key_value;
+		we_care_about_this_key = true;
+	}
+	if (key_value >= '0' && key_value <= '9')
+		we_care_about_this_key = true;
+
+	/* XXX
+	if ((keys2 >= VirtualKey::NumberPad0) && (keys2 <= VirtualKey::NumberPad9))
+		we_care_about_this_key = true;
+	if (keys2 == VirtualKey::Space || keys2 == VirtualKey::Escape || keys2 == VirtualKey::Back)
+		we_care_about_this_key = true;
+	if (keys2 >= VirtualKey::Left && keys2 <= VirtualKey::Down)
+		we_care_about_this_key = true;
+*/
+	if (we_care_about_this_key == false)
+	{
+		return;
+	}
+		key_value = key_value + 32; //lower case a-z
+
+		auto g_corewindow = Windows::UI::Core::CoreWindow::GetForCurrentThread();
+//#define M(c) (0x80 | (c))
+		bool alt_is_pressed = (CoreVirtualKeyStates::Down == g_corewindow->GetKeyState(Windows::System::VirtualKey::Menu));
+//+32
+		bool shift_is_pressed = (CoreVirtualKeyStates::Down == g_corewindow->GetKeyState(Windows::System::VirtualKey::Shift));
+//#define C(c) (0x1f & (c))
+		bool ctrl_is_pressed = (CoreVirtualKeyStates::Down == g_corewindow->GetKeyState(Windows::System::VirtualKey::Control));
+
+		if (alt_is_pressed)
+			key_value |= 0x80;
+		if (shift_is_pressed)
+			key_value -= 32;
+		if (ctrl_is_pressed)
+			key_value &= 0x1f;
+
+	
 		lock_guard<mutex> lock(blocked_on_input);
 		if (input_string.empty())
 			input_string_cv.notify_all();
-		input_string.push_back(nethack_text + 32);
-	}
+		input_string.push_back(key_value);
+	
 
 }
 

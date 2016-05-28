@@ -54,7 +54,7 @@ namespace NethackUWP
 
 		void InputBox_TextChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::TextChangedEventArgs^ e);
 
-        std::deque<wchar_t> input_string;
+        std::deque<int> input_string;
 		std::deque<std::tuple<unsigned short, unsigned short> > input_mouse;
         std::mutex blocked_on_input;
         std::condition_variable input_string_cv;
@@ -74,7 +74,7 @@ namespace NethackUWP
         void CollapseNotifications(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e);
     
 		void OnSizeChanged(Platform::Object ^sender, Windows::UI::Xaml::SizeChangedEventArgs ^e);
-		void OnKeyUp(Platform::Object ^sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs ^e);
+		void OnKeyDown(Platform::Object ^sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs ^e);
 
 
         void clear_map();
