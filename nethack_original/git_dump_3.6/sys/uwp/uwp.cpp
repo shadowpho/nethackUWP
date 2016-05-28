@@ -7,7 +7,7 @@
 #include <condition_variable>
 #include <unordered_map>
 
-#include "../../NativeMainPage.h"
+#include "../../NethackNative.h"
 
 #define terminate terminate2
 #define boolean boolean2
@@ -90,21 +90,21 @@ extern "C"
                 abort();
 
             if (wid == WIN_MESSAGE)
-                NativeMainPage::clear_notifications();
+                NethackNative::clear_notifications();
 
             if (wid == WIN_STATUS)
-				NativeMainPage::clear_statusbar();
+				NethackNative::clear_statusbar();
 
             if (wid == WIN_MAP)
-                NativeMainPage::clear_map();
+                NethackNative::clear_map();
 		}
 		void mswin_display_nhwindow(winid wid, BOOLEAN_P block) 
 		{
             if (wid == WIN_ERR)
                 abort();
             if (wid == WIN_MAP)
-                NativeMainPage::display_map();
-            //NativeMainPage::write_notification();
+                NethackNative::display_map();
+            //NethackNative::write_notification();
 		}
 
 		void mswin_curs(winid wid, int x, int y) {}
@@ -119,7 +119,7 @@ extern "C"
                 abort();
             if (wid == WIN_INVEN)
             {
-                NativeMainPage::clear_inv();
+                NethackNative::clear_inv();
             }
             else
             {
@@ -136,7 +136,7 @@ extern "C"
                 abort();
             if (wid == WIN_INVEN)
             {
-                NativeMainPage::add_inv_str(str, identifier == nullptr, attr, accelerator);
+                NethackNative::add_inv_str(str, identifier == nullptr, attr, accelerator);
             }
             else
             {
@@ -167,7 +167,7 @@ extern "C"
                 return 0;
 
             int selection_value = 0;
-            auto cancelled = NativeMainPage::ask_menu(g_menus[wid], selection_value);
+            auto cancelled = NethackNative::ask_menu(g_menus[wid], selection_value);
 
             if (cancelled)
                 return -1;
@@ -241,7 +241,8 @@ extern "C"
             else
 #endif
             if (ch > 127) abort();
-            NativeMainPage::write_char(x, y, (char)ch);
+            tile_t tile{ ch, color };
+            NethackNative::put_tile(x, y, tile);
             //g_putch(ch); /* print the character */
 
             if (reverse_on) {
@@ -263,16 +264,16 @@ extern "C"
 		
 		void mswin_raw_print(const char *str) 
 		{
-			NativeMainPage::write_notification(str);
+			NethackNative::write_notification(str);
 		}
 		void mswin_raw_print_bold(const char *str) 
 		{
-            NativeMainPage::write_notification(str);
+            NethackNative::write_notification(str);
         }
         void mswin_putstr(winid wid, int attr, const char *text) 
 		{ 
 			if (wid == WIN_STATUS)
-				NativeMainPage::update_statusbar(text);
+				NethackNative::update_statusbar(text);
 			else
 				mswin_raw_print(text);
 		}
@@ -285,7 +286,7 @@ extern "C"
 		{ 
 			int pass_x = 0;
 			int pass_y = 0;
-			int ret = NativeMainPage::read_char(pass_x, pass_y);
+			int ret = NethackNative::read_char(pass_x, pass_y);
 			if (ret == 0)
 			{
 				*x = pass_x;
@@ -303,14 +304,14 @@ extern "C"
         {
             assert(question != nullptr);
             if (strcmp(question, "In what direction?") == 0) // directions
-                return NativeMainPage::ask_direction(def);
+                return NethackNative::ask_direction(def);
             else if(strncmp(question, "What do you want to ", sizeof("What do you want to")) == 0)
             {
-                return NativeMainPage::ask_inv_function(question, def);
+                return NethackNative::ask_inv_function(question, def);
             }
             else
             {
-                return NativeMainPage::ask_yn_function(question, choices, def);
+                return NethackNative::ask_yn_function(question, choices, def);
             }
         }
 		void mswin_getlin(const char *question, char *input) {}
@@ -331,7 +332,7 @@ extern "C"
             }
             ext_command_menu.prompt = "What extended command?";
             int val = -1;
-            NativeMainPage::ask_menu(ext_command_menu, val);
+            NethackNative::ask_menu(ext_command_menu, val);
             return val;
         }
 		void mswin_number_pad(int state) {}
@@ -485,7 +486,7 @@ extern "C"
 	void nttty_preference_update(const char*) {}
 	int tgetch() 
 	{
-		//return NativeMainPage::read_char();
+		//return NethackNative::read_char();
 		abort();
 	}
 	void gettty() { return;  } //called after ! or ^Z. Don't think we need it.
