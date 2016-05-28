@@ -46,7 +46,7 @@ using namespace Windows::UI::Input;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
-const std::vector<wchar_t*> DEFAULT_KEYS = {L"#",L".",L"z",L"Z",L"o",L"e",L"l",L"d",L"w",L"W",};
+const std::vector<wchar_t*> DEFAULT_KEYS = {L"#",L".",L"z",L"Z",L"o",L"e",L"l",L"d",L"w",L"W",L"s",L">",L"<",L"P",L"t",};
 
 struct NativeMainPageImpl
 {
