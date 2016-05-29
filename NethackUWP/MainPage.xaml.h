@@ -75,6 +75,7 @@ namespace NethackUWP
         void clear_map();
         void MapCanvas_Draw(Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl^ sender, Microsoft::Graphics::Canvas::UI::Xaml::CanvasDrawEventArgs^ args);
     };
-    static MainPage^ g_mainpage;
-    static Platform::Agile<Windows::UI::Core::CoreWindow> g_corewindow;
+
+    extern MainPage^ g_mainpage;
+    extern Platform::Agile<Windows::UI::Core::CoreWindow> g_corewindow;
 }

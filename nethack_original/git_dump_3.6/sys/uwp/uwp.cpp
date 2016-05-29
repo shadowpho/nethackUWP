@@ -146,7 +146,7 @@ extern "C"
                 ch.selectable = identifier != nullptr;
                 ch.value = identifier != nullptr ? identifier->a_int : 0;
                 ch.str = str;
-                ch.preselected = presel;
+                ch.preselected = presel != 0;
                 g_menus[wid].choices.push_back(std::move(ch));
             }
         }

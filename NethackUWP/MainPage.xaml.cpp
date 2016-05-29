@@ -44,6 +44,10 @@ using namespace Windows::UI::Xaml::Media;
 using namespace Windows::UI::Xaml::Navigation;
 using namespace Windows::UI::Input;
 
+
+MainPage^ NethackUWP::g_mainpage;
+Platform::Agile<Windows::UI::Core::CoreWindow> NethackUWP::g_corewindow;
+
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
 const std::vector<wchar_t*> DEFAULT_KEYS = {L"#",L".",L"z",L"Z",L"o",L"e",L"l",L"d",L"w",L"W",L"s",L">",L"<",L"P",L"t",};
@@ -70,7 +74,8 @@ MainPage::MainPage()
 {
 	InitializeComponent();
     if (g_mainpage != nullptr)
-        abort();
+        __fastfail(1);
+
     g_mainpage = this;
     g_corewindow = Windows::UI::Core::CoreWindow::GetForCurrentThread();
     Notifications = ref new Platform::Collections::Vector<Platform::String^>();
@@ -84,7 +89,7 @@ MainPage::MainPage()
     this->DataContext = this;
 
 
-    for(int i=0; i< MAX_BUTTONS; i++)
+    for(unsigned int i=0; i< MAX_BUTTONS; i++)
 	{ 
 		Button ^button = ref new Button();
 		button->Click += ref new Windows::UI::Xaml::RoutedEventHandler(this, &NethackUWP::MainPage::Quick_Button_Click);
@@ -93,7 +98,7 @@ MainPage::MainPage()
 		if (i < DEFAULT_KEYS.size())
 			button->Content = ref new Platform::String(DEFAULT_KEYS[i]);
 		else
-			button->Content=ref new Platform::String( std::to_wstring(i).c_str());
+			button->Content = ref new Platform::String( std::to_wstring(i).c_str());
 		button->Margin = Thickness(5,0,5,15);
 		Action_Button_Stack->Children->Append(button);
 		//Action_Button_Stack->Items->Append(button);
@@ -170,41 +175,31 @@ void NethackUWP::MainPage::OnTapped(
     if (pressed.Y <(MapCanvas->RenderSize.Height / 3.0))
         up = true;
 
+    using namespace input_event;
+    event_t e;
+    e.kind = kind_t::directional;
+
     //XXX DIAGONALS
     if (up && left)
-        send_str = "y";
+        e.direction = direction_t::northwest;
     else if (up && right)
-        send_str = "u";
+        e.direction = direction_t::northeast;
     else if (down && left)
-        send_str = "b";
+        e.direction = direction_t::southwest;
     else if (down && right)
-        send_str = "n";
+        e.direction = direction_t::southeast;
     else if (left)
-        send_str = "h";
+        e.direction = direction_t::west;
     else if (up)
-        send_str = "k";
+        e.direction = direction_t::north;
     else if (right)
-        send_str = "l";
+        e.direction = direction_t::east;
     else if (down)
-        send_str = "j";
-    {
-        std::lock_guard<std::mutex> lock(g_nativepage_impl.promise_lock);
-        if (g_nativepage_impl.waiting_for_direction) {
-            if (send_str.empty())
-                g_nativepage_impl.yn_function_promise.set_value('s');
-            else
-                g_nativepage_impl.yn_function_promise.set_value(send_str.front());
-            g_mainpage->modalDialog->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-            return;
-        }
-    }
-    if (!send_str.empty())
-    {
-        lock_guard<mutex> lock(blocked_on_input);
-        if (input_string.empty())
-            input_string_cv.notify_all();
-        input_string.insert(input_string.end(), begin(send_str), end(send_str));
-    }
+        e.direction = direction_t::south;
+    else
+        e.direction = direction_t::self;
+
+    NativeMainPage::event_queue.enqueue(e);
 }
 
 
@@ -217,7 +212,7 @@ void NethackUWP::MainPage::button_Click(Platform::Object^ sender, Windows::UI::X
 	char* real_spooky_ghost = spooky_ghost;
 
 	while (*spooky_ghost_folder)
-		*spooky_ghost++ = *spooky_ghost_folder++;
+		*spooky_ghost++ = (char)*spooky_ghost_folder++;
 	*spooky_ghost++ = '\\';
 	*spooky_ghost++ = 'G';
 	*spooky_ghost++ = 0;
@@ -233,6 +228,8 @@ void NethackUWP::MainPage::button_Click(Platform::Object^ sender, Windows::UI::X
 	game_is_running = true;
     static thread nethack_thread([real_spooky_ghost]()
 	{
+        std::unique_ptr<char[]> delete_real_spooky_ghost(real_spooky_ghost);
+
 		sys_early_init();
 		choose_windows("mswin");//dun worry
 							  //	tty_procs (NULL, NULL); //dun worry
@@ -250,21 +247,22 @@ void NethackUWP::MainPage::button_Click(Platform::Object^ sender, Windows::UI::X
         display_inventory(nullptr, 0);
 		moveloop(0);
 		//trololololololololololololololololololo
-		delete[] real_spooky_ghost;
 	});
 	
 }
 
-void NethackUWP::MainPage::Quick_Button_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+void NethackUWP::MainPage::Quick_Button_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ args)
 {
 	auto nethack_text = ((Platform::String^)((Button^)sender)->Content);
-	{
-		lock_guard<mutex> lock(blocked_on_input);
-		if (input_string.empty())
-			input_string_cv.notify_all();
-		input_string.insert(input_string.end(), begin(nethack_text), end(nethack_text));
-	}
+    if (nethack_text->IsEmpty())
+        return;
 
+    using namespace input_event;
+    event_t e;
+    e.kind = kind_t::keyboard;
+    e.key = (char)nethack_text->Data()[0];
+
+    NativeMainPage::event_queue.enqueue(e);
 }
 
 void NethackUWP::MainPage::Send_butt_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
@@ -277,268 +275,6 @@ void NethackUWP::MainPage::Send_butt_Click(Platform::Object^ sender, Windows::UI
         input_string.insert(input_string.end(), begin(InputBox->Text), end(InputBox->Text));
     }
     InputBox->Text = "";
-}
-
-int NativeMainPage::read_char(int &x, int &y)
-{
-    unique_lock<mutex> lock(g_mainpage->blocked_on_input);
-    while (g_mainpage->input_string.empty() && g_mainpage->input_mouse.empty())
-    {
-        g_mainpage->input_string_cv.wait(lock);
-    }
-	if (!g_mainpage->input_string.empty())
-	{
-		int ret = g_mainpage->input_string.back();
-		g_mainpage->input_string.pop_back();
-
-		return ret;
-	}
-	else //mouse contact
-	{
-		std::tuple<unsigned short, unsigned short> ret_tuple = g_mainpage->input_mouse.back();
-		g_mainpage->input_mouse.pop_back();
-		x = std::get<0>(ret_tuple);
-		y = std::get<1>(ret_tuple);
-		return 0;
-	}
-}
-
-using namespace Windows::UI::Core;
-
-void NativeMainPage::write_char(int x, int y, char ch, int color)
-{
-    {
-        lock_guard<mutex> lock(g_mainpage->blocked_on_output);
-        if (x >= max_width) abort();
-        if (y >= max_height) abort();
-
-        g_mainpage->map_data[y][x].ch = ch;
-        g_mainpage->map_data[y][x].color = color;
-    }
-}
-void NativeMainPage::display_map()
-{
-    g_corewindow->Dispatcher->RunAsync(CoreDispatcherPriority::Low, ref new DispatchedHandler([]() {
-        g_mainpage->MapCanvas->Invalidate();
-    }));
-}
-
-void NativeMainPage::write_notification(const char * str)
-{
-    if (str == 0 || *str == 0 || !strcmp(str,""))
-        return;
-
-    std::wstring strbuf;
-    while (*str) { strbuf.push_back(*str); ++str; }
-    Platform::String^ pcstr = ref new Platform::String(strbuf.c_str());
-    g_corewindow->Dispatcher->RunAsync(CoreDispatcherPriority::Low, ref new DispatchedHandler([pcstr]() {
-        g_mainpage->Notifications->Append(pcstr);
-        g_mainpage->Last_Notifications->Append(pcstr);
-        g_mainpage->Last_Notification = pcstr;
-        if (g_mainpage->Last_Notifications->Size > 1)
-            g_mainpage->notificationsExpander->Visibility = Windows::UI::Xaml::Visibility::Visible;
-        g_mainpage->PropertyChanged(g_mainpage, ref new PropertyChangedEventArgs("Last_Notification"));
-    }));
-}
-
-void NativeMainPage::clear_map()
-{
-    g_mainpage->clear_map();
-}
-
-void NativeMainPage::clear_notifications()
-{
-    g_corewindow->Dispatcher->RunAsync(CoreDispatcherPriority::Low, ref new DispatchedHandler([]() {
-        g_mainpage->Last_Notification = "";
-        g_mainpage->Last_Notifications->Clear();
-        g_mainpage->notificationsExpander->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-        g_mainpage->PropertyChanged(g_mainpage, ref new PropertyChangedEventArgs("Last_Notification"));
-    }));
-}
-void NativeMainPage::clear_statusbar()
-{
-	g_corewindow->Dispatcher->RunAsync(CoreDispatcherPriority::Low, ref new DispatchedHandler([]() {
-        g_mainpage->Status_Line_1 = nullptr;
-        g_mainpage->Status_Line_2 = nullptr;
-        g_mainpage->PropertyChanged(g_mainpage, ref new PropertyChangedEventArgs("Status_Line_1"));
-        g_mainpage->PropertyChanged(g_mainpage, ref new PropertyChangedEventArgs("Status_Line_2"));
-    }));
-}
-void NativeMainPage::clear_inv()
-{
-    g_corewindow->Dispatcher->RunAsync(CoreDispatcherPriority::Low, ref new DispatchedHandler([]() {
-        g_mainpage->Inventory_Strings->Clear();
-    }));
-}
-
-void NativeMainPage::add_inv_str(const char* str, bool is_header, int attr, char accelerator)
-{
-    if (str == 0 || *str == 0)
-		return;
-
-	std::wstring strbuf;
-    if (attr == 0)
-    {
-        if (accelerator != 0)
-            strbuf.push_back(accelerator);
-        else
-            strbuf.push_back(' ');
-        strbuf.append(L" - ");
-    }
-	while (*str) { strbuf.push_back(*str); ++str; }
-	Platform::String^ pcstr = ref new Platform::String(strbuf.c_str());
-	g_corewindow->Dispatcher->RunAsync(CoreDispatcherPriority::Low, ref new DispatchedHandler([pcstr]() {
-		g_mainpage->Inventory_Strings->Append(pcstr);
-	}));
-}
-
-static auto cstr_to_platstr(const char* str)
-{
-    if (str == nullptr)
-        return (Platform::String^)nullptr;
-    std::wstring strbuf;
-    while (*str) { strbuf.push_back(*str); ++str; }
-    Platform::String^ pcstr = ref new Platform::String(strbuf.c_str(), strbuf.size());
-    return pcstr;
-}
-
-void NativeMainPage::update_statusbar(const char * str)
-{
-    if (str == 0 || *str == 0)
-        return;
-
-    Platform::String^ pcstr = cstr_to_platstr(str);
-    g_corewindow->Dispatcher->RunAsync(CoreDispatcherPriority::Low, ref new DispatchedHandler([pcstr]() {
-        if (g_mainpage->Status_Line_1 == nullptr)
-        {
-            g_mainpage->Status_Line_1 = pcstr;
-            g_mainpage->PropertyChanged(g_mainpage, ref new PropertyChangedEventArgs("Status_Line_1"));
-        }
-        else
-        {
-            g_mainpage->Status_Line_2 = pcstr;
-            g_mainpage->PropertyChanged(g_mainpage, ref new PropertyChangedEventArgs("Status_Line_2"));
-        }
-    }));
-}
-
-char NativeMainPage::ask_inv_function(const char *question, char def)
-{
-    {
-        std::lock_guard<std::mutex> lock(g_nativepage_impl.promise_lock);
-        g_nativepage_impl.yn_function_promise = std::promise<int>();
-    }
-
-    Platform::String^ psQuestion = cstr_to_platstr(question);
-    g_corewindow->Dispatcher->RunAsync(CoreDispatcherPriority::Low, ref new DispatchedHandler([psQuestion]() mutable {
-        g_mainpage->Modal_Question = psQuestion;
-        g_mainpage->Modal_Answers->Clear();
-
-        for (auto&& inv : g_mainpage->Inventory_Strings)
-            g_mainpage->Modal_Answers->Append(inv);
-
-        g_mainpage->PropertyChanged(g_mainpage, ref new PropertyChangedEventArgs("Modal_Question"));
-        g_mainpage->modalDialog->Visibility = Windows::UI::Xaml::Visibility::Visible;
-    }));
-
-
-    std::future<int> f = g_nativepage_impl.yn_function_promise.get_future();
-    auto f_val = f.get();
-    if (f_val >= 0)
-        return (char)g_mainpage->Inventory_Strings->GetAt(f_val)->Data()[0];
-    return def;
-}
-
-char NativeMainPage::ask_direction(char def)
-{
-    {
-        std::lock_guard<std::mutex> lock(g_nativepage_impl.promise_lock);
-        g_nativepage_impl.yn_function_promise = std::promise<int>();
-        g_nativepage_impl.waiting_for_direction = true;
-    }
-
-    g_corewindow->Dispatcher->RunAsync(CoreDispatcherPriority::Low, ref new DispatchedHandler([]() {
-        g_mainpage->Modal_Question = L"In what direction?";
-        g_mainpage->Modal_Answers->Clear();
-
-        g_mainpage->PropertyChanged(g_mainpage, ref new PropertyChangedEventArgs("Modal_Question"));
-
-        g_mainpage->modalDialog->Visibility = Windows::UI::Xaml::Visibility::Visible;
-    }));
-
-    std::future<int> f = g_nativepage_impl.yn_function_promise.get_future();
-    auto x = f.get();
-    {
-        std::lock_guard<std::mutex> lock(g_nativepage_impl.promise_lock);
-        g_nativepage_impl.waiting_for_direction = false;
-    }
-    if (x == -1)
-        return def;
-    return static_cast<char>(x);
-}
-
-char NativeMainPage::ask_yn_function(const char *question, const char *choices, char def)
-{
-    {
-        std::lock_guard<std::mutex> lock(g_nativepage_impl.promise_lock);
-        g_nativepage_impl.yn_function_promise = std::promise<int>();
-    }
-
-    Platform::String^ psQuestion = cstr_to_platstr(question);
-    g_corewindow->Dispatcher->RunAsync(CoreDispatcherPriority::Low, ref new DispatchedHandler([psQuestion, choices]() mutable {
-        g_mainpage->Modal_Question = psQuestion;
-        g_mainpage->Modal_Answers->Clear();
-        if (choices != nullptr)
-            while (*choices != 0)
-            {
-                std::string s;
-                s.push_back(*choices);
-                g_mainpage->Modal_Answers->Append(cstr_to_platstr(s.c_str()));
-                ++choices;
-            }
-
-        g_mainpage->PropertyChanged(g_mainpage, ref new PropertyChangedEventArgs("Modal_Question"));
-
-        g_mainpage->modalDialog->Visibility = Windows::UI::Xaml::Visibility::Visible;
-    }));
-
-    std::future<int> f = g_nativepage_impl.yn_function_promise.get_future();
-    auto f_val = f.get();
-    return f_val == -1 ? def : choices[f_val];
-}
-void NativeMainPage::complete_yn_function(int idx)
-{
-    std::lock_guard<std::mutex> lock(g_nativepage_impl.promise_lock);
-    g_nativepage_impl.yn_function_promise.set_value(idx);
-}
-bool NativeMainPage::ask_menu(const menu_t& m, int& selection_value)
-{
-    {
-        std::lock_guard<std::mutex> lock(g_nativepage_impl.promise_lock);
-        g_nativepage_impl.yn_function_promise = std::promise<int>();
-    }
-
-    Platform::String^ psQuestion = cstr_to_platstr(m.prompt.c_str());
-
-    g_corewindow->Dispatcher->RunAsync(CoreDispatcherPriority::Low, ref new DispatchedHandler([psQuestion, &m]() {
-        g_mainpage->Modal_Question = psQuestion;
-        g_mainpage->Modal_Answers->Clear();
-
-        for (auto&& s : m.choices)
-            g_mainpage->Modal_Answers->Append(cstr_to_platstr(s.str.c_str()));
-
-        g_mainpage->PropertyChanged(g_mainpage, ref new PropertyChangedEventArgs("Modal_Question"));
-
-        g_mainpage->modalDialog->Visibility = Windows::UI::Xaml::Visibility::Visible;
-    }));
-
-    std::future<int> f = g_nativepage_impl.yn_function_promise.get_future();
-    auto idx = f.get();
-    if (idx == -1 || !m.choices[idx].selectable)
-        return true;
-
-    selection_value = m.choices[idx].value;
-    return false;
 }
 
 void NethackUWP::MainPage::OutputBox_TextChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::TextChangedEventArgs^ e)
@@ -566,18 +302,27 @@ void NethackUWP::MainPage::listView_SelectionChanged(Platform::Object^ sender, W
         auto obj = (Platform::String^)e->AddedItems->GetAt(0);
         unsigned int idx = -1;
         Modal_Answers->IndexOf(obj, &idx);
+        if (idx == -1)
+            return;
 
-        NativeMainPage::complete_yn_function(idx);
-        modalDialog->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+        using namespace input_event;
+
+        event_t e;
+        e.kind = kind_t::select_menu_item;
+        e.menu_index = idx;
+        NativeMainPage::event_queue.enqueue(e);
     }
 }
 
 
-void NethackUWP::MainPage::SymbolIcon_Tapped(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e)
+void NethackUWP::MainPage::SymbolIcon_Tapped(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ args)
 {
     // Dismiss modal dialog
-    NativeMainPage::complete_yn_function(-1);
-    modalDialog->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+    using namespace input_event;
+
+    event_t e;
+    e.kind = kind_t::cancel_menu_button;
+    NativeMainPage::event_queue.enqueue(e);
 }
 
 
@@ -638,6 +383,7 @@ void NethackUWP::MainPage::OnSizeChanged(Platform::Object ^sender, Windows::UI::
 void NethackUWP::MainPage::OnKeyDown(Platform::Object ^sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs ^e)
 {
 	using Windows::System::VirtualKey;
+    using Windows::UI::Core::CoreVirtualKeyStates;
 
 	e->Handled = false;
 	//auto keys = e->OriginalSource;
@@ -784,9 +530,6 @@ void NethackUWP::MainPage::MapCanvas_Draw(Microsoft::Graphics::Canvas::UI::Xaml:
                         return Colors::DarkGray;
                     }
                 };
-
-                std::string tile_string_ascii(1, tile.ch);
-                std::wstring tile_string_wide(tile_string_ascii.begin(), tile_string_ascii.end());
 
                 args->DrawingSession->DrawText(
                     ref new Platform::String(&tile.ch, 1),
