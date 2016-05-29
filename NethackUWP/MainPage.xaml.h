@@ -41,9 +41,20 @@ namespace NethackUWP
 
         std::queue<InputEntry> inputQueue;
 
-        void OnTapped(Windows::UI::Input::GestureRecognizer ^sender, Windows::UI::Input::TappedEventArgs ^args);
         void OnPointerPressed(Platform::Object ^sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs ^e);
         void OnPointerReleased(Platform::Object ^sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs ^e);
         void OnPointerMoved(Platform::Object ^sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs ^e);
+
+        void OnTapped(Windows::UI::Input::GestureRecognizer ^sender, Windows::UI::Input::TappedEventArgs ^args);
+
+        struct Point {
+            float x, y;
+        };
+
+        Point viewportOffset;
+
+        void OnManipulationStarted(Windows::UI::Input::GestureRecognizer ^sender, Windows::UI::Input::ManipulationStartedEventArgs ^args);
+        void OnManipulationUpdated(Windows::UI::Input::GestureRecognizer ^sender, Windows::UI::Input::ManipulationUpdatedEventArgs ^args);
+        void OnManipulationCompleted(Windows::UI::Input::GestureRecognizer ^sender, Windows::UI::Input::ManipulationCompletedEventArgs ^args);
     };
 }

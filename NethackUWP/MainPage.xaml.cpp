@@ -44,11 +44,30 @@ MainPage::MainPage()
 
     gestureRecognizer = ref new GestureRecognizer();
 
-    gestureRecognizer->GestureSettings = GestureSettings::Tap;
+    gestureRecognizer->GestureSettings = 
+        GestureSettings::Tap | 
+        GestureSettings::ManipulationTranslateX |
+        GestureSettings::ManipulationTranslateY;
 
-    gestureRecognizer->Tapped += ref new Windows::Foundation::TypedEventHandler<
-        Windows::UI::Input::GestureRecognizer ^,
-        Windows::UI::Input::TappedEventArgs ^>(this, &NethackUWP::MainPage::OnTapped);
+    gestureRecognizer->Tapped += 
+        ref new Windows::Foundation::TypedEventHandler<
+            Windows::UI::Input::GestureRecognizer ^,
+            Windows::UI::Input::TappedEventArgs ^>(this, &NethackUWP::MainPage::OnTapped);
+
+    gestureRecognizer->ManipulationStarted += 
+        ref new Windows::Foundation::TypedEventHandler<
+            Windows::UI::Input::GestureRecognizer ^,
+            Windows::UI::Input::ManipulationStartedEventArgs ^>(this, &NethackUWP::MainPage::OnManipulationStarted);
+
+    gestureRecognizer->ManipulationUpdated += 
+        ref new Windows::Foundation::TypedEventHandler<
+            Windows::UI::Input::GestureRecognizer ^,
+            Windows::UI::Input::ManipulationUpdatedEventArgs ^>(this, &NethackUWP::MainPage::OnManipulationUpdated);
+
+    gestureRecognizer->ManipulationCompleted += 
+        ref new Windows::Foundation::TypedEventHandler<
+            Windows::UI::Input::GestureRecognizer ^,
+            Windows::UI::Input::ManipulationCompletedEventArgs ^>(this, &NethackUWP::MainPage::OnManipulationCompleted);
 }
 
 void MainPage::Redraw(
@@ -60,8 +79,16 @@ void MainPage::Redraw(
     
     auto player_position = NethackNative::get_player_position();
 
-    int start_x = player_position.x - (sender->ActualWidth / tile_width) / 2;
-    int start_y = player_position.y - (sender->ActualHeight / tile_height) / 2;
+    player_position.x -= viewportOffset.x / tile_width;
+    player_position.y -= viewportOffset.y / tile_width;
+
+    int start_x, start_y;
+
+    start_x = player_position.x;
+    start_y = player_position.y;
+
+    start_x -= (sender->ActualWidth / tile_width) / 2;
+    start_y -= (sender->ActualHeight / tile_height) / 2;
 
     float screen_x_start = (sender->ActualWidth / 2.0f) - (player_position.x - start_x) * tile_width;
     float screen_y_start = (sender->ActualHeight / 2.0f) - (player_position.y - start_y) * tile_height;
@@ -164,14 +191,24 @@ void MainPage::OnKeyDown(
     Windows::UI::Core::CoreWindow ^sender,
     Windows::UI::Core::KeyEventArgs ^args)
 {
-    std::unique_lock<std::mutex> lock(inputQueueLock);
+    if (args->VirtualKey == VirtualKey::Space)
+    {
+        viewportOffset.x = 0;
+        viewportOffset.y = 0;
 
-    InputEntry entry;
-    entry.Key = args->VirtualKey;
-    inputQueue.push(entry);
+        OnRedrawMap();
+    }
+    else
+    {
+        std::unique_lock<std::mutex> lock(inputQueueLock);
 
-    lock.unlock();
-    inputQueueSignal.notify_all();
+        InputEntry entry;
+        entry.Key = args->VirtualKey;
+        inputQueue.push(entry);
+
+        lock.unlock();
+        inputQueueSignal.notify_all();
+    }
 }
 
 void NethackUWP::MainPage::OnPointerPressed(
@@ -228,4 +265,29 @@ void NethackUWP::MainPage::OnTapped(
 
     lock.unlock();
     inputQueueSignal.notify_all();
+}
+
+
+void NethackUWP::MainPage::OnManipulationStarted(
+    Windows::UI::Input::GestureRecognizer ^sender,
+    Windows::UI::Input::ManipulationStartedEventArgs ^args)
+{
+    //
+}
+
+void NethackUWP::MainPage::OnManipulationUpdated(
+    Windows::UI::Input::GestureRecognizer ^sender,
+    Windows::UI::Input::ManipulationUpdatedEventArgs ^args)
+{
+    viewportOffset.x += args->Delta.Translation.X;
+    viewportOffset.y += args->Delta.Translation.Y;
+
+    OnRedrawMap();
+}
+
+void NethackUWP::MainPage::OnManipulationCompleted(
+    Windows::UI::Input::GestureRecognizer ^sender,
+    Windows::UI::Input::ManipulationCompletedEventArgs ^args)
+{
+    //
 }
