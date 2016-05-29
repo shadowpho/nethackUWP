@@ -92,3 +92,5 @@ _pkginfo.txt
 # SQL Server files
 *.mdf
 *.ldf
+
+nethack_original/git_dump_3.6/include/date.h
