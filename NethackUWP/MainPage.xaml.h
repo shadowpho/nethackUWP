@@ -42,11 +42,6 @@ namespace NethackUWP
         void Send_butt_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
         void Quick_Button_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 
-        std::deque<int> input_string;
-        std::deque<std::tuple<unsigned short, unsigned short> > input_mouse;
-        std::mutex blocked_on_input;
-        std::condition_variable input_string_cv;
-
         std::mutex blocked_on_output;
         std::vector<std::vector<tile_t>> map_data;
 
