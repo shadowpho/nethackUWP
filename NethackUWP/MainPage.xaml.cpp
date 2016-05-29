@@ -249,9 +249,13 @@ void NethackUWP::MainPage::button_Click(Platform::Object^ sender, Windows::UI::X
 #ifndef NDEBUG
 		flags.debug = true;
 #endif
-        //resuming = pcmain(argc, argv);
+		auto fd = restore_saved_game();
+		bool resume = false;
+		if (fd >= 0 && dorecover(fd))
+			resume = true;
+
         display_inventory(nullptr, 0);
-        moveloop(0);
+        moveloop(resume);
         //trololololololololololololololololololo
     });
 

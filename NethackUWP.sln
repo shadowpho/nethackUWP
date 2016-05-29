@@ -44,6 +44,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		nethack_original\git_dump_3.6\win\win32\mnselcnt.uu = nethack_original\git_dump_3.6\win\win32\mnselcnt.uu
 		nethack_original\git_dump_3.6\win\win32\mnunsel.uu = nethack_original\git_dump_3.6\win\win32\mnunsel.uu
 		nethack_original\git_dump_3.6\win\win32\mswproc.c = nethack_original\git_dump_3.6\win\win32\mswproc.c
+		E:\Programming\nethack2\nethack-3.6.0\sys\share\pcmain.c = E:\Programming\nethack2\nethack-3.6.0\sys\share\pcmain.c
 		nethack_original\git_dump_3.6\win\win32\petmark.uu = nethack_original\git_dump_3.6\win\win32\petmark.uu
 		nethack_original\git_dump_3.6\win\win32\pilemark.uu = nethack_original\git_dump_3.6\win\win32\pilemark.uu
 		nethack_original\git_dump_3.6\win\win32\record.uu = nethack_original\git_dump_3.6\win\win32\record.uu
