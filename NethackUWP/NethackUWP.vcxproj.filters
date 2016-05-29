@@ -59,13 +59,14 @@
     <None Include="sysconf" />
     <None Include="rumors" />
     <None Include="packages.config" />
+    <None Include="defaults.nh" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="MainPage.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="wizkit.txt" />
-    <Text Include="engrave.txt" />
-    <Text Include="epitaph.txt" />
+    <Text Include="engrave" />
+    <Text Include="epitaph" />
   </ItemGroup>
 </Project>

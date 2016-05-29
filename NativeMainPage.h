@@ -37,6 +37,8 @@ struct tile_t
     int color;
 };
 
+
+
 enum class direction_t
 {
     north,
@@ -46,10 +48,10 @@ enum class direction_t
     northeast,
     northwest,
     southeast,
-    southwest,
-    up,
-    down,
-    self,
+    southwest,  //n
+    up,         //<
+    down,       //>
+    self,       //'.'  s
     COUNT
 };
 

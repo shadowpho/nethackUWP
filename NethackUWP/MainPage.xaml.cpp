@@ -44,6 +44,8 @@ using namespace Windows::UI::Xaml::Media;
 using namespace Windows::UI::Xaml::Navigation;
 using namespace Windows::UI::Input;
 
+constexpr auto tile_width = 10.0f;
+constexpr auto tile_height = 14.0f;
 
 MainPage^ NethackUWP::g_mainpage;
 Platform::Agile<Windows::UI::Core::CoreWindow> NethackUWP::g_corewindow;
@@ -205,7 +207,9 @@ void NethackUWP::MainPage::OnTapped(
 
 void NethackUWP::MainPage::button_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
+#ifndef NDEBUG
     flags.debug = true;
+#endif
     wchar_t* spooky_ghost_folder = (wchar_t*)Windows::Storage::ApplicationData::Current->LocalFolder->Path->Data();
 
     char* spooky_ghost = new char[1024];
@@ -242,7 +246,9 @@ void NethackUWP::MainPage::button_Click(Platform::Object^ sender, Windows::UI::X
 
         flags.perm_invent = true;
 
-        flags.debug = true;
+#ifndef NDEBUG
+		flags.debug = true;
+#endif
         //resuming = pcmain(argc, argv);
         display_inventory(nullptr, 0);
         moveloop(0);
@@ -348,72 +354,111 @@ void NethackUWP::MainPage::OnSizeChanged(Platform::Object ^sender, Windows::UI::
 
     const int DESIRED_MIN_W = 80;
     const int DESIRED_MIN_H = 40;
-    const int MINIMUM_FONT = 15; //DPI is hard, alright? Scott can fix. Or I can fix after seeing how it works
 
-    float maximum_font = (out_box_w / DESIRED_MIN_W);
+	int actual_x_count = 0;
+	int actual_y_count = 0;
 
-    if (out_box_h / DESIRED_MIN_H < maximum_font) maximum_font = (out_box_h / DESIRED_MIN_H);
+	if (out_box_w / tile_width < DESIRED_MIN_W)  // we need to scroll 
+		actual_x_count = DESIRED_MIN_W;
+	else
+		actual_x_count = (int)out_box_w / tile_width;
 
-    if (maximum_font < MINIMUM_FONT) maximum_font = MINIMUM_FONT;
-
-    //OutputBox->FontSize = maximum_font-1;
-    //XXX - ENABLE SCROLLBAR IF CANT REACH 80/40.
-
-
-
+	if (out_box_h / tile_height < DESIRED_MIN_H)  // we need to scroll 
+		actual_y_count = DESIRED_MIN_H;
+	else
+		actual_y_count = (int)out_box_h / tile_height;
 
 }
 
+static const char
+/* normal, shift, control */
+keypad[][3] =
+{
+    {'0','0','0'},
+    { 'b', 'B', C('b') },    /* NumberPad1 */
+    { 'j', 'J', C('j') },    /* 2 */
+    { 'n', 'N', C('n') },    /* 3 */
+    { 'h', 'H', C('h') },    /* 4 */
+    { 'g', 'G', 'g' },       /* 5 */
+    { 'l', 'L', C('l') },    /* 6 */
+    { 'y', 'Y', C('y') },    /* 7 */
+    { 'k', 'K', C('k') },    /* 8 */
+    { 'u', 'U', C('u') },    /* 9 */
+    {'*','*','*'},
+    { '+', 'P', C('p') },    /* + */
+    {'\n', '\n', '\n' },    //ENTER??? 
+    { 'm', C('p'), C('p') }, /* - */
+    {'.', '.','.'}, //dot
+    {'//','//','//'} //divide
+
+    //{ 'i', 'I', C('i') },    /* Ins */
+    //{ '.', ':', ':' }        /* Del */
+},
+numpad[][3] = {   //XXX if numpad option is DISABLED.
+    { '7', M('7'), '7' },    /* 7 */
+    { '8', M('8'), '8' },    /* 8 */
+    { '9', M('9'), '9' },    /* 9 */
+    { 'm', C('p'), C('p') }, /* - */
+    { '4', M('4'), '4' },    /* 4 */
+    { '5', M('5'), '5' },    /* 5 */
+    { '6', M('6'), '6' },    /* 6 */
+    { '+', 'P', C('p') },    /* + */
+    { '1', M('1'), '1' },    /* 1 */
+    { '2', M('2'), '2' },    /* 2 */
+    { '3', M('3'), '3' },    /* 3 */
+    { '0', M('0'), '0' },    /* Ins */
+    { '.', ':', ':' }        /* Del */
+};
 
 //we care about the following keys.
 // a-z
 // 1-9 for selection
-//XXX
 // numlock
 //space to dismiss messages
 //up/down/left/right
 //escape\back
+
 //. and ,
 // \ ?- = ~ ; '
-
+//> <
+//XXX
 //then we care about these MODIFIERS:
 //shift for capital letters//numbers modifier
 //ctrl for ^kick commands
+
+static direction_t key_to_direction(char direction)
+{
+    direction_t return_direction;
+    switch (direction)
+    {
+    case 'y': return_direction = direction_t::northwest; break;
+    case 'k': return_direction = direction_t::north; break;
+    case 'u': return_direction = direction_t::northeast; break;
+    case 'h': return_direction = direction_t::west; break;
+    case 'l': return_direction = direction_t::east; break;
+    case 'b': return_direction = direction_t::southwest; break;
+    case 'j': return_direction = direction_t::south; break;
+    case 'n': return_direction = direction_t::southeast; break;
+    case '.': return_direction = direction_t::self; break;
+    case 's': return_direction = direction_t::self; break;
+    case '<': return_direction = direction_t::up; break;
+    case '>': return_direction = direction_t::down; break;
+    default:
+        __fastfail(555);
+   }
+    return return_direction;
+}
 
 void NethackUWP::MainPage::OnKeyDown(Platform::Object ^sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs ^e)
 {
     using Windows::System::VirtualKey;
     using Windows::UI::Core::CoreVirtualKeyStates;
-
-    e->Handled = false;
-    //auto keys = e->OriginalSource;
-    auto keys2 = e->Key;
-    auto keys3 = e->KeyStatus;
-    char key_value = (char)(int)keys2;
-
-    bool we_care_about_this_key = false;
+    using Windows::UI::Xaml::FocusState;
+    using namespace input_event;
 
 
-    if (key_value >= 'A' && key_value <= 'Z') //a-z
-    {
-        we_care_about_this_key = true;
-    }
-    if (key_value >= '0' && key_value <= '9')
-        we_care_about_this_key = true;
-
-    /* XXX
-    if ((keys2 >= VirtualKey::NumberPad0) && (keys2 <= VirtualKey::NumberPad9))
-        we_care_about_this_key = true;
-    if (keys2 == VirtualKey::Space || keys2 == VirtualKey::Escape || keys2 == VirtualKey::Back)
-        we_care_about_this_key = true;
-    if (keys2 >= VirtualKey::Left && keys2 <= VirtualKey::Down)
-        we_care_about_this_key = true;
-*/
-    if (we_care_about_this_key == false)
-    {
+    if (InputBox->FocusState != FocusState::Unfocused)
         return;
-    }
-    key_value = key_value + 32; //lower case a-z
 
     auto g_corewindow = Windows::UI::Core::CoreWindow::GetForCurrentThread();
     //#define M(c) (0x80 | (c))
@@ -423,20 +468,108 @@ void NethackUWP::MainPage::OnKeyDown(Platform::Object ^sender, Windows::UI::Xaml
     //#define C(c) (0x1f & (c))
     bool ctrl_is_pressed = (CoreVirtualKeyStates::Down == g_corewindow->GetKeyState(Windows::System::VirtualKey::Control));
 
-    if (alt_is_pressed)
-        key_value |= 0x80;
-    if (shift_is_pressed)
-        key_value -= 32;
-    if (ctrl_is_pressed)
-        key_value &= 0x1f;
+
+    e->Handled = false;
+    //auto keys = e->OriginalSource;
+    auto keys2 = e->Key;
+    auto keys3 = e->KeyStatus;
+    char key_value = (char)(int)keys2;
+
+    bool we_care_about_this_key = false;
+    bool modifiers_handled = false;
+    bool directionals = false;
+
+    if (keys2 >= VirtualKey::A && keys2 <= VirtualKey::Z) //a-z
+    {
+        key_value = key_value + 32; //lower case a-z
+        we_care_about_this_key = true;
+    }
+    if (keys2 >= VirtualKey::Number0 && keys2 <= VirtualKey::Number9)
+        we_care_about_this_key = true;
 
 
-    lock_guard<mutex> lock(blocked_on_input);
-    if (input_string.empty())
-        input_string_cv.notify_all();
-    input_string.push_back(key_value);
+    if ((keys2 >= VirtualKey::NumberPad0) && (keys2 <= VirtualKey::Divide))
+    {
+        int index_array = (shift_is_pressed * 1) | (ctrl_is_pressed * 2);
+        key_value=keypad[key_value - (char)VirtualKey::NumberPad0][index_array];
+        we_care_about_this_key = true;
+        modifiers_handled = true;
+        if (keys2 >= VirtualKey::NumberPad0  && keys2 <= VirtualKey::NumberPad9)
+            if (keys2 != VirtualKey::NumberPad5)
+                if ((alt_is_pressed || shift_is_pressed || ctrl_is_pressed) == false)
+                    directionals = true;
+    }           
+    
+    if (keys2 == VirtualKey::Escape || keys2 == VirtualKey::Back || keys2 == VirtualKey::GoBack || keys2 == VirtualKey::Space)
+    {
+        event_t ET;
+        ET.kind = kind_t::cancel_menu_button;
+         NativeMainPage::event_queue.enqueue(ET);
+        we_care_about_this_key = true;
+        return;
+    }
 
+    if (keys2 >= VirtualKey::Left && keys2 <= VirtualKey::Down)
+    {
+        we_care_about_this_key = true;
+        directionals = true;
+        switch (keys2)
+        {
+        case VirtualKey::Left: key_value = 'h'; break;
+        case VirtualKey::Right: key_value = 'l'; break;
+        case VirtualKey::Up: key_value = 'k'; break;
+        case VirtualKey::Down: key_value = 'j'; break;
+        default:
+            __fastfail(5);
+            
+        }
+    }
 
+    if ((int)keys2 >= VK_OEM_1 && (int)keys2 <= VK_OEM_7) // don't handkle 
+    {
+        we_care_about_this_key = true;
+        modifiers_handled = true;
+
+        constexpr const   static char keys_no_shift[] = ";+,-./`[\\]'";
+        constexpr const   static char keys_shift[] = ":=<_>?~{|}\"";
+        int iter_arr = (int)keys2 - VK_OEM_1;
+        assert(iter_arr >= 0 && iter_arr <= 11);
+        if (shift_is_pressed)
+            key_value = keys_no_shift[iter_arr];
+        else
+            key_value = keys_shift[iter_arr];
+        
+    }
+
+    if (we_care_about_this_key == false)
+    {
+        return;
+    }
+ 
+
+    if (modifiers_handled == false)
+    {
+        if (alt_is_pressed)
+            key_value |= 0x80;
+        if (shift_is_pressed)
+            key_value -= 32;
+        if (ctrl_is_pressed)
+            key_value &= 0x1f;
+    }
+
+    event_t ET;
+    if (directionals)
+    {
+        ET.kind = kind_t::directional;
+        ET.direction = key_to_direction(key_value);
+
+    }
+    else
+    {
+        ET.kind = kind_t::keyboard;
+        ET.key = key_value;
+    }
+    NativeMainPage::event_queue.enqueue(ET);
 }
 
 
@@ -451,13 +584,13 @@ void NethackUWP::MainPage::CollapseNotifications(Platform::Object^ sender, Windo
     notificationsExpander->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 }
 
+
+
+
 void NethackUWP::MainPage::MapCanvas_Draw(Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl^ sender, Microsoft::Graphics::Canvas::UI::Xaml::CanvasDrawEventArgs^ args)
 {
     using namespace Microsoft::Graphics::Canvas::Text;
     using namespace Windows::UI;
-
-    constexpr auto tile_width = 10.0f;
-    constexpr auto tile_height = 14.0f;
 
     //int start_x = (sender->ActualWidth / tile_size) / 2;
     //int start_y = (sender->ActualHeight / tile_size) / 2;

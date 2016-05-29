@@ -32,6 +32,9 @@ static char to_keyboard_key(direction_t direction)
     return dirmap[idx];
 }
 
+
+
+
 int NativeMainPage::read_char(int &x, int &y)
 {
     using namespace input_event;

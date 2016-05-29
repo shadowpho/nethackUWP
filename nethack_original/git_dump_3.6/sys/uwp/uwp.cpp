@@ -65,7 +65,7 @@ extern "C"
     }
 
     void mswin_player_selection(void) {}
-    void mswin_askname(void) { strcpy(plname, "best_playa-wizard-elf-female-chaos"); } //ask user for name, bail if cancel.
+    void mswin_askname(void) { strcpy(plname, "playa-wiz-elf-fem-cha"); } //ask user for name, bail if cancel.
     void mswin_get_nh_event(void) {}
     void mswin_exit_nhwindows(const char *) {}
 

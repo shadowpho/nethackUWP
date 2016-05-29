@@ -182,6 +182,9 @@
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
     </None>
+    <None Include="defaults.nh">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+    </None>
     <None Include="NethackUWP_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="rumors">
@@ -233,8 +236,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="engrave.txt" />
-    <Text Include="epitaph.txt" />
+    <Text Include="engrave" />
+    <Text Include="epitaph" />
     <Text Include="wizkit.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
