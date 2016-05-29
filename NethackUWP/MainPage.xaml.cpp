@@ -264,27 +264,38 @@ void NethackUWP::MainPage::button_Click(Platform::Object^ sender, Windows::UI::X
 void NethackUWP::MainPage::Quick_Button_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ args)
 {
     auto nethack_text = ((Platform::String^)((Button^)sender)->Content);
+
     if (nethack_text->IsEmpty())
         return;
 
-    using namespace input_event;
-    event_t e;
-    e.kind = kind_t::keyboard;
-    e.key = (char)nethack_text->Data()[0];
+    for (wchar_t c : nethack_text)
+    {
+        using namespace input_event;
+        event_t e;
+        e.kind = kind_t::keyboard;
+        e.key = c;
 
-    NativeMainPage::event_queue.enqueue(e);
+        NativeMainPage::event_queue.enqueue(e);
+    }
 }
 
-void NethackUWP::MainPage::Send_butt_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+void NethackUWP::MainPage::Send_butt_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ args)
 {
-    {
-        lock_guard<mutex> lock(blocked_on_input);
-
-        if (input_string.empty())
-            input_string_cv.notify_all();
-        input_string.insert(input_string.end(), begin(InputBox->Text), end(InputBox->Text));
-    }
+    auto nethack_text = InputBox->Text;
     InputBox->Text = "";
+
+    if (nethack_text->IsEmpty())
+        return;
+
+    for (wchar_t c : nethack_text)
+    {
+        using namespace input_event;
+        event_t e;
+        e.kind = kind_t::keyboard;
+        e.key = c;
+
+        NativeMainPage::event_queue.enqueue(e);
+    }
 }
 
 void NethackUWP::MainPage::OutputBox_TextChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::TextChangedEventArgs^ e)
