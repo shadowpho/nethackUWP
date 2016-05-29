@@ -48,10 +48,10 @@ enum class direction_t
     northeast,
     northwest,
     southeast,
-    southwest,  //n
-    up,         //<
-    down,       //>
-    self,       //'.'  s
+    southwest,
+    up,
+    down,
+    self,
     COUNT
 };
 
