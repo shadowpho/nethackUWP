@@ -103,7 +103,10 @@ extern "C"
             if (wid == WIN_ERR)
                 abort();
             if (wid == WIN_MAP)
+            {
+                NethackNative::put_player_position(u.ux, u.uy);
                 NethackNative::display_map();
+            }
             //NethackNative::write_notification();
 		}
 

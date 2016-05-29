@@ -16,7 +16,7 @@ using namespace Windows::System;
 
 MainPage::MainPage()
 {
-	InitializeComponent();
+    InitializeComponent();
 
     NethackNative::start_nethack();
 

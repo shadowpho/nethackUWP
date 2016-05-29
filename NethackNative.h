@@ -53,6 +53,7 @@ struct NethackNative {
     static void put_tile(int x, int y, tile_t& tile);
     static tile_t get_tile(int x, int y);
 
+    static void put_player_position(int x, int y);
     static point_t get_player_position();
 
     static void write_notification(const char*);

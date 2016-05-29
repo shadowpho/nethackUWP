@@ -63,13 +63,6 @@ void NethackNative::put_tile(int x, int y, tile_t& tile)
     
     std::lock_guard<std::mutex> lock(g_map.lock);
     g_map.tiles[x][y] = tile;
-
-    if (tile.ch == '@')
-    {
-        std::lock_guard<std::mutex> lock(g_player.lock);
-        g_player.position.x = x;
-        g_player.position.y = y;
-    }
 }
 
 tile_t NethackNative::get_tile(int x, int y)
@@ -79,6 +72,13 @@ tile_t NethackNative::get_tile(int x, int y)
 
     std::lock_guard<std::mutex> lock(g_map.lock);
     return g_map.tiles[x][y];
+}
+
+void NethackNative::put_player_position(int x, int y)
+{
+    std::lock_guard<std::mutex> lock(g_player.lock);
+    g_player.position.x = x;
+    g_player.position.y = y;
 }
 
 point_t NethackNative::get_player_position()
