@@ -465,10 +465,10 @@ void NethackUWP::MainPage::MapCanvas_Draw(Microsoft::Graphics::Canvas::UI::Xaml:
     //float screen_x_start = (sender->ActualWidth / 2.0f) - (15 - start_x) * tile_size;
     //float screen_y_start = (sender->ActualHeight / 2.0f) - (15 - start_y) * tile_size;
 
-    int start_x = 0;
-    int start_y = 0;
-    float screen_x_start = 0;
-    float screen_y_start = 0;
+    int start_x = u.ux - sender->ActualWidth / tile_width / 2;
+    int start_y = u.uy - sender->ActualHeight / tile_height / 2;
+    float screen_x_start = 0; //(sender->ActualWidth / 2.0f) - (u.ux - start_x) * tile_width;
+    float screen_y_start = 0; //(sender->ActualHeight / 2.0f) - (u.uy - start_y) * tile_height;
 
     auto text_format = ref new CanvasTextFormat();
     text_format->FontFamily = "Consolas";
@@ -479,16 +479,20 @@ void NethackUWP::MainPage::MapCanvas_Draw(Microsoft::Graphics::Canvas::UI::Xaml:
     std::lock_guard<std::mutex> lock(blocked_on_output);
 
     int y = start_y;
-    for (float screenY = screen_y_start; screenY < sender->ActualHeight; screenY += tile_height)
+    for (float screenY = screen_y_start; screenY < sender->ActualHeight; screenY += tile_height, ++y)
     {
+        if (y < 0)
+            continue;
         if (y >= map_data.size())
             break;
 
         auto& row_data = map_data[y];
 
         int x = start_x;
-        for (float screenX = screen_x_start; screenX < sender->ActualWidth; screenX += tile_width)
+        for (float screenX = screen_x_start; screenX < sender->ActualWidth; screenX += tile_width, ++x)
         {
+            if (x < 0)
+                continue;
             if (x >= row_data.size())
                 break;
             tile_t tile = row_data[x];
@@ -537,8 +541,6 @@ void NethackUWP::MainPage::MapCanvas_Draw(Microsoft::Graphics::Canvas::UI::Xaml:
                     NetHackColorToColor(tile.color),
                     text_format);
             }
-            x++;
         }
-        y++;
     }
 }
