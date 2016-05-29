@@ -15,14 +15,14 @@
 
 namespace NethackUWP
 {
-	/// <summary>
-	/// An empty page that can be used on its own or navigated to within a Frame.
-	/// </summary>
+    /// <summary>
+    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// </summary>
     [Windows::UI::Xaml::Data::Bindable]
-	public ref class MainPage sealed : public Windows::UI::Xaml::Data::INotifyPropertyChanged
-	{
-	public:
-		MainPage();
+    public ref class MainPage sealed : public Windows::UI::Xaml::Data::INotifyPropertyChanged
+    {
+    public:
+        MainPage();
 
         property Windows::Foundation::Collections::IVector<Platform::String^>^ Inventory_Strings;
 
@@ -37,13 +37,13 @@ namespace NethackUWP
 
         virtual event Windows::UI::Xaml::Data::PropertyChangedEventHandler ^ PropertyChanged;
 
-	private:
-		void button_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
-		void Send_butt_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
-		void Quick_Button_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+    private:
+        void button_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+        void Send_butt_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+        void Quick_Button_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 
         std::deque<int> input_string;
-		std::deque<std::tuple<unsigned short, unsigned short> > input_mouse;
+        std::deque<std::tuple<unsigned short, unsigned short> > input_mouse;
         std::mutex blocked_on_input;
         std::condition_variable input_string_cv;
 
@@ -67,9 +67,9 @@ namespace NethackUWP
         void Button_Close_History_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
         void ExpandNotifications(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e);
         void CollapseNotifications(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e);
-    
-		void OnSizeChanged(Platform::Object ^sender, Windows::UI::Xaml::SizeChangedEventArgs ^e);
-		void OnKeyDown(Platform::Object ^sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs ^e);
+
+        void OnSizeChanged(Platform::Object ^sender, Windows::UI::Xaml::SizeChangedEventArgs ^e);
+        void OnKeyDown(Platform::Object ^sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs ^e);
 
 
         void clear_map();

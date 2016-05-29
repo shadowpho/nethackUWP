@@ -50,7 +50,7 @@ Platform::Agile<Windows::UI::Core::CoreWindow> NethackUWP::g_corewindow;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
-const std::vector<wchar_t*> DEFAULT_KEYS = {L"#",L".",L"z",L"Z",L"o",L"e",L"l",L"d",L"w",L"W",L"s",L">",L"<",L"P",L"t",};
+const std::vector<wchar_t*> DEFAULT_KEYS = { L"#",L".",L"z",L"Z",L"o",L"e",L"l",L"d",L"w",L"W",L"s",L">",L"<",L"P",L"t", };
 
 struct NativeMainPageImpl
 {
@@ -72,7 +72,7 @@ void MainPage::clear_map()
 
 MainPage::MainPage()
 {
-	InitializeComponent();
+    InitializeComponent();
     if (g_mainpage != nullptr)
         __fastfail(1);
 
@@ -89,28 +89,28 @@ MainPage::MainPage()
     this->DataContext = this;
 
 
-    for(unsigned int i=0; i< MAX_BUTTONS; i++)
-	{ 
-		Button ^button = ref new Button();
-		button->Click += ref new Windows::UI::Xaml::RoutedEventHandler(this, &NethackUWP::MainPage::Quick_Button_Click);
-		
-		//button->AddHandler(button_Click, Quick_Button_Click, true);
-		if (i < DEFAULT_KEYS.size())
-			button->Content = ref new Platform::String(DEFAULT_KEYS[i]);
-		else
-			button->Content = ref new Platform::String( std::to_wstring(i).c_str());
-		button->Margin = Thickness(5,0,5,15);
-		Action_Button_Stack->Children->Append(button);
-		//Action_Button_Stack->Items->Append(button);
-		//Action_Button_Stack->Conten
-	}
+    for (unsigned int i = 0; i < MAX_BUTTONS; i++)
+    {
+        Button ^button = ref new Button();
+        button->Click += ref new Windows::UI::Xaml::RoutedEventHandler(this, &NethackUWP::MainPage::Quick_Button_Click);
 
-	//OutputBox->AddHandler(TappedEvent, ref new TappedEventHandler(this, &NethackUWP::MainPage::OutputBox_Tapped2), true);
-	//OutputBox->Tapped += ref new Windows::UI::Xaml::Input::TappedEventHandler(this, &NethackUWP::MainPage::OutputBox_Tapped2,true);
-	g_mainpage->SizeChanged += ref new Windows::UI::Xaml::SizeChangedEventHandler(this, &NethackUWP::MainPage::OnSizeChanged);
-	g_mainpage->KeyDown += ref new Windows::UI::Xaml::Input::KeyEventHandler(this, &NethackUWP::MainPage::OnKeyDown);
+        //button->AddHandler(button_Click, Quick_Button_Click, true);
+        if (i < DEFAULT_KEYS.size())
+            button->Content = ref new Platform::String(DEFAULT_KEYS[i]);
+        else
+            button->Content = ref new Platform::String(std::to_wstring(i).c_str());
+        button->Margin = Thickness(5, 0, 5, 15);
+        Action_Button_Stack->Children->Append(button);
+        //Action_Button_Stack->Items->Append(button);
+        //Action_Button_Stack->Conten
+    }
 
-	//XXX hardware button
+    //OutputBox->AddHandler(TappedEvent, ref new TappedEventHandler(this, &NethackUWP::MainPage::OutputBox_Tapped2), true);
+    //OutputBox->Tapped += ref new Windows::UI::Xaml::Input::TappedEventHandler(this, &NethackUWP::MainPage::OutputBox_Tapped2,true);
+    g_mainpage->SizeChanged += ref new Windows::UI::Xaml::SizeChangedEventHandler(this, &NethackUWP::MainPage::OnSizeChanged);
+    g_mainpage->KeyDown += ref new Windows::UI::Xaml::Input::KeyEventHandler(this, &NethackUWP::MainPage::OnKeyDown);
+
+    //XXX hardware button
 
 
 
@@ -170,9 +170,9 @@ void NethackUWP::MainPage::OnTapped(
         right = true;
     if (pressed.X < (MapCanvas->RenderSize.Width / 3.0))
         left = true;
-    if (pressed.Y >(MapCanvas->RenderSize.Height*2.0 / 3.0))
+    if (pressed.Y > (MapCanvas->RenderSize.Height*2.0 / 3.0))
         down = true;
-    if (pressed.Y <(MapCanvas->RenderSize.Height / 3.0))
+    if (pressed.Y < (MapCanvas->RenderSize.Height / 3.0))
         up = true;
 
     using namespace input_event;
@@ -205,55 +205,55 @@ void NethackUWP::MainPage::OnTapped(
 
 void NethackUWP::MainPage::button_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-	flags.debug = true;
-	wchar_t* spooky_ghost_folder = (wchar_t*) Windows::Storage::ApplicationData::Current->LocalFolder->Path->Data();
+    flags.debug = true;
+    wchar_t* spooky_ghost_folder = (wchar_t*)Windows::Storage::ApplicationData::Current->LocalFolder->Path->Data();
 
-	char* spooky_ghost = new char[1024];
-	char* real_spooky_ghost = spooky_ghost;
+    char* spooky_ghost = new char[1024];
+    char* real_spooky_ghost = spooky_ghost;
 
-	while (*spooky_ghost_folder)
-		*spooky_ghost++ = (char)*spooky_ghost_folder++;
-	*spooky_ghost++ = '\\';
-	*spooky_ghost++ = 'G';
-	*spooky_ghost++ = 0;
+    while (*spooky_ghost_folder)
+        *spooky_ghost++ = (char)*spooky_ghost_folder++;
+    *spooky_ghost++ = '\\';
+    *spooky_ghost++ = 'G';
+    *spooky_ghost++ = 0;
 
-	fqn_prefix[LEVELPREFIX] = real_spooky_ghost;
-	for (int i = 0; i < 7; i++)
-	{
-		fqn_prefix[i] = real_spooky_ghost;
-	}
+    fqn_prefix[LEVELPREFIX] = real_spooky_ghost;
+    for (int i = 0; i < 7; i++)
+    {
+        fqn_prefix[i] = real_spooky_ghost;
+    }
 
 
-	if (game_is_running == true) return;
-	game_is_running = true;
+    if (game_is_running == true) return;
+    game_is_running = true;
     static thread nethack_thread([real_spooky_ghost]()
-	{
+    {
         std::unique_ptr<char[]> delete_real_spooky_ghost(real_spooky_ghost);
 
-		sys_early_init();
-		choose_windows("mswin");//dun worry
-							  //	tty_procs (NULL, NULL); //dun worry
-		initoptions(); //nuh nuh nuh
-		dlb_init();
-		init_nhwindows(0, 0);
-		vision_init();
-		display_gamewindows();//dunno
-		newgame();
+        sys_early_init();
+        choose_windows("mswin");//dun worry
+                              //	tty_procs (NULL, NULL); //dun worry
+        initoptions(); //nuh nuh nuh
+        dlb_init();
+        init_nhwindows(0, 0);
+        vision_init();
+        display_gamewindows();//dunno
+        newgame();
 
         flags.perm_invent = true;
 
-		flags.debug = true;
-		//resuming = pcmain(argc, argv);
+        flags.debug = true;
+        //resuming = pcmain(argc, argv);
         display_inventory(nullptr, 0);
-		moveloop(0);
-		//trololololololololololololololololololo
-	});
-	
+        moveloop(0);
+        //trololololololololololololololololololo
+    });
+
 }
 
 void NethackUWP::MainPage::Quick_Button_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ args)
 {
-	auto nethack_text = ((Platform::String^)((Button^)sender)->Content);
+    auto nethack_text = ((Platform::String^)((Button^)sender)->Content);
     if (nethack_text->IsEmpty())
         return;
 
@@ -341,25 +341,25 @@ void NethackUWP::MainPage::Button_Close_History_Click(Platform::Object^ sender, 
 
 void NethackUWP::MainPage::OnSizeChanged(Platform::Object ^sender, Windows::UI::Xaml::SizeChangedEventArgs ^e)
 {
-	float total_size_w = e->NewSize.Width;
-	float total_size_h = e->NewSize.Height;
-	float out_box_w = MapCanvas->RenderSize.Width;
-	float out_box_h = MapCanvas->RenderSize.Height;
+    float total_size_w = e->NewSize.Width;
+    float total_size_h = e->NewSize.Height;
+    float out_box_w = MapCanvas->RenderSize.Width;
+    float out_box_h = MapCanvas->RenderSize.Height;
 
-	const int DESIRED_MIN_W = 80;
-	const int DESIRED_MIN_H = 40;
-	const int MINIMUM_FONT = 15; //DPI is hard, alright? Scott can fix. Or I can fix after seeing how it works
+    const int DESIRED_MIN_W = 80;
+    const int DESIRED_MIN_H = 40;
+    const int MINIMUM_FONT = 15; //DPI is hard, alright? Scott can fix. Or I can fix after seeing how it works
 
-	float maximum_font = (out_box_w / DESIRED_MIN_W);
+    float maximum_font = (out_box_w / DESIRED_MIN_W);
 
-	if (out_box_h / DESIRED_MIN_H < maximum_font) maximum_font = (out_box_h / DESIRED_MIN_H);
+    if (out_box_h / DESIRED_MIN_H < maximum_font) maximum_font = (out_box_h / DESIRED_MIN_H);
 
     if (maximum_font < MINIMUM_FONT) maximum_font = MINIMUM_FONT;
 
-	//OutputBox->FontSize = maximum_font-1;
-	//XXX - ENABLE SCROLLBAR IF CANT REACH 80/40.
-	
-	
+    //OutputBox->FontSize = maximum_font-1;
+    //XXX - ENABLE SCROLLBAR IF CANT REACH 80/40.
+
+
 
 
 }
@@ -382,60 +382,60 @@ void NethackUWP::MainPage::OnSizeChanged(Platform::Object ^sender, Windows::UI::
 
 void NethackUWP::MainPage::OnKeyDown(Platform::Object ^sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs ^e)
 {
-	using Windows::System::VirtualKey;
+    using Windows::System::VirtualKey;
     using Windows::UI::Core::CoreVirtualKeyStates;
 
-	e->Handled = false;
-	//auto keys = e->OriginalSource;
-	auto keys2 = e->Key;
-	auto keys3 = e->KeyStatus;
-	char key_value = (char) (int) keys2;
-	
-	bool we_care_about_this_key = false;
+    e->Handled = false;
+    //auto keys = e->OriginalSource;
+    auto keys2 = e->Key;
+    auto keys3 = e->KeyStatus;
+    char key_value = (char)(int)keys2;
 
-		
-	if (key_value >= 'A' && key_value <= 'Z') //a-z
-	{
-		we_care_about_this_key = true;
-	}
-	if (key_value >= '0' && key_value <= '9')
-		we_care_about_this_key = true;
+    bool we_care_about_this_key = false;
 
-	/* XXX
-	if ((keys2 >= VirtualKey::NumberPad0) && (keys2 <= VirtualKey::NumberPad9))
-		we_care_about_this_key = true;
-	if (keys2 == VirtualKey::Space || keys2 == VirtualKey::Escape || keys2 == VirtualKey::Back)
-		we_care_about_this_key = true;
-	if (keys2 >= VirtualKey::Left && keys2 <= VirtualKey::Down)
-		we_care_about_this_key = true;
+
+    if (key_value >= 'A' && key_value <= 'Z') //a-z
+    {
+        we_care_about_this_key = true;
+    }
+    if (key_value >= '0' && key_value <= '9')
+        we_care_about_this_key = true;
+
+    /* XXX
+    if ((keys2 >= VirtualKey::NumberPad0) && (keys2 <= VirtualKey::NumberPad9))
+        we_care_about_this_key = true;
+    if (keys2 == VirtualKey::Space || keys2 == VirtualKey::Escape || keys2 == VirtualKey::Back)
+        we_care_about_this_key = true;
+    if (keys2 >= VirtualKey::Left && keys2 <= VirtualKey::Down)
+        we_care_about_this_key = true;
 */
-	if (we_care_about_this_key == false)
-	{
-		return;
-	}
-		key_value = key_value + 32; //lower case a-z
+    if (we_care_about_this_key == false)
+    {
+        return;
+    }
+    key_value = key_value + 32; //lower case a-z
 
-		auto g_corewindow = Windows::UI::Core::CoreWindow::GetForCurrentThread();
-//#define M(c) (0x80 | (c))
-		bool alt_is_pressed = (CoreVirtualKeyStates::Down == g_corewindow->GetKeyState(Windows::System::VirtualKey::Menu));
-//+32
-		bool shift_is_pressed = (CoreVirtualKeyStates::Down == g_corewindow->GetKeyState(Windows::System::VirtualKey::Shift));
-//#define C(c) (0x1f & (c))
-		bool ctrl_is_pressed = (CoreVirtualKeyStates::Down == g_corewindow->GetKeyState(Windows::System::VirtualKey::Control));
+    auto g_corewindow = Windows::UI::Core::CoreWindow::GetForCurrentThread();
+    //#define M(c) (0x80 | (c))
+    bool alt_is_pressed = (CoreVirtualKeyStates::Down == g_corewindow->GetKeyState(Windows::System::VirtualKey::Menu));
+    //+32
+    bool shift_is_pressed = (CoreVirtualKeyStates::Down == g_corewindow->GetKeyState(Windows::System::VirtualKey::Shift));
+    //#define C(c) (0x1f & (c))
+    bool ctrl_is_pressed = (CoreVirtualKeyStates::Down == g_corewindow->GetKeyState(Windows::System::VirtualKey::Control));
 
-		if (alt_is_pressed)
-			key_value |= 0x80;
-		if (shift_is_pressed)
-			key_value -= 32;
-		if (ctrl_is_pressed)
-			key_value &= 0x1f;
+    if (alt_is_pressed)
+        key_value |= 0x80;
+    if (shift_is_pressed)
+        key_value -= 32;
+    if (ctrl_is_pressed)
+        key_value &= 0x1f;
 
-	
-		lock_guard<mutex> lock(blocked_on_input);
-		if (input_string.empty())
-			input_string_cv.notify_all();
-		input_string.push_back(key_value);
-	
+
+    lock_guard<mutex> lock(blocked_on_input);
+    if (input_string.empty())
+        input_string_cv.notify_all();
+    input_string.push_back(key_value);
+
 
 }
 
