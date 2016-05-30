@@ -72,6 +72,97 @@ void MainPage::clear_map()
     }
 }
 
+static Platform::Collections::Vector<QuickMenuGroup^>^ g_quickmenugroups = []() {
+    auto v = ref new Platform::Collections::Vector<QuickMenuGroup^>();
+    {
+        auto group = ref new QuickMenuGroup("Equip");
+        group->Commands->Append(ref new QuickMenuCommand("# - Extended commands", '#'));
+        /*
+        group->Commands->Append(ref new QuickMenuCommand("# - Dip", '#'));
+        group->Commands->Append(ref new QuickMenuCommand("# - Rub", '#'));
+        group->Commands->Append(ref new QuickMenuCommand("# - Invoke", '#'));
+        group->Commands->Append(ref new QuickMenuCommand("# - Reorder your items", '#'));
+        group->Commands->Append(ref new QuickMenuCommand("# - Name an item category", '#'));
+        */
+        group->Commands->Append(ref new QuickMenuCommand("a - Use an item (Apply)", 'a'));
+        group->Commands->Append(ref new QuickMenuCommand("d - Drop an item", 'd'));
+        group->Commands->Append(ref new QuickMenuCommand("e - Eat", 'e'));
+        group->Commands->Append(ref new QuickMenuCommand("q - Drink a potion (Quaff)", 'q'));
+        group->Commands->Append(ref new QuickMenuCommand("r - Read a scroll", 'r'));
+        group->Commands->Append(ref new QuickMenuCommand(", - Pick up items", ','));
+
+        group->Commands->Append(ref new QuickMenuCommand("w - Wield a weapon", 'w'));
+
+        group->Commands->Append(ref new QuickMenuCommand("W - Wear armor", 'W'));
+        group->Commands->Append(ref new QuickMenuCommand("T - Take off armor", 'T'));
+
+        group->Commands->Append(ref new QuickMenuCommand("P - Put on accessories", 'P'));
+        group->Commands->Append(ref new QuickMenuCommand("R - Remove accessories", 'R'));
+
+        group->Commands->Append(ref new QuickMenuCommand("z - Zap a wand", 'z'));
+        v->Append(std::move(group));
+    }
+    {
+        auto group = ref new QuickMenuGroup("Combat");
+        group->Commands->Append(ref new QuickMenuCommand("# - Extended commands", '#'));
+        /*
+        group->Commands->Append(ref new QuickMenuCommand("# - Jump", '#'));
+        group->Commands->Append(ref new QuickMenuCommand("# - Turn", '#'));
+        group->Commands->Append(ref new QuickMenuCommand("# - Monster", '#'));
+        */
+        group->Commands->Append(ref new QuickMenuCommand(". - Wait one turn", '.'));
+        group->Commands->Append(ref new QuickMenuCommand("x - Swap weapons", 'x'));
+        group->Commands->Append(ref new QuickMenuCommand("Q - Mark an item as quivered", 'Q'));
+        group->Commands->Append(ref new QuickMenuCommand("f - Fire a quivered item", 'f'));
+        group->Commands->Append(ref new QuickMenuCommand("t - Throw an item", 't'));
+        group->Commands->Append(ref new QuickMenuCommand("z - Zap a wand", 'z'));
+        group->Commands->Append(ref new QuickMenuCommand("Z - Cast a spell", 'Z'));
+        group->Commands->Append(ref new QuickMenuCommand("F - Force-attack a direction", 'F'));
+        v->Append(std::move(group));
+    }
+    {
+        auto group = ref new QuickMenuGroup("Environ");
+        group->Commands->Append(ref new QuickMenuCommand("# - Extended commands", '#'));
+        /*
+        group->Commands->Append(ref new QuickMenuCommand("# - Force open a lock", '#'));
+        group->Commands->Append(ref new QuickMenuCommand("# - Loot a container on the ground", '#'));
+        group->Commands->Append(ref new QuickMenuCommand("# - Offer a sacrifice", '#'));
+        group->Commands->Append(ref new QuickMenuCommand("# - Sit", '#'));
+        group->Commands->Append(ref new QuickMenuCommand("# - Travel", '#'));
+        group->Commands->Append(ref new QuickMenuCommand("# - Untrap", '#'));
+        group->Commands->Append(ref new QuickMenuCommand("# - Wipe", '#'));
+        group->Commands->Append(ref new QuickMenuCommand("# - Kick", '#'));
+        group->Commands->Append(ref new QuickMenuCommand("# - Chat", '#'));
+        */
+        group->Commands->Append(ref new QuickMenuCommand("E - Engrave on the floor", 'E'));
+        group->Commands->Append(ref new QuickMenuCommand("c - Close door", 'c'));
+        group->Commands->Append(ref new QuickMenuCommand("o - Open door", 'o'));
+        group->Commands->Append(ref new QuickMenuCommand("s - Search", 's'));
+        v->Append(std::move(group));
+    }
+    {
+        auto group = ref new QuickMenuGroup("Info");
+        group->Commands->Append(ref new QuickMenuCommand("# - Extended commands", '#'));
+
+        group->Commands->Append(ref new QuickMenuCommand("v - Display game version", 'v'));
+        group->Commands->Append(ref new QuickMenuCommand("C - Rename a monster", 'C'));
+        group->Commands->Append(ref new QuickMenuCommand("O - Options", 'O'));
+        /*
+        group->Commands->Append(ref new QuickMenuCommand("$ - Inspect your purse", '$'));
+        group->Commands->Append(ref new QuickMenuCommand("V - Display the game History", 'V'));
+        group->Commands->Append(ref new QuickMenuCommand("# - Quit and abandon game", '#'));
+        */
+        group->Commands->Append(ref new QuickMenuCommand(": - Look at the ground", ':'));
+        group->Commands->Append(ref new QuickMenuCommand("; - Look at something", ';'));
+        group->Commands->Append(ref new QuickMenuCommand("\\ - List your discoveries", '\\'));
+        group->Commands->Append(ref new QuickMenuCommand("^ - Display traps near you", '^'));
+        group->Commands->Append(ref new QuickMenuCommand("S - Save and exit", 'S'));
+        group->Commands->Append(ref new QuickMenuCommand("X - Enter cheat mode", 'X'));
+        v->Append(std::move(group));
+    }
+    return v;
+}();
+
 MainPage::MainPage()
 {
     InitializeComponent();
@@ -85,27 +176,29 @@ MainPage::MainPage()
     Last_Notifications = ref new Platform::Collections::Vector<Platform::String^>();
     Modal_Answers = ref new Platform::Collections::Vector<Platform::String^>();
 
+    QuickMenuGroups = g_quickmenugroups;
+
     for (int y = 0; y < NativeMainPage::max_height; ++y)
         map_data.emplace_back(NativeMainPage::max_width_offset, tile_t{ L' ',0 });
 
     this->DataContext = this;
 
 
-    for (unsigned int i = 0; i < MAX_BUTTONS; i++)
-    {
-        Button ^button = ref new Button();
-        button->Click += ref new Windows::UI::Xaml::RoutedEventHandler(this, &NethackUWP::MainPage::Quick_Button_Click);
+    //for (unsigned int i = 0; i < MAX_BUTTONS; i++)
+    //{
+    //    Button ^button = ref new Button();
+    //    button->Click += ref new Windows::UI::Xaml::RoutedEventHandler(this, &NethackUWP::MainPage::Quick_Button_Click);
 
-        //button->AddHandler(button_Click, Quick_Button_Click, true);
-        if (i < DEFAULT_KEYS.size())
-            button->Content = ref new Platform::String(DEFAULT_KEYS[i]);
-        else
-            button->Content = ref new Platform::String(std::to_wstring(i).c_str());
-        button->Margin = Thickness(5, 0, 5, 15);
-        Action_Button_Stack->Children->Append(button);
-        //Action_Button_Stack->Items->Append(button);
-        //Action_Button_Stack->Conten
-    }
+    //    //button->AddHandler(button_Click, Quick_Button_Click, true);
+    //    if (i < DEFAULT_KEYS.size())
+    //        button->Content = ref new Platform::String(DEFAULT_KEYS[i]);
+    //    else
+    //        button->Content = ref new Platform::String(std::to_wstring(i).c_str());
+    //    button->Margin = Thickness(5, 0, 5, 15);
+    //    //Action_Button_Stack->Children->Append(button);
+    //    //Action_Button_Stack->Items->Append(button);
+    //    //Action_Button_Stack->Conten
+    //}
 
     //OutputBox->AddHandler(TappedEvent, ref new TappedEventHandler(this, &NethackUWP::MainPage::OutputBox_Tapped2), true);
     //OutputBox->Tapped += ref new Windows::UI::Xaml::Input::TappedEventHandler(this, &NethackUWP::MainPage::OutputBox_Tapped2,true);
@@ -273,7 +366,7 @@ void NethackUWP::MainPage::Quick_Button_Click(Platform::Object^ sender, Windows:
         using namespace input_event;
         event_t e;
         e.kind = kind_t::keyboard;
-        e.key = c;
+        e.key = static_cast<char>(c);
 
         NativeMainPage::event_queue.enqueue(e);
     }
@@ -292,7 +385,7 @@ void NethackUWP::MainPage::Send_butt_Click(Platform::Object^ sender, Windows::UI
         using namespace input_event;
         event_t e;
         e.kind = kind_t::keyboard;
-        e.key = c;
+        e.key = static_cast<char>(c);
 
         NativeMainPage::event_queue.enqueue(e);
     }
@@ -690,5 +783,45 @@ void NethackUWP::MainPage::MapCanvas_Draw(Microsoft::Graphics::Canvas::UI::Xaml:
                     text_format);
             }
         }
+    }
+}
+
+
+void NethackUWP::MainPage::CloseQuickMenu(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    QuickMenuExpander->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+}
+
+void NethackUWP::MainPage::OpenQuickMenu(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    auto my_data_context = ((Windows::UI::Xaml::Controls::Button^)sender)->DataContext;
+
+    if (QuickMenuExpander->Visibility == Windows::UI::Xaml::Visibility::Visible && QuickMenuInnerList->DataContext == my_data_context)
+    {
+        // Second click should dismiss if the menu is currently displaying what would have been displayed.
+        QuickMenuExpander->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+        return;
+    }
+    QuickMenuInnerList->DataContext = my_data_context;
+    QuickMenuInnerList->SelectedIndex = -1;
+    QuickMenuExpander->Visibility = Windows::UI::Xaml::Visibility::Visible;
+}
+
+
+void NethackUWP::MainPage::QuickMenuInnerListSelectionChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::SelectionChangedEventArgs^ e)
+{
+    if (e->AddedItems->Size == 1)
+    {
+        auto my_data_context = ((Windows::UI::Xaml::Controls::ListView^)sender)->DataContext;
+        auto current_quick_menu = (QuickMenuGroup^)my_data_context;
+
+        auto obj = (QuickMenuCommand^)e->AddedItems->GetAt(0);
+
+        using namespace input_event;
+        event_t e;
+        e.kind = kind_t::keyboard;
+        e.key = obj->ch;
+        NativeMainPage::event_queue.enqueue(e);
+        QuickMenuExpander->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     }
 }

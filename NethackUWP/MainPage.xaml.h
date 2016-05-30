@@ -15,6 +15,36 @@
 
 namespace NethackUWP
 {
+
+    [Windows::UI::Xaml::Data::Bindable]
+    public ref class QuickMenuCommand sealed
+    {
+    public:
+        QuickMenuCommand() {}
+        QuickMenuCommand(Platform::String^ description, int c) : ch(c) { Description = std::move(description); }
+
+        property Platform::String^ Description;
+
+        friend ref class NethackUWP::MainPage;
+    private:
+        int ch;
+    };
+
+    [Windows::UI::Xaml::Data::Bindable]
+    public ref class QuickMenuGroup sealed
+    {
+    public:
+        QuickMenuGroup() {}
+        QuickMenuGroup(Platform::String^ description)
+        {
+            Description = std::move(description);
+            Commands = ref new Platform::Collections::Vector<QuickMenuCommand^>();
+        }
+        property Platform::String^ Description;
+
+        property Windows::Foundation::Collections::IVector<QuickMenuCommand^>^ Commands;
+    };
+
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
@@ -34,6 +64,9 @@ namespace NethackUWP
         property Platform::String^ Last_Notification;
         property Windows::Foundation::Collections::IVector<Platform::String^>^ Last_Notifications;
         property Windows::Foundation::Collections::IVector<Platform::String^>^ Modal_Answers;
+
+        property Windows::Foundation::Collections::IVector<QuickMenuGroup^>^ QuickMenuGroups;
+        property Windows::Foundation::Collections::IVector<Platform::String^>^ QuickButtons;
 
         virtual event Windows::UI::Xaml::Data::PropertyChangedEventHandler ^ PropertyChanged;
 
@@ -69,6 +102,9 @@ namespace NethackUWP
 
         void clear_map();
         void MapCanvas_Draw(Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl^ sender, Microsoft::Graphics::Canvas::UI::Xaml::CanvasDrawEventArgs^ args);
+        void CloseQuickMenu(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+        void OpenQuickMenu(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+        void QuickMenuInnerListSelectionChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::SelectionChangedEventArgs^ e);
     };
 
     extern MainPage^ g_mainpage;
