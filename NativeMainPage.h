@@ -69,7 +69,14 @@ namespace input_event
         keyboard,
         cancel_menu_button,
         tap,
-        select_menu_item
+        select_menu_item,
+        extended_command,
+        state_transition
+    };
+
+    enum class transition_t
+    {
+        to_extended_command
     };
 
     struct event_t
@@ -86,6 +93,7 @@ namespace input_event
                 double x, y;
             };
             direction_t direction;
+            transition_t transition;
         };
     };
 }
@@ -111,6 +119,11 @@ struct ThreadSafeQueue
 
         out = std::move(m_queue.front());
         m_queue.pop_front();
+    }
+    bool empty()
+    {
+        std::lock_guard<std::mutex> lock(m_mutex);
+        return m_queue.empty();
     }
     void clear()
     {
@@ -142,12 +155,14 @@ struct NativeMainPage {
     static void display_map();
     static void clear_inv();
     static void add_inv_str(const char* str, bool is_header, int attr, char accelerator);
+    static void enqueue_ext_cmd(const char* cmdname);
 
     // Input/output functions -- blocking.
     static bool ask_menu(const menu_t& m, int& selection_value);
     static char ask_inv_function(const char* question, char def);
     static char ask_direction(char def);
     static char ask_yn_function(const char *question, const char *choices, char def);
+    static int ask_extcmdlist();
 
     // Utility function.
     static void complete_yn_function(int idx);

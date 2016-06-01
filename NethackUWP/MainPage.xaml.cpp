@@ -76,88 +76,90 @@ static Platform::Collections::Vector<QuickMenuGroup^>^ g_quickmenugroups = []() 
     auto v = ref new Platform::Collections::Vector<QuickMenuGroup^>();
     {
         auto group = ref new QuickMenuGroup("Equip");
-        group->Commands->Append(ref new QuickMenuCommand("# - Extended commands", '#'));
+        group->Commands->Append(ref new QuickMenuCommand("# - Extended commands", (uintptr_t)"#"));
+        group->Commands->Append(ref new QuickMenuCommand("# - Dip", (uintptr_t)"#dip"));
+        group->Commands->Append(ref new QuickMenuCommand("# - Rub", (uintptr_t)"#rub"));
         /*
-        group->Commands->Append(ref new QuickMenuCommand("# - Dip", '#'));
-        group->Commands->Append(ref new QuickMenuCommand("# - Rub", '#'));
-        group->Commands->Append(ref new QuickMenuCommand("# - Invoke", '#'));
-        group->Commands->Append(ref new QuickMenuCommand("# - Reorder your items", '#'));
-        group->Commands->Append(ref new QuickMenuCommand("# - Name an item category", '#'));
+        group->Commands->Append(ref new QuickMenuCommand("# - Invoke", "#"));
+        group->Commands->Append(ref new QuickMenuCommand("# - Reorder your items", "#"));
+        group->Commands->Append(ref new QuickMenuCommand("# - Name an item category", "#"));
         */
-        group->Commands->Append(ref new QuickMenuCommand("a - Use an item (Apply)", 'a'));
-        group->Commands->Append(ref new QuickMenuCommand("d - Drop an item", 'd'));
-        group->Commands->Append(ref new QuickMenuCommand("e - Eat", 'e'));
-        group->Commands->Append(ref new QuickMenuCommand("q - Drink a potion (Quaff)", 'q'));
-        group->Commands->Append(ref new QuickMenuCommand("r - Read a scroll", 'r'));
-        group->Commands->Append(ref new QuickMenuCommand(", - Pick up items", ','));
 
-        group->Commands->Append(ref new QuickMenuCommand("w - Wield a weapon", 'w'));
+        group->Commands->Append(ref new QuickMenuCommand("w - Wield a weapon", (uintptr_t)"w"));
+        group->Commands->Append(ref new QuickMenuCommand("W - Wear armor", (uintptr_t)"W"));
+        group->Commands->Append(ref new QuickMenuCommand("T - Take off armor", (uintptr_t)"T"));
+        group->Commands->Append(ref new QuickMenuCommand("P - Put on accessories", (uintptr_t)"P"));
+        group->Commands->Append(ref new QuickMenuCommand("R - Remove accessories", (uintptr_t)"R"));
 
-        group->Commands->Append(ref new QuickMenuCommand("W - Wear armor", 'W'));
-        group->Commands->Append(ref new QuickMenuCommand("T - Take off armor", 'T'));
+        group->Commands->Append(ref new QuickMenuCommand("a - Use an item (Apply)", (uintptr_t)"a"));
+        group->Commands->Append(ref new QuickMenuCommand("d - Drop an item", (uintptr_t)"d"));
+        group->Commands->Append(ref new QuickMenuCommand("q - Drink a potion (Quaff)", (uintptr_t)"q"));
+        group->Commands->Append(ref new QuickMenuCommand("r - Read a scroll", (uintptr_t)"r"));
+        group->Commands->Append(ref new QuickMenuCommand(", - Pick up items", (uintptr_t)","));
 
-        group->Commands->Append(ref new QuickMenuCommand("P - Put on accessories", 'P'));
-        group->Commands->Append(ref new QuickMenuCommand("R - Remove accessories", 'R'));
+        group->Commands->Append(ref new QuickMenuCommand("e - Eat", (uintptr_t)"e"));
+        group->Commands->Append(ref new QuickMenuCommand("z - Zap a wand", (uintptr_t)"z"));
 
-        group->Commands->Append(ref new QuickMenuCommand("z - Zap a wand", 'z'));
         v->Append(std::move(group));
     }
     {
         auto group = ref new QuickMenuGroup("Combat");
-        group->Commands->Append(ref new QuickMenuCommand("# - Extended commands", '#'));
+        group->Commands->Append(ref new QuickMenuCommand("# - Extended commands", (uintptr_t)"#"));
         /*
-        group->Commands->Append(ref new QuickMenuCommand("# - Jump", '#'));
-        group->Commands->Append(ref new QuickMenuCommand("# - Turn", '#'));
-        group->Commands->Append(ref new QuickMenuCommand("# - Monster", '#'));
+        group->Commands->Append(ref new QuickMenuCommand("# - Jump", "#"));
+        group->Commands->Append(ref new QuickMenuCommand("# - Turn", "#"));
+        group->Commands->Append(ref new QuickMenuCommand("# - Monster", "#"));
         */
-        group->Commands->Append(ref new QuickMenuCommand(". - Wait one turn", '.'));
-        group->Commands->Append(ref new QuickMenuCommand("x - Swap weapons", 'x'));
-        group->Commands->Append(ref new QuickMenuCommand("Q - Mark an item as quivered", 'Q'));
-        group->Commands->Append(ref new QuickMenuCommand("f - Fire a quivered item", 'f'));
-        group->Commands->Append(ref new QuickMenuCommand("t - Throw an item", 't'));
-        group->Commands->Append(ref new QuickMenuCommand("z - Zap a wand", 'z'));
-        group->Commands->Append(ref new QuickMenuCommand("Z - Cast a spell", 'Z'));
-        group->Commands->Append(ref new QuickMenuCommand("F - Force-attack a direction", 'F'));
+        group->Commands->Append(ref new QuickMenuCommand(". - Wait one turn", (uintptr_t)"."));
+        group->Commands->Append(ref new QuickMenuCommand("x - Swap weapons", (uintptr_t)"x"));
+        group->Commands->Append(ref new QuickMenuCommand("Q - Mark an item as quivered", (uintptr_t)"Q"));
+        group->Commands->Append(ref new QuickMenuCommand("f - Fire a quivered item", (uintptr_t)"f"));
+        group->Commands->Append(ref new QuickMenuCommand("t - Throw an item", (uintptr_t)"t"));
+        group->Commands->Append(ref new QuickMenuCommand("z - Zap a wand", (uintptr_t)"z"));
+        group->Commands->Append(ref new QuickMenuCommand("Z - Cast a spell", (uintptr_t)"Z"));
+        group->Commands->Append(ref new QuickMenuCommand("F - Force-attack a direction", (uintptr_t)"F"));
         v->Append(std::move(group));
     }
     {
         auto group = ref new QuickMenuGroup("Environ");
-        group->Commands->Append(ref new QuickMenuCommand("# - Extended commands", '#'));
-        /*
-        group->Commands->Append(ref new QuickMenuCommand("# - Force open a lock", '#'));
-        group->Commands->Append(ref new QuickMenuCommand("# - Loot a container on the ground", '#'));
-        group->Commands->Append(ref new QuickMenuCommand("# - Offer a sacrifice", '#'));
-        group->Commands->Append(ref new QuickMenuCommand("# - Sit", '#'));
-        group->Commands->Append(ref new QuickMenuCommand("# - Travel", '#'));
-        group->Commands->Append(ref new QuickMenuCommand("# - Untrap", '#'));
-        group->Commands->Append(ref new QuickMenuCommand("# - Wipe", '#'));
-        group->Commands->Append(ref new QuickMenuCommand("# - Kick", '#'));
-        group->Commands->Append(ref new QuickMenuCommand("# - Chat", '#'));
-        */
-        group->Commands->Append(ref new QuickMenuCommand("E - Engrave on the floor", 'E'));
-        group->Commands->Append(ref new QuickMenuCommand("c - Close door", 'c'));
-        group->Commands->Append(ref new QuickMenuCommand("o - Open door", 'o'));
-        group->Commands->Append(ref new QuickMenuCommand("s - Search", 's'));
+        group->Commands->Append(ref new QuickMenuCommand("# - Extended commands", (uintptr_t)"#"));
+
+        group->Commands->Append(ref new QuickMenuCommand("# - Force open a lock", (uintptr_t)"#force"));
+        group->Commands->Append(ref new QuickMenuCommand("# - Loot a container on the ground", (uintptr_t)"#loot"));
+        group->Commands->Append(ref new QuickMenuCommand("# - Offer a sacrifice", (uintptr_t)"#offer"));
+        group->Commands->Append(ref new QuickMenuCommand("# - Sit", (uintptr_t)"#sit"));
+        group->Commands->Append(ref new QuickMenuCommand("# - Untrap", (uintptr_t)"#untrap"));
+        group->Commands->Append(ref new QuickMenuCommand("# - Wipe", (uintptr_t)"#wipe"));
+        group->Commands->Append(ref new QuickMenuCommand("# - Kick", (uintptr_t)"#kick"));
+        group->Commands->Append(ref new QuickMenuCommand("# - Chat", (uintptr_t)"#chat"));
+
+        group->Commands->Append(ref new QuickMenuCommand("_ - Travel to a location", (uintptr_t)"_"));
+        group->Commands->Append(ref new QuickMenuCommand("E - Engrave on the floor", (uintptr_t)"E"));
+        group->Commands->Append(ref new QuickMenuCommand("< - Go Upstairs", (uintptr_t)"<"));
+        group->Commands->Append(ref new QuickMenuCommand("> - Go Downstairs", (uintptr_t)">"));
+        group->Commands->Append(ref new QuickMenuCommand("c - Close door", (uintptr_t)"c"));
+        group->Commands->Append(ref new QuickMenuCommand("o - Open door", (uintptr_t)"o"));
+        group->Commands->Append(ref new QuickMenuCommand("s - Search", (uintptr_t)"s"));
         v->Append(std::move(group));
     }
     {
         auto group = ref new QuickMenuGroup("Info");
-        group->Commands->Append(ref new QuickMenuCommand("# - Extended commands", '#'));
+        group->Commands->Append(ref new QuickMenuCommand("# - Extended commands", (uintptr_t)"#"));
 
-        group->Commands->Append(ref new QuickMenuCommand("v - Display game version", 'v'));
-        group->Commands->Append(ref new QuickMenuCommand("C - Rename a monster", 'C'));
-        group->Commands->Append(ref new QuickMenuCommand("O - Options", 'O'));
+        group->Commands->Append(ref new QuickMenuCommand("v - Display game version", (uintptr_t)"v"));
+        group->Commands->Append(ref new QuickMenuCommand("C - Rename a monster", (uintptr_t)"C"));
+        group->Commands->Append(ref new QuickMenuCommand("O - Options", (uintptr_t)"O"));
         /*
-        group->Commands->Append(ref new QuickMenuCommand("$ - Inspect your purse", '$'));
-        group->Commands->Append(ref new QuickMenuCommand("V - Display the game History", 'V'));
-        group->Commands->Append(ref new QuickMenuCommand("# - Quit and abandon game", '#'));
+        group->Commands->Append(ref new QuickMenuCommand("$ - Inspect your purse", "$"));
+        group->Commands->Append(ref new QuickMenuCommand("V - Display the game History", "V"));
+        group->Commands->Append(ref new QuickMenuCommand("# - Quit and abandon game", "#"));
         */
-        group->Commands->Append(ref new QuickMenuCommand(": - Look at the ground", ':'));
-        group->Commands->Append(ref new QuickMenuCommand("; - Look at something", ';'));
-        group->Commands->Append(ref new QuickMenuCommand("\\ - List your discoveries", '\\'));
-        group->Commands->Append(ref new QuickMenuCommand("^ - Display traps near you", '^'));
-        group->Commands->Append(ref new QuickMenuCommand("S - Save and exit", 'S'));
-        group->Commands->Append(ref new QuickMenuCommand("X - Enter cheat mode", 'X'));
+        group->Commands->Append(ref new QuickMenuCommand(": - Look at the ground", (uintptr_t)":"));
+        group->Commands->Append(ref new QuickMenuCommand("; - Look at something", (uintptr_t)";"));
+        group->Commands->Append(ref new QuickMenuCommand("\\ - List your discoveries", (uintptr_t)"\\"));
+        group->Commands->Append(ref new QuickMenuCommand("^ - Display traps near you", (uintptr_t)"^"));
+        group->Commands->Append(ref new QuickMenuCommand("S - Save and exit", (uintptr_t)"S"));
+        group->Commands->Append(ref new QuickMenuCommand("X - Enter cheat mode", (uintptr_t)"X"));
         v->Append(std::move(group));
     }
     return v;
@@ -817,11 +819,21 @@ void NethackUWP::MainPage::QuickMenuInnerListSelectionChanged(Platform::Object^ 
 
         auto obj = (QuickMenuCommand^)e->AddedItems->GetAt(0);
 
-        using namespace input_event;
-        event_t e;
-        e.kind = kind_t::keyboard;
-        e.key = obj->ch;
-        NativeMainPage::event_queue.enqueue(e);
+        const char* cmd_str = obj->ch;
+        assert(cmd_str != nullptr);
+        if (*cmd_str != '#')
+        {
+            using namespace input_event;
+            event_t e;
+            e.kind = kind_t::keyboard;
+            e.key = *cmd_str;
+            NativeMainPage::event_queue.enqueue(e);
+        }
+        else
+        {
+            // skip the starting #
+            NativeMainPage::enqueue_ext_cmd(cmd_str + 1);
+        }
         QuickMenuExpander->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     }
 }

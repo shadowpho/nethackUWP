@@ -50,6 +50,11 @@ int NativeMainPage::read_char(int &x, int &y)
             return to_keyboard_key(e.direction);
         case kind_t::keyboard:
             return e.key;
+        case kind_t::state_transition:
+            if (e.transition == transition_t::to_extended_command)
+                return '#';
+
+            break;
         case kind_t::tap:
             // TODO: add mouse/tap support.
             break;
@@ -300,6 +305,95 @@ char NativeMainPage::ask_yn_function(const char *question, const char *choices, 
         }
     }
 }
+
+#define NDECL(X) X(void)
+extern "C" {
+#include "func_tab.h"
+}
+#undef NDECL
+void NativeMainPage::enqueue_ext_cmd(const char* cmdname)
+{
+    auto p_extcmd = extcmdlist;
+    while (p_extcmd->ef_txt != nullptr)
+    {
+        if (strcmp(cmdname, p_extcmd->ef_txt) == 0)
+        {
+            using namespace input_event;
+            event_t e;
+            e.kind = kind_t::state_transition;
+            e.transition = transition_t::to_extended_command;
+            event_queue.enqueue(e);
+
+            e.kind = kind_t::extended_command;
+            e.menu_index = static_cast<int>(p_extcmd - extcmdlist);
+            event_queue.enqueue(e);
+
+            return;
+        }
+        ++p_extcmd;
+    }
+    __fastfail(0);
+}
+
+int NativeMainPage::ask_extcmdlist()
+{
+    using namespace input_event;
+
+    event_t e;
+    while (!event_queue.empty())
+    {
+        event_queue.dequeue(e);
+
+        switch (e.kind)
+        {
+        case kind_t::extended_command:
+            return e.menu_index;
+        default:
+            break;
+        }
+    }
+
+    g_corewindow->Dispatcher->RunAsync(CoreDispatcherPriority::Low, ref new DispatchedHandler([]() {
+        g_mainpage->Modal_Question = L"What extended command?";
+        g_mainpage->Modal_Answers->Clear();
+
+        auto p_extcmd = extcmdlist;
+        std::string s;
+        while (p_extcmd->ef_txt != nullptr)
+        {
+            s = p_extcmd->ef_txt;
+            s.append(" - ");
+            s.append(p_extcmd->ef_desc);
+
+            g_mainpage->Modal_Answers->Append(cstr_to_platstr(s.c_str()));
+            ++p_extcmd;
+        }
+
+        g_mainpage->PropertyChanged(g_mainpage, ref new PropertyChangedEventArgs("Modal_Question"));
+
+        g_mainpage->modalDialog->Visibility = Windows::UI::Xaml::Visibility::Visible;
+    }));
+
+    while (true)
+    {
+        event_queue.dequeue(e);
+        switch (e.kind)
+        {
+        case kind_t::cancel_menu_button:
+            g_corewindow->Dispatcher->RunAsync(CoreDispatcherPriority::Low, ref new DispatchedHandler([]() {
+                g_mainpage->modalDialog->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+            }));
+            return -1;
+        case kind_t::select_menu_item:
+            g_corewindow->Dispatcher->RunAsync(CoreDispatcherPriority::Low, ref new DispatchedHandler([]() {
+                g_mainpage->modalDialog->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+            }));
+            return e.menu_index;
+        default:
+            break;
+        }
+    }
+}
 void NativeMainPage::complete_yn_function(int idx)
 {
     using namespace input_event;
@@ -342,10 +436,9 @@ bool NativeMainPage::ask_menu(const menu_t& m, int& selection_value)
             }));
             return true;
         case kind_t::select_menu_item:
-            if (e.menu_index == -1)
-            {
+            if (e.menu_index < 0 || e.menu_index >= m.choices.size())
+                break;
 
-            }
             if (m.choices[e.menu_index].selectable)
             {
                 g_corewindow->Dispatcher->RunAsync(CoreDispatcherPriority::Low, ref new DispatchedHandler([]() {

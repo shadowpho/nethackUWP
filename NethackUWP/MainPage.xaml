@@ -162,16 +162,21 @@
                             <TextBlock>Throw a projectile or weapon</TextBlock>
                             <TextBlock>Zap a wand</TextBlock>
                             <TextBlock>Read a scroll</TextBlock>
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                    <Setter Property="MinHeight" Value="0"/>
+                                    <Setter Property="Padding" Value="10,5"/>
+                                </Style>
+                            </ListView.ItemContainerStyle>
                             <ListView.ItemTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding Description}"/>
+                                    <TextBlock Text="{Binding Description}" Margin="0" Padding="0" />
                                 </DataTemplate>
                             </ListView.ItemTemplate>
                         </ListView>
                         <Button HorizontalAlignment="Right" Click="CloseQuickMenu" Width="32" Height="32" Padding="0" VerticalAlignment="Top" Grid.Row="0">
-                            <Button.Content>
-                                <SymbolIcon Symbol="Cancel"/>
-                            </Button.Content>
+                            <SymbolIcon Symbol="Cancel"/>
                         </Button>
                     </Grid>
                     <StackPanel Orientation="Horizontal" Grid.Row="2">

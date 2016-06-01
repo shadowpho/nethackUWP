@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" IgnorableNamespaces="uap mp">
-  <Identity Name="abd57f92-b026-4ed8-8a46-351b76eeb5d6" Publisher="CN=aaa" Version="1.0.2.0" />
+  <Identity Name="abd57f92-b026-4ed8-8a46-351b76eeb5d6" Publisher="CN=aaa" Version="1.0.3.0" />
   <mp:PhoneIdentity PhoneProductId="abd57f92-b026-4ed8-8a46-351b76eeb5d6" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>Nethack</DisplayName>

@@ -21,13 +21,14 @@ namespace NethackUWP
     {
     public:
         QuickMenuCommand() {}
-        QuickMenuCommand(Platform::String^ description, int c) : ch(c) { Description = std::move(description); }
+        QuickMenuCommand(Platform::String^ description, uintptr_t c) : ch(reinterpret_cast<const char*>(c)) { Description = std::move(description); }
 
         property Platform::String^ Description;
 
         friend ref class NethackUWP::MainPage;
     private:
-        int ch;
+        // this should be a const char*, but C++/CX doesn't support it
+        const char* ch;
     };
 
     [Windows::UI::Xaml::Data::Bindable]
