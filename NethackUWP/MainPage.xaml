@@ -37,19 +37,20 @@
         <SplitView.Pane>
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <StackPanel Grid.Row="0">
+                <TextBlock x:Name="textBlock_inventory" VerticalAlignment="Top" Text="Inventory" Grid.Row="0" Margin="10,5" Height="26" FontSize="18" FontWeight="Bold"/>
+                <ScrollViewer Margin="5,35,5,5" Grid.Row="0">
+                    <ItemsControl
+                    ItemsSource="{Binding Inventory_Strings}" x:Name="listView_Inventory"/>
+                </ScrollViewer>
+                <StackPanel
+                    Grid.Row="1">
                     <Button x:Name="button_LeftSplitTopRow" Click="Button_Click_1" Height="32" Width="32" Padding="0">
-                        <SymbolIcon Symbol="Shop" />
+                        <SymbolIcon Symbol="Cancel" />
                     </Button>
                 </StackPanel>
-                <TextBlock x:Name="textBlock_inventory" Margin="10,5" Grid.Row="1" Text="Inventory" VerticalAlignment="Top" Height="26" FontSize="18" FontWeight="Bold"/>
-                <ScrollViewer Margin="5,35,5,5" Grid.Row="1">
-                    <ItemsControl x:Name="listView_Inventory" ItemsSource="{Binding Inventory_Strings}"/>
-                </ScrollViewer>
             </Grid>
         </SplitView.Pane>
         <SplitView PanePlacement="Right" x:Name="splitView_History" OpenPaneLength="360" >
@@ -92,24 +93,17 @@
                 </Grid>
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="32"/>
-                        <RowDefinition/>
+                        <RowDefinition
+                        />
                         <RowDefinition Height="32"/>
                         <RowDefinition Height="40"/>
                         <RowDefinition Height="28"/>
                     </Grid.RowDefinitions>
 
-                    <StackPanel Orientation="Horizontal">
-                        <Button x:Name="button" Content="New Game" HorizontalAlignment="Left" VerticalAlignment="Top" Click="button_Click" Grid.Column="1" Height="32" Width="93" Margin="0,0,10,0"/>
-                        <TextBox x:Name="InputBox" HorizontalAlignment="Left" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="50" Height="32" Margin="0,0,10,0" />
-                        <Button x:Name="Send_butt" Content="Send" HorizontalAlignment="Left" VerticalAlignment="Top" Click="Send_butt_Click" Height="32" Width="55" Margin="0,0,10,0"/>
-                    </StackPanel>
-                    <canvas:CanvasControl x:Name="MapCanvas" Draw="MapCanvas_Draw" ClearColor="Black"
-                                          Grid.Row="1"
-                                          />
+                    <canvas:CanvasControl x:Name="MapCanvas" Draw="MapCanvas_Draw" ClearColor="Black" />
 
-                    <TextBlock x:Name="textBox_last_notification" Text="{Binding Last_Notification, FallbackValue='lorem ipsum dolor sit amet'}" Margin="10,5,40,0" Grid.Row="4" />
-                    <Button HorizontalAlignment="Right" Click="ExpandNotifications" Grid.Row="4" Width="30" Padding="0" VerticalAlignment="Stretch">
+                    <TextBlock x:Name="textBox_last_notification" Text="{Binding Last_Notification, FallbackValue='lorem ipsum dolor sit amet'}" Margin="10,5,40,0" Grid.Row="3" />
+                    <Button HorizontalAlignment="Right" Click="ExpandNotifications" Grid.Row="3" Width="30" Padding="0" VerticalAlignment="Stretch">
                         <Button.Content>
                             <SymbolIcon Symbol="More"/>
                         </Button.Content>
@@ -117,15 +111,15 @@
 
                     <!-- Best_playa the Evoker    St:10 Dx:16 Co:13 In:20 Wi:7 Ch:10  Chaotic -->
                     <!-- Dlvl:1  $:0  HP:11(11) Pw:8(8) AC:9  Exp:1 -->
-                    <TextBlock x:Name="textBlock_status_1" Margin="10,0,10,20" Grid.Row="3" TextWrapping="Wrap" Text="{Binding Status_Line_1, FallbackValue=Status1}" VerticalAlignment="Bottom" Height="20" />
-                    <TextBlock x:Name="textBlock_status_2" Margin="10,0,10,0" Grid.Row="3" TextWrapping="Wrap" Text="{Binding Status_Line_2, FallbackValue=Status2}" VerticalAlignment="Bottom" Height="20"/>
+                    <TextBlock x:Name="textBlock_status_1" Margin="10,0,10,20" Grid.Row="2" TextWrapping="Wrap" Text="{Binding Status_Line_1, FallbackValue=Status1}" VerticalAlignment="Bottom" Height="20" />
+                    <TextBlock x:Name="textBlock_status_2" Margin="10,0,10,0" Grid.Row="2" TextWrapping="Wrap" Text="{Binding Status_Line_2, FallbackValue=Status2}" VerticalAlignment="Bottom" Height="20"/>
 
                     <!--<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" VerticalContentAlignment="Top" IsHorizontalScrollChainingEnabled="True" HorizontalScrollMode="Enabled" ZoomMode="Disabled" VerticalScrollMode="Disabled" MinHeight="50" Grid.Row="4" >
                         <StackPanel x:Name="Action_Button_Stack" Orientation="Horizontal" VerticalAlignment="Top" Height="Auto">
                         </StackPanel>
                     </ScrollViewer>-->
 
-                    <Grid x:Name="notificationsExpander" RequestedTheme="Dark" Canvas.ZIndex="1" VerticalAlignment="Bottom" Grid.RowSpan="5" Visibility="Collapsed">
+                    <Grid x:Name="notificationsExpander" RequestedTheme="Dark" Canvas.ZIndex="1" VerticalAlignment="Bottom" Visibility="Collapsed" Grid.Row="3">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*" />
                             <RowDefinition Height="28"/>
@@ -146,7 +140,7 @@
                             <TextBlock>hello</TextBlock>
                         </ItemsControl>
                     </Grid>
-                    <Grid x:Name="QuickMenuExpander" Canvas.ZIndex="1" VerticalAlignment="Bottom" Grid.RowSpan="2" Visibility="Collapsed">
+                    <Grid x:Name="QuickMenuExpander" Canvas.ZIndex="1" VerticalAlignment="Bottom" Visibility="Collapsed" Margin="0,0,0,0">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
@@ -179,7 +173,7 @@
                             <SymbolIcon Symbol="Cancel"/>
                         </Button>
                     </Grid>
-                    <StackPanel Orientation="Horizontal" Grid.Row="2">
+                    <StackPanel Orientation="Horizontal" Grid.Row="1">
                         <Button x:Name="Button_Open_Inventory" VerticalAlignment="Stretch" Padding="0" Height="32" Width="32" Margin="0,0,5,0" Click="Button_Open_Inventory_Click">
                             <SymbolIcon Symbol="Shop" />
                         </Button>
@@ -195,6 +189,9 @@
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
+                        <TextBox x:Name="InputBox" HorizontalAlignment="Left" TextWrapping="NoWrap" IsSpellCheckEnabled="False" IsTextPredictionEnabled="False" Text="" VerticalAlignment="Top" Width="50" Height="32" Margin="0,0,10,0" />
+                        <Button x:Name="Send_butt" Content="Send" HorizontalAlignment="Left" VerticalAlignment="Top" Click="Send_butt_Click" Height="32" Width="55" Margin="0,0,10,0"/>
+                        <Button x:Name="button" Content="New Game" HorizontalAlignment="Left" VerticalAlignment="Top" Click="button_Click" Grid.Column="1" Height="32" Width="93" Margin="0,0,10,0"/>
                     </StackPanel>
                 </Grid>
             </Grid>
