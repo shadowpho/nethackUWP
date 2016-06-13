@@ -159,7 +159,10 @@ extern "C"
             return;
         }
 
-        g_menus[wid].prompt = prompt;
+        if (prompt == nullptr)
+            g_menus[wid].prompt.clear();
+        else
+            g_menus[wid].prompt = prompt;
     }
     int mswin_select_menu(winid wid, int how, MENU_ITEM_P **selected)
     {
