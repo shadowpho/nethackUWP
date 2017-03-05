@@ -105,7 +105,7 @@ namespace NethackUWP
         void MapCanvas_Draw(Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl^ sender, Microsoft::Graphics::Canvas::UI::Xaml::CanvasDrawEventArgs^ args);
         void CloseQuickMenu(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
         void OpenQuickMenu(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
-        void QuickMenuInnerListSelectionChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::SelectionChangedEventArgs^ e);
+        void QuickMenuInnerList_ItemClick(Platform::Object^ sender, Windows::UI::Xaml::Controls::ItemClickEventArgs^ e);
     };
 
     extern MainPage^ g_mainpage;

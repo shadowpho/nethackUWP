@@ -209,9 +209,6 @@ MainPage::MainPage()
 
     //XXX hardware button
 
-
-
-
     MapCanvas->PointerPressed +=
         ref new Windows::UI::Xaml::Input::PointerEventHandler(this, &NethackUWP::MainPage::OnPointerPressed);
 
@@ -566,7 +563,6 @@ void NethackUWP::MainPage::OnKeyDown(Platform::Object ^sender, Windows::UI::Xaml
     using Windows::UI::Xaml::FocusState;
     using namespace input_event;
 
-
     if (InputBox->FocusState != FocusState::Unfocused)
         return;
 
@@ -582,12 +578,73 @@ void NethackUWP::MainPage::OnKeyDown(Platform::Object ^sender, Windows::UI::Xaml
     e->Handled = false;
     //auto keys = e->OriginalSource;
     auto keys2 = e->Key;
+    if (e->DeviceId) {
+        keys2 = e->OriginalKey;
+    }
     auto keys3 = e->KeyStatus;
     char key_value = (char)(int)keys2;
 
     bool we_care_about_this_key = false;
     bool modifiers_handled = false;
     bool directionals = false;
+
+    if (keys2 >= VirtualKey::GamepadA && keys2 <= VirtualKey::GamepadRightThumbstickLeft)
+    {
+        if (QuickMenuExpander->Visibility == Windows::UI::Xaml::Visibility::Visible)
+        {
+            e->Handled = false;
+            return;
+        }
+        switch (keys2) {
+            case VirtualKey::GamepadA:
+                QuickMenuInnerList->DataContext = QuickMenuGroups->GetAt(0);
+                QuickMenuInnerList->SelectedIndex = 0;
+                QuickMenuExpander->Visibility = Windows::UI::Xaml::Visibility::Visible;
+                e->Handled = true;
+                return;
+            case VirtualKey::GamepadB:
+                QuickMenuInnerList->DataContext = QuickMenuGroups->GetAt(1);
+                QuickMenuInnerList->SelectedIndex = 0;
+                QuickMenuExpander->Visibility = Windows::UI::Xaml::Visibility::Visible;
+                e->Handled = true;
+                return;
+            case VirtualKey::GamepadX:
+                QuickMenuInnerList->DataContext = QuickMenuGroups->GetAt(2);
+                QuickMenuInnerList->SelectedIndex = 0;
+                QuickMenuExpander->Visibility = Windows::UI::Xaml::Visibility::Visible;
+                e->Handled = true;
+                return;
+            case VirtualKey::GamepadY:
+                QuickMenuInnerList->DataContext = QuickMenuGroups->GetAt(3);
+                QuickMenuInnerList->SelectedIndex = 0;
+                QuickMenuExpander->Visibility = Windows::UI::Xaml::Visibility::Visible;
+                e->Handled = true;
+                return;
+            case VirtualKey::GamepadMenu:
+                button_Click(nullptr, nullptr);
+                e->Handled = true;
+                return;
+            case VirtualKey::GamepadDPadLeft:
+            case VirtualKey::GamepadLeftThumbstickLeft:
+                keys2 = VirtualKey::Left;
+                break;
+            case VirtualKey::GamepadDPadRight:
+            case VirtualKey::GamepadLeftThumbstickRight:
+                keys2 = VirtualKey::Right;
+                break;
+            case VirtualKey::GamepadDPadUp:
+            case VirtualKey::GamepadLeftThumbstickUp:
+                keys2 = VirtualKey::Up;
+                break;
+            case VirtualKey::GamepadDPadDown:
+            case VirtualKey::GamepadLeftThumbstickDown:
+                keys2 = VirtualKey::Down;
+                break;
+            default:
+                e->Handled = true;
+                return;
+        }
+    }
 
     if (keys2 >= VirtualKey::A && keys2 <= VirtualKey::Z) //a-z
     {
@@ -616,6 +673,7 @@ void NethackUWP::MainPage::OnKeyDown(Platform::Object ^sender, Windows::UI::Xaml
         ET.kind = kind_t::cancel_menu_button;
          NativeMainPage::event_queue.enqueue(ET);
         we_care_about_this_key = true;
+        e->Handled = we_care_about_this_key;
         return;
     }
 
@@ -635,21 +693,33 @@ void NethackUWP::MainPage::OnKeyDown(Platform::Object ^sender, Windows::UI::Xaml
         }
     }
 
-    if ((int)keys2 >= VK_OEM_1 && (int)keys2 <= VK_OEM_7) // don't handkle 
-    {
-        we_care_about_this_key = true;
-        modifiers_handled = true;
+    switch ((int)keys2) {
+        case VK_OEM_1:
+        case VK_OEM_2:
+        case VK_OEM_3:
+        case VK_OEM_4:
+        case VK_OEM_5:
+        case VK_OEM_6:
+        case VK_OEM_7:
+        case VK_OEM_8:
+        {
+            we_care_about_this_key = true;
+            modifiers_handled = true;
 
-        constexpr const   static char keys_no_shift[] = ";+,-./`[\\]'";
-        constexpr const   static char keys_shift[] = ":=<_>?~{|}\"";
-        int iter_arr = (int)keys2 - VK_OEM_1;
-        assert(iter_arr >= 0 && iter_arr <= 11);
-        if (shift_is_pressed)
-            key_value = keys_no_shift[iter_arr];
-        else
-            key_value = keys_shift[iter_arr];
-        
+            constexpr const   static char keys_no_shift[] = ";+,-./`[\\]'";
+            constexpr const   static char keys_shift[] = ":=<_>?~{|}\"";
+            int iter_arr = (int)keys2 - VK_OEM_1;
+            assert(iter_arr >= 0 && iter_arr <= 11);
+            if (shift_is_pressed)
+                key_value = keys_no_shift[iter_arr];
+            else
+                key_value = keys_shift[iter_arr];
+        }
+        default:
+            break;
     }
+
+    e->Handled = we_care_about_this_key;
 
     if (we_care_about_this_key == false)
     {
@@ -679,6 +749,7 @@ void NethackUWP::MainPage::OnKeyDown(Platform::Object ^sender, Windows::UI::Xaml
         ET.kind = kind_t::keyboard;
         ET.key = key_value;
     }
+
     NativeMainPage::event_queue.enqueue(ET);
 }
 
@@ -809,31 +880,27 @@ void NethackUWP::MainPage::OpenQuickMenu(Platform::Object^ sender, Windows::UI::
     QuickMenuExpander->Visibility = Windows::UI::Xaml::Visibility::Visible;
 }
 
-
-void NethackUWP::MainPage::QuickMenuInnerListSelectionChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::SelectionChangedEventArgs^ e)
+void NethackUWP::MainPage::QuickMenuInnerList_ItemClick(Platform::Object^ sender, Windows::UI::Xaml::Controls::ItemClickEventArgs^ e)
 {
-    if (e->AddedItems->Size == 1)
+    auto my_data_context = ((Windows::UI::Xaml::Controls::ListView^)sender)->DataContext;
+    auto current_quick_menu = (QuickMenuGroup^)my_data_context;
+
+    auto obj = (QuickMenuCommand^)e->ClickedItem;
+
+    const char* cmd_str = obj->ch;
+    assert(cmd_str != nullptr);
+    if (*cmd_str != '#')
     {
-        auto my_data_context = ((Windows::UI::Xaml::Controls::ListView^)sender)->DataContext;
-        auto current_quick_menu = (QuickMenuGroup^)my_data_context;
-
-        auto obj = (QuickMenuCommand^)e->AddedItems->GetAt(0);
-
-        const char* cmd_str = obj->ch;
-        assert(cmd_str != nullptr);
-        if (*cmd_str != '#')
-        {
-            using namespace input_event;
-            event_t e;
-            e.kind = kind_t::keyboard;
-            e.key = *cmd_str;
-            NativeMainPage::event_queue.enqueue(e);
-        }
-        else
-        {
-            // skip the starting #
-            NativeMainPage::enqueue_ext_cmd(cmd_str + 1);
-        }
-        QuickMenuExpander->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+        using namespace input_event;
+        event_t e;
+        e.kind = kind_t::keyboard;
+        e.key = *cmd_str;
+        NativeMainPage::event_queue.enqueue(e);
     }
+    else
+    {
+        // skip the starting #
+        NativeMainPage::enqueue_ext_cmd(cmd_str + 1);
+    }
+    QuickMenuExpander->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 }

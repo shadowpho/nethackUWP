@@ -100,7 +100,7 @@
                         <RowDefinition Height="28"/>
                     </Grid.RowDefinitions>
 
-                    <canvas:CanvasControl x:Name="MapCanvas" Draw="MapCanvas_Draw" ClearColor="Black" />
+                    <canvas:CanvasControl x:Name="MapCanvas" Draw="MapCanvas_Draw" ClearColor="Black"/>
 
                     <TextBlock x:Name="textBox_last_notification" Text="{Binding Last_Notification, FallbackValue='lorem ipsum dolor sit amet'}" Margin="10,5,40,0" Grid.Row="3" />
                     <Button HorizontalAlignment="Right" Click="ExpandNotifications" Grid.Row="3" Width="30" Padding="0" VerticalAlignment="Stretch">
@@ -149,7 +149,8 @@
                         </Grid.Background>
                         <ListView x:Name="QuickMenuInnerList" ItemsSource="{Binding Commands}" Margin="0,0,32,0" Grid.Row="0" VerticalAlignment="Top"
                                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                  SelectionChanged="QuickMenuInnerListSelectionChanged"
+                                  ItemClick="QuickMenuInnerList_ItemClick"
+                                  IsItemClickEnabled="True"
                                   SelectionMode="Single"
                                   >
                             <TextBlock>Cast a spell</TextBlock>

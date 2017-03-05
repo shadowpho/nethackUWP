@@ -29,6 +29,7 @@ using namespace Windows::UI::Xaml::Navigation;
 App::App()
 {
     InitializeComponent();
+    RequiresPointerMode = ApplicationRequiresPointerMode::WhenRequested;
     Suspending += ref new SuspendingEventHandler(this, &App::OnSuspending);
 }
 
